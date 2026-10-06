@@ -51,7 +51,7 @@ function renderOrder() {
     price.textContent = `Base price: ${currency.format(item.basePriceCents / 100)}`;
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = 'btn btn-outline-danger py-2';
+    removeButton.className = 'btn btn-outline-primary py-2';
     removeButton.textContent = 'Remove';
     removeButton.setAttribute('aria-label', `Remove pizza ${index + 1}: ${item.quantity} × ${item.name}`);
     removeButton.addEventListener('click', () => {

@@ -26,8 +26,8 @@ filterButtons.forEach((button) => {
 
     filterButtons.forEach((filter) => {
       const isActive = filter === button;
-      filter.classList.toggle('btn-danger', isActive);
-      filter.classList.toggle('btn-outline-danger', !isActive);
+      filter.classList.toggle('btn-primary', isActive);
+      filter.classList.toggle('btn-outline-primary', !isActive);
       filter.setAttribute('aria-pressed', String(isActive));
     });
     document.querySelector('#menuStatus').textContent = `Showing ${visibleCount} sample menu ${visibleCount === 1 ? 'item' : 'items'}.`;

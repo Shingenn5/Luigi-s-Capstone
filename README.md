@@ -15,7 +15,7 @@ Menu prices are sample USD prices. Each add button's `data-price` is in cents; u
 
 The order panel supports adding items, calculating a subtotal, and clearing the order. Selections reset on reload. It never places an order or collects payment. Real contact details, opening hours, and restaurant history are intentionally left as clearly marked placeholders.
 
-Bootstrap CSS and JavaScript are included in `assets/` so the demo works without a CDN connection. These are unmodified vendor files; leave them alone and use Bootstrap classes in `index.html`. All asset paths are relative so the frontend works under a GitHub Pages repository URL.
+All pages share `assets/bootswatch-simplex.min.css`: the unmodified Bootswatch Simplex 5.3.8 theme, which includes Bootstrap CSS. Use this one stylesheet on new pages too; do not also load the default Bootstrap CSS. The bundled Bootstrap JavaScript is also 5.3.8. Simplex keeps the red-and-white look without custom CSS. Its optional Open Sans font loads from Google Fonts, with local font fallbacks when offline. All asset paths are relative so the frontend works under a GitHub Pages repository URL.
 
 ## GitHub Pages hosting
 

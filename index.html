@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Explore Luigi's Pizzeria: a pizza restaurant frontend demo with a sample menu." />
     <title>Luigi's Pizzeria | A little slice of happiness</title>
-    <link rel="stylesheet" href="./assets/bootstrap.min.css" />
+    <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
     <script src="./assets/bootstrap.bundle.min.js" defer></script>
     <script src="./js/app.js" defer></script>
   </head>
@@ -16,14 +16,14 @@
     <header class="border-bottom">
       <nav class="navbar navbar-expand-md py-3" aria-label="Main navigation">
         <div class="container">
-          <a class="navbar-brand fw-bold fs-3 text-danger" href="./">Luigi's<span class="d-block fs-6 text-body-secondary fw-normal">Pizzeria</span></a>
+          <a class="navbar-brand fw-bold fs-3 text-primary" href="./">Luigi's<span class="d-block fs-6 text-body-secondary fw-normal">Pizzeria</span></a>
           <button class="navbar-toggler p-3" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
           <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto align-items-md-center gap-md-3">
               <li class="nav-item"><a class="nav-link py-3" href="./menu.html">Our menu</a></li>
               <li class="nav-item"><a class="nav-link py-3" href="./about.html">Our story</a></li>
               <li class="nav-item"><a class="nav-link py-3" href="#visit">Visit us</a></li>
-              <li class="nav-item"><button class="btn btn-danger px-4 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#orderDrawer" aria-controls="orderDrawer">Demo order <span id="cartCount" class="badge text-bg-light ms-2">0</span></button></li>
+              <li class="nav-item"><button class="btn btn-primary px-4 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#orderDrawer" aria-controls="orderDrawer">Demo order <span id="cartCount" class="badge text-bg-light ms-2">0</span></button></li>
             </ul>
           </div>
         </div>
@@ -35,18 +35,18 @@
         <div class="container py-lg-4">
           <div class="row gy-5 gx-4 align-items-center">
             <div class="col-lg-6">
-              <p class="text-danger fw-semibold text-uppercase mb-3">Good company, Better pizza.</p>
+              <p class="text-primary fw-semibold text-uppercase mb-3">Good company, Better pizza.</p>
               <h1 class="display-3 fw-bold mb-4" id="heroTitle">A little slice<br />of happiness.</h1>
               <p class="lead text-body-secondary mb-4">Golden crust. Melty cheese. Your favorite people around the table. Make tonight a Luigi's night.</p>
               <div class="d-flex flex-wrap gap-3">
-                <a class="btn btn-danger btn-lg px-4" href="./menu.html">Explore the menu <span aria-hidden="true">&rarr;</span></a>
+                <a class="btn btn-primary btn-lg px-4" href="./menu.html">Explore the menu <span aria-hidden="true">&rarr;</span></a>
                 <a class="btn btn-outline-dark btn-lg px-4" href="./about.html">Meet Luigi's</a>
               </div>
             </div>
             <div class="col-lg-6">
               <figure class="mb-0">
                 <img src="./assets/pizza.jpg" alt="Golden cheese pizza with a slice pulled away on a rustic wooden table" width="1200" height="900" class="img-fluid rounded-4 shadow-sm" fetchpriority="high" />
-                <figcaption class="mt-3 d-flex justify-content-between gap-3 small text-body-secondary"><span>The best plans start with pizza.</span><span class="text-danger fw-semibold">Made to share.</span></figcaption>
+                <figcaption class="mt-3 d-flex justify-content-between gap-3 small text-body-secondary"><span>The best plans start with pizza.</span><span class="text-primary fw-semibold">Made to share.</span></figcaption>
               </figure>
             </div>
           </div>
@@ -57,16 +57,16 @@
         <div class="container py-lg-3">
           <div class="row align-items-end g-3 mb-4">
             <div class="col-lg-7">
-              <p class="text-danger fw-semibold text-uppercase mb-2">Find your favorite</p>
+              <p class="text-primary fw-semibold text-uppercase mb-2">Find your favorite</p>
               <h2 class="display-6 fw-bold" id="menuTitle">Big flavor. Simple ingredients.</h2>
               <p class="text-body-secondary mb-0">A few classics, a few new favorites. All prices are sample prices.</p>
             </div>
             <div class="col-lg-5">
               <div class="d-flex flex-wrap justify-content-lg-end gap-2" role="group" aria-label="Filter menu">
-                <button class="btn btn-danger py-2 px-3" type="button" data-filter="all" aria-pressed="true">All</button>
-                <button class="btn btn-outline-danger py-2 px-3" type="button" data-filter="pizza" aria-pressed="false">Pizzas</button>
-                <button class="btn btn-outline-danger py-2 px-3" type="button" data-filter="sides" aria-pressed="false">Sides</button>
-                <button class="btn btn-outline-danger py-2 px-3" type="button" data-filter="drinks" aria-pressed="false">Drinks</button>
+                <button class="btn btn-primary py-2 px-3" type="button" data-filter="all" aria-pressed="true">All</button>
+                <button class="btn btn-outline-primary py-2 px-3" type="button" data-filter="pizza" aria-pressed="false">Pizzas</button>
+                <button class="btn btn-outline-primary py-2 px-3" type="button" data-filter="sides" aria-pressed="false">Sides</button>
+                <button class="btn btn-outline-primary py-2 px-3" type="button" data-filter="drinks" aria-pressed="false">Drinks</button>
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">12-inch pizza</span><span class="fw-semibold">$5.00</span></div>
                 <h3 class="h4">Small Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="margherita" data-price="1400" aria-label="Add small pizza to order.">Add to demo order <span aria-hidden="true">+</span></button>
+                <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="margherita" data-price="1400" aria-label="Add small pizza to order.">Add to demo order <span aria-hidden="true">+</span></button>
               </div></article>
             </div>
             <!--Medium Pizza-->
@@ -86,7 +86,7 @@
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">14-inch pizza</span><span class="fw-semibold">$7.00</span></div>
                 <h3 class="h4">Medium Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="pepperoni" data-price="1600" aria-label="Add medium pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
+                <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="pepperoni" data-price="1600" aria-label="Add medium pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
               </div></article>
             </div>
             <!--Large Pizza-->
@@ -94,17 +94,17 @@
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">18-inch pizza</span><span class="fw-semibold">$9.00</span></div>
                 <h3 class="h4">large Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
+                <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
               </div></article>
             </div>
             <div class="col-md-6 col-lg-4" data-category="Drinks">
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
                 <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">Iced Tea</span><span class="fw-semibold">$2.50</span></div>
                 <h3 class="h4">large Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
+                <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
             <div class="col-md-6 col-lg-4 mx-auto my-5">
               <aside class="card shadow-sm" aria-labelledby="hoursTitle">
-                <div class="card-header bg-danger text-light text-center">
+                <div class="card-header bg-primary text-light text-center">
                   <h2 class="h5 mb-0" id="hoursTitle">Hours of Operation</h2>
                 </div>
                 <ul class="list-group list-group-flush">
