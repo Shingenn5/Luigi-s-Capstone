@@ -6,6 +6,7 @@ A small pizza restaurant demo built with **HTML, Bootstrap 5.3.8, and plain Java
 
 - `index.html`: all page sections and menu cards. Change text and Bootstrap classes here.
 - `js/app.js`: menu filters and the in-memory demo order panel. JavaScript uses camelCase.
+- `menu.html` and `js/menu.js`: pizza size, proposed toppings, quantity, service type, and an in-memory order review. Sample base subtotals exclude unconfirmed topping prices and tax; this preview does not submit orders.
 - `assets/pizza.jpg`: sample hero photograph. Replace with restaurant-owned photography later.
 
 Open `index.html` in your browser to preview locally. Refresh after edits. A local static preview extension in your editor works too.

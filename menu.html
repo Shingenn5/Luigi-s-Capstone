@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Menu | Luigi's Pizzeria</title>
     <link rel="stylesheet" href="./assets/bootstrap.min.css" />
+    <script src="./js/menu.js" defer></script>
   </head>
   <body>
     <header class="border-bottom py-3">
@@ -34,20 +35,56 @@
               <span class="fw-semibold text-nowrap">$9.00</span>
             </li>
           </ul>
-          <section class="mt-5" aria-labelledby="toppingsTitle">
-            <h2 class="h4 mb-2" id="toppingsTitle">Pizza toppings</h2>
-            <p class="text-body-secondary">Proposed toppings; availability and prices await confirmation.</p>
-            <ul class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 list-unstyled mb-0">
-              <li class="col"><span class="d-block border rounded-3 p-3">Pepperoni</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Italian sausage</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Beef</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Green peppers</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Jalapeños</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Pineapple</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Onion</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Black olives</span></li>
-              <li class="col"><span class="d-block border rounded-3 p-3">Diced tomatoes</span></li>
-            </ul>
+          <form class="mt-5" id="pizzaForm" aria-labelledby="pizzaBuilderTitle">
+            <h2 class="h4" id="pizzaBuilderTitle">Build a demo pizza</h2>
+            <p class="text-body-secondary">Try your selections before reviewing the order. This demo resets when you reload.</p>
+            <div class="row g-3 mb-4">
+              <div class="col-sm-8">
+                <label class="form-label" for="pizzaSize">Pizza size</label>
+                <select class="form-select py-2" id="pizzaSize" name="pizzaSize">
+                  <option value="small">Small — 12-inch — $5.00</option>
+                  <option value="medium">Medium — 14-inch — $7.00</option>
+                  <option value="large">Large — 18-inch — $9.00</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-label" for="pizzaQuantity">Quantity</label>
+                <input class="form-control py-2" id="pizzaQuantity" name="pizzaQuantity" type="number" min="1" step="1" value="1" required />
+              </div>
+            </div>
+            <fieldset aria-describedby="toppingsNote">
+              <legend class="h4 mb-2" id="toppingsTitle">Pizza toppings</legend>
+              <p class="text-body-secondary" id="toppingsNote">Proposed toppings; availability and prices await confirmation. Leave unchecked for a plain pizza.</p>
+              <ul class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 list-unstyled mb-0">
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Pepperoni" />Pepperoni</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Italian sausage" />Italian sausage</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Beef" />Beef</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Green peppers" />Green peppers</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Jalapeños" />Jalapeños</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Pineapple" />Pineapple</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Onion" />Onion</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Black olives" />Black olives</label></li>
+                <li class="col"><label class="d-flex align-items-center gap-2 border rounded-3 p-3"><input class="form-check-input mt-0" type="checkbox" name="topping" value="Diced tomatoes" />Diced tomatoes</label></li>
+              </ul>
+            </fieldset>
+            <button class="btn btn-danger py-2 px-4 mt-4" type="submit">Add pizza to demo order</button>
+            <p class="small text-body-secondary mt-2">Topping prices and tax are not included in the sample base subtotal.</p>
+            <p class="small text-success" id="orderAnnouncement" role="status"></p>
+          </form>
+          <section class="card mt-4" aria-labelledby="reviewTitle">
+            <div class="card-body p-4">
+              <h2 class="h4" id="reviewTitle">Review your demo order</h2>
+              <label class="form-label mt-2" for="serviceType">Service type</label>
+              <select class="form-select py-2 mb-3" id="serviceType">
+                <option value="pickup">Pickup</option>
+                <option value="dineIn">Dine-in</option>
+              </select>
+              <ul class="list-unstyled mb-3" id="orderItems"></ul>
+              <div class="d-flex justify-content-between gap-3 border-top pt-3">
+                <span>Sample base subtotal</span><strong id="baseSubtotal">$0.00</strong>
+              </div>
+              <p class="small text-body-secondary mt-3 mb-0">Review only. No order is submitted. Topping prices and tax await confirmation; a final total is not available yet.</p>
+            </div>
           </section>
         </div>
       </div>
