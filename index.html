@@ -35,14 +35,13 @@
         <div class="container py-lg-4">
           <div class="row gy-5 gx-4 align-items-center">
             <div class="col-lg-6">
-              <p class="text-danger fw-semibold text-uppercase mb-3">Good pizza. Good company.</p>
+              <p class="text-danger fw-semibold text-uppercase mb-3">Good company, Better pizza.</p>
               <h1 class="display-3 fw-bold mb-4" id="heroTitle">A little slice<br />of happiness.</h1>
               <p class="lead text-body-secondary mb-4">Golden crust. Melty cheese. Your favorite people around the table. Make tonight a Luigi's night.</p>
               <div class="d-flex flex-wrap gap-3">
                 <a class="btn btn-danger btn-lg px-4" href="#menu">Explore the menu <span aria-hidden="true">&rarr;</span></a>
                 <a class="btn btn-outline-dark btn-lg px-4" href="#story">Meet Luigi's</a>
               </div>
-              <p class="small text-body-secondary mt-4 mb-0">Frontend demo &middot; Sample menu &middot; No real orders</p>
             </div>
             <div class="col-lg-6">
               <figure class="mb-0">
@@ -73,26 +72,41 @@
           </div>
 
           <!-- Edit cards here. data-price stores cents to keep demo totals exact. -->
+          <!--Small Pizza-->
           <div class="row g-4" id="menuGrid">
             <div class="col-md-6 col-lg-4" data-category="pizza">
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
-                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">12-inch pizza</span><span class="fw-semibold">$14.00</span></div>
-                <h3 class="h4">Classic Margherita</h3><p class="text-body-secondary flex-grow-1">Tomato sauce, mozzarella, and fresh basil. Simple for a reason.</p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="margherita" data-price="1400" aria-label="Add Classic Margherita to demo order">Add to demo order <span aria-hidden="true">+</span></button>
+                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">12-inch pizza</span><span class="fw-semibold">$5.00</span></div>
+                <h3 class="h4">Small Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
+                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="margherita" data-price="1400" aria-label="Add small pizza to order.">Add to demo order <span aria-hidden="true">+</span></button>
               </div></article>
             </div>
+            <!--Medium Pizza-->
             <div class="col-md-6 col-lg-4" data-category="pizza">
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
-                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">12-inch pizza</span><span class="fw-semibold">$16.00</span></div>
-                <h3 class="h4">Pepperoni Favorite</h3><p class="text-body-secondary flex-grow-1">Our classic tomato base, mozzarella, and a generous layer of pepperoni.</p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="pepperoni" data-price="1600" aria-label="Add Pepperoni Favorite to demo order">Add to demo order <span aria-hidden="true">+</span></button>
+                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">14-inch pizza</span><span class="fw-semibold">$7.00</span></div>
+                <h3 class="h4">Medium Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
+                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="pepperoni" data-price="1600" aria-label="Add medium pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
               </div></article>
             </div>
+            <!--Large Pizza-->
             <div class="col-md-6 col-lg-4" data-category="pizza">
               <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
-                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">12-inch pizza</span><span class="fw-semibold">$16.00</span></div>
-                <h3 class="h4">Garden Party</h3><p class="text-body-secondary flex-grow-1">Bell peppers, mushrooms, red onion, and mozzarella on a tomato base.</p>
-                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add Garden Party to demo order">Add to demo order <span aria-hidden="true">+</span></button>
+                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">18-inch pizza</span><span class="fw-semibold">$9.00</span></div>
+                <h3 class="h4">large Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
+                <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
               </div></article>
+            </div>
+            <div class="container my-5" style="max-width: 400px;">
+                <div class="card shadow-sm"></div>
+                    <div class="card-header bg-danger text-light text-center">
+                        <h5 class="mb-0">Hours of Operation</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content align-items-center">
+                            <span class="Sunday">Sunday-Monday:</li>
+                                <span class="text-muted">10:00 AM - 11:00 PM</span>
+                                <span class="list-group-item d-flex justify-content align-items-center">
+                    </ul>
             </div>
  
