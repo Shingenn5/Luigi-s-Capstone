@@ -36,8 +36,9 @@ filterButtons.forEach((button) => {
 
 document.querySelectorAll('[data-item]').forEach((button) => {
   button.addEventListener('click', () => {
-    const itemId = button.dataset.item;
-    const itemName = button.closest('article').querySelector('h3').textContent;
+    const drinkType = button.dataset.drinkSize ? document.querySelector('#drinkType').value : '';
+    const itemId = drinkType ? `${button.dataset.item}-${drinkType}` : button.dataset.item;
+    const itemName = drinkType ? `${button.dataset.drinkSize} ${drinkType}` : button.dataset.name || button.closest('article').querySelector('h3').textContent;
     const priceCents = Number(button.dataset.price);
     const quantity = (cart.get(itemId)?.quantity || 0) + 1;
 
