@@ -94,16 +94,30 @@
                 <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">18-inch pizza</span><span class="fw-semibold">$9.00</span></div>
                 <h3 class="h4">large Pizza</h3><p class="text-body-secondary flex-grow-1"></p>
                 <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="garden" data-price="1600" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
-              </div>
+              </div></article>
             </div>
-            </article>
-              <article class="mt-5" aria-labelledby="drinksTitle">
-                <h2 class="h4 mb-2" id="drinksTitle">Drinks</h2>
+            <div class="col-12" data-category="drinks">
+              <article class="mt-4" aria-labelledby="drinksTitle">
+                <h2 class="h3 mb-2" id="drinksTitle">Drinks</h2>
                   <p class="text-body-secondary">Choose Iced Tea, Dr. Pepper, Cola, or UnCola in any of these sizes.</p>
-                    <ul class="list-group">
-                      <li class="list-group-item p-3 d-flex justify-content-between gap-2"><span>Small drink</span><span class="fw-semibold">$1.00</span></li>
-                      <li class="list-group-item p-3 d-flex justify-content-between gap-2"><span>Medium drink</span><span class="fw-semibold">$2.00</span></li>
-                      <li class="list-group-item p-3 d-flex justify-content-between gap-2"><span>Large drink</span><span class="fw-semibold">$3.00</span></li>
+                <ul class="list-group">
+                  <li class="list-group-item p-3">
+                    <div class="d-flex justify-content-between gap-2 mb-2"><span>Small drink</span><span class="fw-semibold">$1.00</span></div>
+                    <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="drinks" data-price="16q00" aria-label="Add Small Drink to Order">Add to demo order <span aria-hidden="true">+</span></button>
+                  </li>
+                  <li class="list-group-item p-3">
+                    <div class="d-flex justify-content-between gap-2 mb-2"><span>Medium drink</span><span class="fw-semibold">$2.00</span></div>
+                    <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="drinks" data-price="1600" aria-label="Add Medium Drink to Order">Add to demo order <span aria-hidden="true">+</span></button>
+                  </li>
+                  <li class="list-group-item p-3">
+                    <div class="d-flex justify-content-between gap-2 mb-2"><span>Large drink</span><span class="fw-semibold">$3.00</span></div>
+                    <button class="btn btn-outline-primary w-100 py-2" type="button" data-item="drinks" data-price="1600" aria-label="Add Large Drink to Order">Add to demo order <span aria-hidden="true">+</span></button>
+                  </li>
+                </ul>
+              </article>
+            </div>
+          </div>
+          <p class="visually-hidden" id="menuStatus" role="status">Showing all menu sections.</p>
             <div class="col-md-6 col-lg-4 mx-auto my-5">
               <aside class="card shadow-sm" aria-labelledby="hoursTitle">
                 <div class="card-header bg-primary text-light text-center">
@@ -118,3 +132,8 @@
                 <p class="card-body small text-body-secondary mb-0">Opening hours to closing hours. Orders ordered within the last 10 minutes require confirmation.</p>
               </aside>
             </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
