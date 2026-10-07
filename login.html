@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Luigi's Pizzeria</title>
+    <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
+    <script src="./js/login.js" defer></script>
+  </head>
+  <body>
+    <a class="visually-hidden-focusable position-absolute p-3 bg-white text-dark" href="#main">Skip to content</a>
+    <header class="border-bottom py-3">
+      <nav class="container d-flex flex-wrap justify-content-between align-items-center gap-3" aria-label="Main navigation">
+        <a class="fs-3 fw-bold text-primary text-decoration-none" href="./index.html">Luigi's Pizzeria</a>
+        <a class="btn btn-outline-dark py-2" href="./index.html">Back to home</a>
+      </nav>
+    </header>
+    <main class="container py-5" id="main">
+      <div class="row justify-content-center">
+        <div class="col-sm-10 col-md-7 col-lg-5">
+          <section class="card shadow-sm" aria-labelledby="loginTitle">
+            <div class="card-body p-4">
+              <h1 class="h3 mb-3" id="loginTitle">Customer login</h1>
+              <form id="loginForm" novalidate>
+                <div class="mb-3">
+                  <label class="form-label" id="identityLabel" for="loginIdentity">Email address</label>
+                  <input class="form-control" id="loginIdentity" name="email" type="email" autocomplete="username" maxlength="254" aria-describedby="identityHint identityError" required />
+                  <div class="form-text" id="identityHint">Enter your email address.</div>
+                  <div class="invalid-feedback" id="identityError">Enter a valid email address, such as name@example.com.</div>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label" for="loginPassword">Password</label>
+                  <input class="form-control" id="loginPassword" name="password" type="password" autocomplete="current-password" maxlength="128" aria-describedby="passwordHint passwordError" required />
+                  <div class="form-text" id="passwordHint">Use 8–128 characters, with no spaces.</div>
+                  <div class="invalid-feedback" id="passwordError">Enter a password with 8–128 characters and no spaces.</div>
+                </div>
+                <button class="btn btn-primary w-100 py-2" type="submit">Login</button>
+                <p class="small mt-3 mb-0" id="loginStatus" role="status"></p>
+              </form>
+              <div class="border-top mt-4 pt-3 text-center">
+                <button class="btn btn-outline-dark btn-sm" id="employeeLogin" type="button" aria-pressed="false">Employee login</button>
+              </div>
+              <p class="small text-body-secondary mt-3 mb-0">Frontend preview. Account sign-in is not connected yet.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

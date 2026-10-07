@@ -13,7 +13,8 @@
       <nav class="container d-flex flex-wrap justify-content-between align-items-center gap-3" aria-label="Main navigation">
         <a class="fs-3 fw-bold text-danger text-decoration-none" href="./index.html">Luigi's Pizzeria</a>
         <a class="btn btn-outline-dark py-2" href="./index.html">Back to home</a>
-        <button class="btn btn-danger px-4 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#orderDrawer" aria-controls="orderDrawer">Demo order <span id="cartCount" class="badge text-bg-light ms-2">0</span></button>
+        <a class="btn btn-outline-dark py-2" href="./login.html">Login</a>
+        <button class="btn btn-danger px-4 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#orderDrawer" aria-controls="orderDrawer">Add to order <span id="cartCount" class="badge text-bg-light ms-2">0</span></button>
       </nav>
     </header>
     <main class="container py-5" id="main">
@@ -27,17 +28,17 @@
             <li class="list-group-item p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
               <div><h3 class="h5 mb-1">Small Pizza</h3><p class="text-body-secondary mb-0">12-inch pizza</p></div>
               <span class="fw-semibold text-nowrap">$5.00</span>
-              <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="small-pizza" data-name="Small Pizza" data-price="500" aria-label="Add small pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
+              <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="small-pizza" data-name="Small Pizza" data-price="500" aria-label="Add small pizza to order">Add to order <span aria-hidden="true">+</span></button>
             </li>
             <li class="list-group-item p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
               <div><h3 class="h5 mb-1">Medium Pizza</h3><p class="text-body-secondary mb-0">14-inch pizza</p></div>
               <span class="fw-semibold text-nowrap">$7.00</span>
-              <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="medium-pizza" data-name="Medium Pizza" data-price="700" aria-label="Add medium pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
+              <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="medium-pizza" data-name="Medium Pizza" data-price="700" aria-label="Add medium pizza to order">Add to order <span aria-hidden="true">+</span></button>
             </li>
             <li class="list-group-item p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
               <div><h3 class="h5 mb-1">Large Pizza</h3><p class="text-body-secondary mb-0">18-inch pizza</p></div>
               <span class="fw-semibold text-nowrap">$9.00</span>
-              <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="large-pizza" data-name="Large Pizza" data-price="900" aria-label="Add large pizza to order">Add to demo order <span aria-hidden="true">+</span></button>
+              <button class="btn btn-outline-danger w-100 py-2" type="button" data-item="large-pizza" data-name="Large Pizza" data-price="900" aria-label="Add large pizza to order">Add to order <span aria-hidden="true">+</span></button>
             </li>
           </ul>
           <section class="mt-5" aria-labelledby="ingredientsTitle">
@@ -66,9 +67,9 @@
             <label class="form-label" for="drinkType">Drink</label>
             <select class="form-select mb-3" id="drinkType"><option>Iced Tea</option><option>Dr. Pepper</option><option>Cola</option><option>UnCola</option></select>
             <ul class="list-group">
-              <li class="list-group-item p-3 d-flex flex-wrap justify-content-between gap-3"><span>Small drink</span><span class="fw-semibold">$1.00</span><button class="btn btn-outline-danger w-100 py-2" type="button" data-item="small-drink" data-drink-size="Small" data-price="100" aria-label="Add small drink to order">Add to demo order <span aria-hidden="true">+</span></button></li>
-              <li class="list-group-item p-3 d-flex flex-wrap justify-content-between gap-3"><span>Medium drink</span><span class="fw-semibold">$2.00</span><button class="btn btn-outline-danger w-100 py-2" type="button" data-item="medium-drink" data-drink-size="Medium" data-price="200" aria-label="Add medium drink to order">Add to demo order <span aria-hidden="true">+</span></button></li>
-              <li class="list-group-item p-3 d-flex flex-wrap justify-content-between gap-3"><span>Large drink</span><span class="fw-semibold">$3.00</span><button class="btn btn-outline-danger w-100 py-2" type="button" data-item="large-drink" data-drink-size="Large" data-price="300" aria-label="Add large drink to order">Add to demo order <span aria-hidden="true">+</span></button></li>
+              <li class="list-group-item p-3 d-flex flex-wrap justify-content-between gap-3"><span>Small drink</span><span class="fw-semibold">$1.00</span><button class="btn btn-outline-danger w-100 py-2" type="button" data-item="small-drink" data-drink-size="Small" data-price="100" aria-label="Add small drink to order">Add to order <span aria-hidden="true">+</span></button></li>
+              <li class="list-group-item p-3 d-flex flex-wrap justify-content-between gap-3"><span>Medium drink</span><span class="fw-semibold">$2.00</span><button class="btn btn-outline-danger w-100 py-2" type="button" data-item="medium-drink" data-drink-size="Medium" data-price="200" aria-label="Add medium drink to order">Add to order <span aria-hidden="true">+</span></button></li>
+              <li class="list-group-item p-3 d-flex flex-wrap justify-content-between gap-3"><span>Large drink</span><span class="fw-semibold">$3.00</span><button class="btn btn-outline-danger w-100 py-2" type="button" data-item="large-drink" data-drink-size="Large" data-price="300" aria-label="Add large drink to order">Add to order <span aria-hidden="true">+</span></button></li>
             </ul>
           </section>
         </div>
@@ -77,7 +78,7 @@
     <p class="container small text-success" id="cartAnnouncement" role="status"></p>
     <div class="offcanvas offcanvas-end" tabindex="-1" id="orderDrawer" aria-labelledby="orderTitle">
       <div class="offcanvas-header">
-        <h2 class="h4 mb-0" id="orderTitle">Your demo order</h2>
+        <h2 class="h4 mb-0" id="orderTitle">Your order</h2>
         <button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Close order"></button>
       </div>
       <div class="offcanvas-body">

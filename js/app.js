@@ -43,14 +43,14 @@ document.querySelectorAll('[data-item]').forEach((button) => {
     const quantity = (cart.get(itemId)?.quantity || 0) + 1;
 
     if (quantity > 20) {
-      cartAnnouncement.textContent = `Maximum 20 ${itemName} per demo order.`;
+      cartAnnouncement.textContent = `Maximum 20 ${itemName} per order.`;
       return;
     }
     cart.set(itemId, { itemName, priceCents, quantity });
     renderCart();
     // Visible and screen-reader feedback without opening the drawer every time.
     button.firstChild.textContent = `Added (${quantity}) · Add another `;
-    cartAnnouncement.textContent = `${itemName} added. ${quantity} in your demo order.`;
+    cartAnnouncement.textContent = `${itemName} added. ${quantity} in your order.`;
   });
 });
 
@@ -88,8 +88,8 @@ clearButton.addEventListener('click', () => {
   cart.clear();
   renderCart();
   document.querySelectorAll('[data-item]').forEach((button) => {
-    button.firstChild.textContent = 'Add to demo order ';
+    button.firstChild.textContent = 'Add to order ';
   });
   document.querySelector('#orderDrawer .btn-close').focus();
-  cartAnnouncement.textContent = 'Your demo order has been cleared.';
+  cartAnnouncement.textContent = 'Your order has been cleared.';
 });
