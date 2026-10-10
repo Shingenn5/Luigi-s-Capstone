@@ -11,3 +11,16 @@ CREATE TABLE IF NOT EXISTS Customer (
     email TEXT NOT NULL UNIQUE,
     passwordHash TEXT NOT NULL
 );
+
+-- Orders table
+-- Stores information about orders
+CREATE TABLE IF NOT EXISTS Orders (
+    orderID INTEGER PRIMARY KEY AUTOINCREMENT,
+    customerID INTEGER,
+    customerName TEXT NOT NULL,
+    phoneNumber TEXT NOT NULL,
+    orderDate TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    totalCents INTEGER NOT NULL CHECK (totalCents >= 0),
+    orderStatus TEXT NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (customerID) REFERENCES Customer(customerID)
+);
