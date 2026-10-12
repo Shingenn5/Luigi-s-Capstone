@@ -26,3 +26,23 @@ VALUES
     ('UnCola', 'Drink', 'Small', 100),
     ('UnCola', 'Drink', 'Medium', 200),
     ('UnCola', 'Drink', 'Large', 300);
+
+-- Insert available pizza toppings into Toppings
+
+INSERT OR IGNORE INTO Toppings (
+    toppingName,
+    smallPriceCents,
+    mediumPriceCents,
+    largePriceCents
+)
+VALUES
+    ('Pepperoni', 100, 200, 300),
+    ('Sausage', 100, 200, 300),
+    ('Beef', 100, 200, 300),
+    ('Green Peppers', 100, 200, 300),
+    ('Jalapeno Peppers', 100, 200, 300),
+    ('Pineapple', 100, 200, 300),
+    ('Onion', 100, 200, 300),
+    ('Black Olives', 100, 200, 300),
+    ('Diced Tomatoes', 100, 200, 300);
+

@@ -51,3 +51,27 @@ CREATE TABLE IF NOT EXISTS OrderItems (
     FOREIGN KEY (menuItemID) REFERENCES MenuItems(menuItemID)
 );
 
+-- Toppings table
+-- Stores available pizza toppings and their prices by size.
+
+CREATE TABLE IF NOT EXISTS Toppings (
+    toppingID INTEGER PRIMARY KEY AUTOINCREMENT,
+    toppingName TEXT NOT NULL UNIQUE,
+    smallPriceCents INTEGER NOT NULL CHECK (smallPriceCents >= 0),
+    mediumPriceCents INTEGER NOT NULL CHECK (mediumPriceCents >= 0),
+    largePriceCents INTEGER NOT NULL CHECK (largePriceCents >= 0)
+);
+
+-- OrderItemToppings table
+-- Stores the toppings selected for individual pizzas.
+
+CREATE TABLE IF NOT EXISTS OrderItemToppings (
+    orderItemToppingID INTEGER PRIMARY KEY AUTOINCREMENT,
+    orderItemID INTEGER NOT NULL,
+    toppingID INTEGER NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    unitPriceCents INTEGER NOT NULL CHECK (unitPriceCents >= 0),
+    FOREIGN KEY (orderItemID) REFERENCES OrderItems(orderItemID),
+    FOREIGN KEY (toppingID) REFERENCES Toppings(toppingID),
+    UNIQUE (orderItemID, toppingID)
+);
