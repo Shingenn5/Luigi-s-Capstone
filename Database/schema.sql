@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS Customer (
 
 -- Orders table
 -- Stores information about orders
+
 CREATE TABLE IF NOT EXISTS Orders (
     orderID INTEGER PRIMARY KEY AUTOINCREMENT,
     customerID INTEGER,
@@ -23,4 +24,16 @@ CREATE TABLE IF NOT EXISTS Orders (
     totalCents INTEGER NOT NULL CHECK (totalCents >= 0),
     orderStatus TEXT NOT NULL DEFAULT 'Pending',
     FOREIGN KEY (customerID) REFERENCES Customer(customerID)
+);
+
+-- MenuItem table
+-- Stores pizza and drinks available for purchase
+
+CREATE TABLE IF NOT EXISTS MenuItems (
+    menuItemID INTEGER PRIMARY KEY AUTOINCREMENT,
+    itemName TEXT NOT NULL,
+    category TEXT NOT NULL CHECK (category IN ('Pizza', 'Drink')),
+    size TEXT NOT NULL CHECK (size IN ('Small', 'Medium', 'Large')),
+    priceCents INTEGER NOT NULL CHECK (priceCents >= 0),
+    UNIQUE (itemName, size)
 );
