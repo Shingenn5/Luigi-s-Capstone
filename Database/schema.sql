@@ -37,3 +37,17 @@ CREATE TABLE IF NOT EXISTS MenuItems (
     priceCents INTEGER NOT NULL CHECK (priceCents >= 0),
     UNIQUE (itemName, size)
 );
+
+-- OrderItems table
+-- Stores individual menu items within an order.
+
+CREATE TABLE IF NOT EXISTS OrderItems (
+    orderItemID INTEGER PRIMARY KEY AUTOINCREMENT,
+    orderID INTEGER NOT NULL,
+    menuItemID INTEGER NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    unitPriceCents INTEGER NOT NULL CHECK (unitPriceCents >= 0),
+    FOREIGN KEY (orderID) REFERENCES Orders(orderID),
+    FOREIGN KEY (menuItemID) REFERENCES MenuItems(menuItemID)
+);
+
