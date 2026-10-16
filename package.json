@@ -1,0 +1,24 @@
+{
+  "name": "luigi-s-capstone",
+  "version": "1.0.0",
+  "description": "Luigi's Pizzeria online ordering system using HTML, Bootstrap, JavaScript, Node.js, Express, and SQLite.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shingenn5/Luigi-s-Capstone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Shingenn5/Luigi-s-Capstone/issues"
+  },
+  "homepage": "https://github.com/Shingenn5/Luigi-s-Capstone#readme",
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}
