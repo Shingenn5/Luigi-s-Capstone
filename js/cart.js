@@ -1,0 +1,81 @@
+const CART_KEY = 'luigis-order-v1';
+export const currency = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
+export function readCart() {
+  try {
+    const cart = JSON.parse(localStorage.getItem(CART_KEY));
+    if (
+      Array.isArray(cart?.items) &&
+      cart.items.length <= 20 &&
+      typeof cart.requestId === 'string'
+    )
+      return cart;
+  } catch {
+    // An invalid saved draft should not prevent starting a new order.
+  }
+  return { items: [], requestId: crypto.randomUUID() };
+}
+
+export function writeCart(items) {
+  const cart = { items, requestId: crypto.randomUUID() };
+  try {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  } catch {
+    throw new Error(
+      'Your browser could not save this order. Allow site storage and try again.',
+    );
+  }
+  return cart;
+}
+
+export function addItem(item) {
+  const cart = readCart();
+  if (cart.items.length >= 20)
+    throw new Error('Maximum 20 items. Review your order to remove an item.');
+  writeCart([...cart.items, item]);
+}
+
+export function describeItem(item, menu, toppings) {
+  const menuItem = menu.find((entry) => entry.menuItemId === item?.menuItemId);
+  if (
+    !menuItem ||
+    !Number.isInteger(item.quantity) ||
+    item.quantity < 1 ||
+    item.quantity > 20 ||
+    !Array.isArray(item.toppings) ||
+    item.toppings.length > toppings.length ||
+    (menuItem.category !== 'Pizza' && item.toppings.length)
+  )
+    throw new Error(
+      'Your saved order contains an unavailable item. Clear the order and choose again.',
+    );
+  const seen = new Set();
+  let unitPriceCents = menuItem.priceCents;
+  const toppingNames = item.toppings.map((selection) => {
+    const topping = toppings.find(
+      (entry) => entry.toppingId === selection?.toppingId,
+    );
+    if (
+      !topping ||
+      seen.has(selection.toppingId) ||
+      !Number.isInteger(selection.quantity) ||
+      selection.quantity < 1 ||
+      selection.quantity > 10
+    )
+      throw new Error(
+        'Your saved toppings are invalid. Clear the order and choose again.',
+      );
+    seen.add(selection.toppingId);
+    unitPriceCents +=
+      topping[`${menuItem.size.toLowerCase()}PriceCents`] * selection.quantity;
+    return `${selection.quantity} × ${topping.toppingName}`;
+  });
+  return {
+    name: `${menuItem.size} ${menuItem.itemName}`,
+    toppingNames: toppingNames.join(', '),
+    lineTotalCents: unitPriceCents * item.quantity,
+  };
+}

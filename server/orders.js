@@ -121,12 +121,10 @@ export function createOrderRouter(database) {
       typeof requestId !== 'string' ||
       !/^[a-zA-Z0-9-]{16,64}$/.test(requestId)
     ) {
-      return response
-        .status(400)
-        .json({
-          error:
-            'Enter your name, phone number, and a pickup or dine-in selection.',
-        });
+      return response.status(400).json({
+        error:
+          'Enter your name, phone number, and a pickup or dine-in selection.',
+      });
     }
     const customerId = request.customer.customerId;
     const existing = database
@@ -185,14 +183,12 @@ export function createOrderRouter(database) {
         }
       }
       database.exec('COMMIT');
-      response
-        .status(201)
-        .json({
-          orderId,
-          totalCents,
-          message:
-            'Order saved as Pending. Restaurant acceptance is not connected.',
-        });
+      response.status(201).json({
+        orderId,
+        totalCents,
+        message:
+          'Order saved as Pending. Restaurant acceptance is not connected.',
+      });
     } catch (error) {
       database.exec('ROLLBACK');
       throw error;
