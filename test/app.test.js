@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { createApp } from '../server/app.js';
 import { openDatabase } from '../server/database.js';
 import { priceOrder } from '../server/orders.js';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 async function startApp(context) {
   const database = openDatabase(':memory:');
@@ -208,4 +211,76 @@ test('orders require authentication, save all lines, isolate customers and dedup
     await (await request('/api/orders', undefined, secondCookie)).json(),
     [],
   );
+});
+
+test('a failed line insert rolls back the entire order', async (context) => {
+  const { database, request } = await startApp(context);
+  const registered = await request('/api/auth/register', account);
+  const cookie = registered.headers.get('set-cookie').split(';')[0];
+  database.exec(`CREATE TRIGGER fail_topping BEFORE INSERT ON OrderItemToppings
+    BEGIN SELECT RAISE(ABORT, 'Simulated storage failure'); END;`);
+  const response = await request(
+    '/api/orders',
+    {
+      customerName: 'Test Customer',
+      phoneNumber: '555-555-0100',
+      serviceType: 'Dine-in',
+      requestId: 'rollback-request-0001',
+      items: [
+        {
+          menuItemId: 1,
+          quantity: 1,
+          toppings: [{ toppingId: 1, quantity: 1 }],
+        },
+      ],
+    },
+    cookie,
+  );
+  assert.equal(response.status, 500);
+  assert.equal(
+    (await response.json()).error,
+    'Something went wrong. Please try again.',
+  );
+  for (const table of [
+    'Orders',
+    'OrderItems',
+    'OrderItemToppings',
+    'order_details',
+  ]) {
+    assert.equal(
+      database.prepare(`SELECT COUNT(*) AS count FROM ${table}`).get().count,
+      0,
+    );
+  }
+});
+
+test('SQLite data and migration version survive closing and reopening', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'luigis-test-'));
+  const databasePath = join(directory, 'test.db');
+  let database;
+  try {
+    database = openDatabase(databasePath);
+    database
+      .prepare(
+        'INSERT INTO Customer (firstName, lastName, email, passwordHash) VALUES (?, ?, ?, ?)',
+      )
+      .run('Persisted', 'Customer', 'persisted@example.com', 'test-hash');
+    database.close();
+    database = openDatabase(databasePath);
+    assert.equal(
+      database.prepare('SELECT firstName FROM Customer').get().firstName,
+      'Persisted',
+    );
+    assert.equal(
+      database.prepare('SELECT COUNT(*) AS count FROM MenuItems').get().count,
+      15,
+    );
+    assert.equal(
+      database.prepare('SELECT version FROM schema_migrations').get().version,
+      1,
+    );
+  } finally {
+    database?.close();
+    rmSync(directory, { recursive: true, force: true });
+  }
 });

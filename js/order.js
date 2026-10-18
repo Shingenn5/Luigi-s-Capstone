@@ -48,6 +48,9 @@ function renderOrder() {
       input.max = 20;
       input.value = item.quantity;
       input.setAttribute('aria-label', `${description.name} quantity`);
+      input.addEventListener('input', () => {
+        checkoutFields.disabled = true;
+      });
       input.addEventListener('change', () => {
         if (isSubmitting || !input.reportValidity()) return;
         try {
