@@ -1,6 +1,7 @@
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { getMenu, getToppings } from './database.js';
+import { createAuthRouter } from './auth.js';
 
 export function createApp(database) {
   const app = express();
@@ -19,6 +20,25 @@ export function createApp(database) {
     next();
   });
   app.use(express.json({ limit: '32kb' }));
+  app.use('/api', (request, response, next) => {
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
+      const expectedOrigin =
+        process.env.APP_ORIGIN ||
+        `${request.protocol}://${request.get('host')}`;
+      if (
+        request.get('origin') !== expectedOrigin ||
+        !request.is('application/json')
+      ) {
+        return response
+          .status(403)
+          .json({
+            error: 'Please submit this request from the restaurant website.',
+          });
+      }
+    }
+    next();
+  });
+  app.use('/api/auth', createAuthRouter(database));
   app.get('/api/menu', (_request, response) =>
     response.json(getMenu(database)),
   );
@@ -52,14 +72,12 @@ export function createApp(database) {
   app.use((error, _request, response, _next) => {
     const status =
       error.status >= 400 && error.status < 500 ? error.status : 500;
-    response
-      .status(status)
-      .json({
-        error:
-          status === 500
-            ? 'Something went wrong. Please try again.'
-            : 'Invalid request.',
-      });
+    response.status(status).json({
+      error:
+        status === 500
+          ? 'Something went wrong. Please try again.'
+          : 'Invalid request.',
+    });
   });
   return app;
 }
