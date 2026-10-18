@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../server/app.js';
 import { openDatabase } from '../server/database.js';
+import { priceOrder } from '../server/orders.js';
 
 async function startApp(context) {
   const database = openDatabase(':memory:');
@@ -123,4 +124,88 @@ test('limits repeated authentication attempts', async (context) => {
     assert.equal((await request('/api/auth/login', {})).status, 401);
   }
   assert.equal((await request('/api/auth/login', {})).status, 429);
+});
+
+test('size-specific topping portions and quantities use authoritative prices', () => {
+  const database = openDatabase(':memory:');
+  try {
+    const [small, medium, large] = priceOrder(
+      database,
+      [1, 2, 3].map((menuItemId) => ({
+        menuItemId,
+        quantity: 2,
+        toppings: [{ toppingId: 1, quantity: 2 }],
+        unitPriceCents: 1,
+      })),
+    );
+    assert.deepEqual(
+      [small.lineTotalCents, medium.lineTotalCents, large.lineTotalCents],
+      [1400, 2200, 3000],
+    );
+    for (const item of [
+      { menuItemId: 999, quantity: 1, toppings: [] },
+      { menuItemId: 1, quantity: -1, toppings: [] },
+      { menuItemId: 1, quantity: 1.5, toppings: [] },
+      { menuItemId: 4, quantity: 1, toppings: [{ toppingId: 1, quantity: 1 }] },
+      {
+        menuItemId: 1,
+        quantity: 1,
+        toppings: [{ toppingId: 1, quantity: 11 }],
+      },
+    ])
+      assert.throws(() => priceOrder(database, [item]), { status: 400 });
+  } finally {
+    database.close();
+  }
+});
+
+test('orders require authentication, save all lines, isolate customers and deduplicate retries', async (context) => {
+  const { database, request } = await startApp(context);
+  const body = {
+    customerName: 'Test Customer',
+    phoneNumber: '555-555-0100',
+    serviceType: 'Pickup',
+    requestId: 'test-request-00001',
+    items: [
+      { menuItemId: 2, quantity: 2, toppings: [{ toppingId: 1, quantity: 2 }] },
+    ],
+    totalCents: 1,
+  };
+  assert.equal((await request('/api/orders', body)).status, 401);
+  const registered = await request('/api/auth/register', account);
+  const cookie = registered.headers.get('set-cookie').split(';')[0];
+  const saved = await request('/api/orders', body, cookie);
+  assert.equal(saved.status, 201);
+  const result = await saved.json();
+  assert.equal(result.totalCents, 2200);
+  const retried = await request('/api/orders', body, cookie);
+  assert.equal((await retried.json()).orderId, result.orderId);
+  assert.equal(
+    database.prepare('SELECT COUNT(*) AS count FROM Orders').get().count,
+    1,
+  );
+  const history = await (
+    await request('/api/orders', undefined, cookie)
+  ).json();
+  assert.equal(history[0].items[0].toppings[0].quantity, 2);
+  assert.equal(history[0].serviceType, 'Pickup');
+  assert.equal(
+    (
+      await request(
+        '/api/orders',
+        { ...body, requestId: 'test-request-00002', items: [] },
+        cookie,
+      )
+    ).status,
+    400,
+  );
+  const second = await request('/api/auth/register', {
+    ...account,
+    email: 'second@example.com',
+  });
+  const secondCookie = second.headers.get('set-cookie').split(';')[0];
+  assert.deepEqual(
+    await (await request('/api/orders', undefined, secondCookie)).json(),
+    [],
+  );
 });

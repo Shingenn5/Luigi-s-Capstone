@@ -2,6 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { getMenu, getToppings } from './database.js';
 import { createAuthRouter } from './auth.js';
+import { createOrderRouter } from './orders.js';
 
 export function createApp(database) {
   const app = express();
@@ -29,16 +30,15 @@ export function createApp(database) {
         request.get('origin') !== expectedOrigin ||
         !request.is('application/json')
       ) {
-        return response
-          .status(403)
-          .json({
-            error: 'Please submit this request from the restaurant website.',
-          });
+        return response.status(403).json({
+          error: 'Please submit this request from the restaurant website.',
+        });
       }
     }
     next();
   });
   app.use('/api/auth', createAuthRouter(database));
+  app.use('/api/orders', createOrderRouter(database));
   app.get('/api/menu', (_request, response) =>
     response.json(getMenu(database)),
   );

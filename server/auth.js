@@ -115,12 +115,10 @@ export function createAuthRouter(database) {
       password.length < 8 ||
       password.length > 128
     ) {
-      return response
-        .status(400)
-        .json({
-          error:
-            'Enter your name, a valid email, and a password with 8–128 characters.',
-        });
+      return response.status(400).json({
+        error:
+          'Enter your name, a valid email, and a password with 8–128 characters.',
+      });
     }
     const salt = randomBytes(16).toString('hex');
     const key = await deriveKey(password, salt, 64);
@@ -136,25 +134,21 @@ export function createAuthRouter(database) {
           `${salt}:${key.toString('hex')}`,
         );
       startSession(request, response, Number(result.lastInsertRowid));
-      response
-        .status(201)
-        .json({
-          customer: getCustomer(database, {
-            headers: {
-              cookie: response.getHeader('Set-Cookie')[0].split(';')[0],
-            },
-          }),
-        });
+      response.status(201).json({
+        customer: getCustomer(database, {
+          headers: {
+            cookie: response.getHeader('Set-Cookie')[0].split(';')[0],
+          },
+        }),
+      });
     } catch (error) {
       if (
         error.code === 'ERR_SQLITE_ERROR' &&
         error.message.includes('UNIQUE')
       ) {
-        return response
-          .status(409)
-          .json({
-            error: 'An account already uses this email. Try logging in.',
-          });
+        return response.status(409).json({
+          error: 'An account already uses this email. Try logging in.',
+        });
       }
       throw error;
     }
