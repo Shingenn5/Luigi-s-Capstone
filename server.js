@@ -1,48 +1,22 @@
-const express = require('express');
-const { DatabaseSync } = require('node:sqlite');
-const path = require('node:path');
+import { createApp } from './server/app.js';
+import { openDatabase } from './server/database.js';
 
-const app = express();
-const PORT = 3000;
-
-// Find the SQLite database file
-const dbPath = path.join(__dirname, 'Database', 'luigis_pizzeria.db');
-
-// Connect to the database
-const db = new DatabaseSync(dbPath, { readOnly: true });
-
-// Enable foreign key enforcement
-db.exec('PRAGMA foreign_keys = ON;');
-
-// Test route for the server
-app.get('/', (req, res) => {
-    res.send('Welcome to Luigi\'s Pizzeria!');
+const PORT = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || '127.0.0.1';
+const database = openDatabase(
+  process.env.DATABASE_PATH || 'Database/luigis_pizzeria.db',
+);
+const app = createApp(database);
+const server = app.listen(PORT, HOST, () => {
+  console.log(`Luigi's Pizzeria running at http://${HOST}:${PORT}`);
 });
 
-// Retrieve all menu items from the database
-app.get('/api/menu', (req, res) => {
-    try {
-        const menuItems = db.prepare('SELECT * FROM MenuItems').all();
-        res.json(menuItems);
-    } catch (error) {
-        console.error('Error retrieving menu items:', error);
-        res.status(500).json({ error: 'Unable to retrieve menu items' });
-    }
-});
+function closeServer() {
+  server.close(() => {
+    database.close();
+    process.exit(0);
+  });
+}
 
- // Retrieve all available pizza toppings
-app.get('/api/toppings', (req, res) => {
-    try {
-        const toppings = db.prepare('SELECT * FROM Toppings').all();
-        res.json(toppings);
-    } catch (error) {
-        console.error('Error retrieving toppings:', error);
-        res.status(500).json({ error: 'Unable to retrieve toppings' });
-    }
-});
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Luigi's Pizzeria server running at http://localhost:${PORT}`);
-    console.log('Connected to SQLite database.');
-});
+process.on('SIGINT', closeServer);
+process.on('SIGTERM', closeServer);
