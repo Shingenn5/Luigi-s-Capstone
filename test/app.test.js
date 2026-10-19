@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createApp } from '../server/app.js';
 import { openDatabase } from '../server/database.js';
 import { priceOrder } from '../server/orders.js';
+import { createEmployee } from '../server/employees.js';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -364,4 +365,195 @@ test('pizza preferences survive order save and appear in history', async (contex
   assert.equal(history[0].items[0].sauce, 'Light');
   assert.equal(history[0].items[0].cheese, 'None');
   assert.equal(history[0].items[0].toppings[0].quantity, 2);
+});
+
+test('employee accounts are provisioned locally with unique usernames and hashed passwords', async () => {
+  const database = openDatabase(':memory:');
+  try {
+    await createEmployee(database, {
+      username: 'Staff.One',
+      displayName: 'Staff One',
+      password: 'employee test password',
+    });
+    const employee = database.prepare('SELECT * FROM employees').get();
+    assert.equal(employee.username, 'staff.one');
+    assert.notEqual(employee.password_hash, 'employee test password');
+    await assert.rejects(
+      createEmployee(database, {
+        username: 'STAFF.ONE',
+        displayName: 'Other',
+        password: 'employee test password',
+      }),
+      /already exists/,
+    );
+    await assert.rejects(
+      createEmployee(database, {
+        username: 'bad username',
+        displayName: 'Staff',
+        password: 'short',
+      }),
+      /username/,
+    );
+  } finally {
+    database.close();
+  }
+});
+
+test('employee login rotates sessions and denies expired or disabled employees', async (context) => {
+  const { database, request } = await startApp(context);
+  const credentials = {
+    username: 'employee',
+    password: 'employee test password',
+  };
+  await createEmployee(database, {
+    ...credentials,
+    displayName: 'Test Employee',
+  });
+  assert.equal(
+    (
+      await request('/api/employee/auth/login', {
+        ...credentials,
+        password: 'wrong password',
+      })
+    ).status,
+    401,
+  );
+  const login = await request('/api/employee/auth/login', {
+    ...credentials,
+    username: ' EMPLOYEE ',
+  });
+  assert.equal(login.status, 200);
+  assert.match(login.headers.get('set-cookie'), /HttpOnly/);
+  assert.match(login.headers.get('set-cookie'), /SameSite=Strict/);
+  const cookie = login.headers.get('set-cookie').split(';')[0];
+  assert.equal(
+    (
+      await (
+        await request('/api/employee/auth/session', undefined, cookie)
+      ).json()
+    ).employee.displayName,
+    'Test Employee',
+  );
+  const nextLogin = await request(
+    '/api/employee/auth/login',
+    credentials,
+    cookie,
+  );
+  assert.equal(
+    (
+      await (
+        await request('/api/employee/auth/session', undefined, cookie)
+      ).json()
+    ).employee,
+    null,
+  );
+  const newCookie = nextLogin.headers.get('set-cookie').split(';')[0];
+  database.exec('UPDATE employee_sessions SET expires_at = 0');
+  assert.equal(
+    (await request('/api/employee/orders', undefined, newCookie)).status,
+    401,
+  );
+  const activeLogin = await request('/api/employee/auth/login', credentials);
+  const activeCookie = activeLogin.headers.get('set-cookie').split(';')[0];
+  database.exec('UPDATE employees SET is_active = 0');
+  assert.equal(
+    (await request('/api/employee/orders', undefined, activeCookie)).status,
+    401,
+  );
+  assert.equal(
+    (await request('/api/employee/auth/login', credentials)).status,
+    401,
+  );
+});
+
+test('employee orders are protected from customers and employee logout revokes access', async (context) => {
+  const { database, request } = await startApp(context);
+  assert.equal((await request('/api/employee/orders')).status, 401);
+  assert.equal(
+    (await request('/api/employee/auth/register', account)).status,
+    404,
+  );
+  const customerLogin = await request('/api/auth/register', {
+    ...account,
+    role: 'employee',
+  });
+  const customerCookie = customerLogin.headers.get('set-cookie').split(';')[0];
+  assert.equal(
+    (await request('/api/employee/orders', undefined, customerCookie)).status,
+    401,
+  );
+  await request(
+    '/api/orders',
+    {
+      customerName: 'Customer Order',
+      phoneNumber: '555-555-0100',
+      serviceType: 'Pickup',
+      requestId: 'employee-queue-order-0001',
+      items: [
+        {
+          menuItemId: 1,
+          quantity: 1,
+          sauce: 'Light',
+          toppings: [{ toppingId: 1, quantity: 2 }],
+        },
+      ],
+    },
+    customerCookie,
+  );
+  const credentials = {
+    username: 'employee',
+    password: 'employee test password',
+  };
+  await createEmployee(database, {
+    ...credentials,
+    displayName: 'Test Employee',
+  });
+  const login = await request('/api/employee/auth/login', credentials);
+  const employeeCookie = login.headers.get('set-cookie').split(';')[0];
+  assert.equal(
+    (await request('/api/orders', undefined, employeeCookie)).status,
+    401,
+  );
+  const orders = await (
+    await request('/api/employee/orders', undefined, employeeCookie)
+  ).json();
+  assert.equal(orders.length, 1);
+  assert.equal(orders[0].customerName, 'Customer Order');
+  assert.equal(orders[0].items[0].sauce, 'Light');
+  assert.equal(orders[0].items[0].toppings[0].quantity, 2);
+  database.exec("UPDATE Orders SET orderStatus = 'Completed'");
+  assert.deepEqual(
+    await (
+      await request('/api/employee/orders', undefined, employeeCookie)
+    ).json(),
+    [],
+  );
+  await request('/api/employee/auth/logout', {}, employeeCookie);
+  assert.equal(
+    (await request('/api/employee/orders', undefined, employeeCookie)).status,
+    401,
+  );
+  assert.equal(
+    (
+      await (
+        await request('/api/auth/session', undefined, customerCookie)
+      ).json()
+    ).customer.email,
+    account.email,
+  );
+});
+
+test('employee authentication blocks cross-origin writes and throttles attempts', async (context) => {
+  const { request } = await startApp(context);
+  assert.equal(
+    (await request('/api/employee/auth/login', {}, '', 'https://other.example'))
+      .status,
+    403,
+  );
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    assert.equal((await request('/api/employee/auth/login', {})).status, 401);
+  }
+  const limited = await request('/api/employee/auth/login', {});
+  assert.equal(limited.status, 429);
+  assert.ok(Number(limited.headers.get('retry-after')) > 0);
 });

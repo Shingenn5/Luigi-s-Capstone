@@ -92,25 +92,29 @@ function readOrders(database, customerId) {
     .all(customerId);
   return orders.map((order) => ({
     ...order,
-    items: database
-      .prepare(
-        `SELECT oi.orderItemID AS orderItemId, m.itemName, m.size,
+    items: readOrderItems(database, order.orderId),
+  }));
+}
+
+export function readOrderItems(database, orderId) {
+  return database
+    .prepare(
+      `SELECT oi.orderItemID AS orderItemId, m.itemName, m.size,
       oi.quantity, oi.unitPriceCents, COALESCE(p.sauce, 'Regular') AS sauce,
       COALESCE(p.cheese, 'Regular') AS cheese FROM OrderItems oi JOIN MenuItems m ON m.menuItemID = oi.menuItemID
       LEFT JOIN order_item_preferences p ON p.order_item_id = oi.orderItemID
       WHERE oi.orderID = ? ORDER BY oi.orderItemID`,
-      )
-      .all(order.orderId)
-      .map((item) => ({
-        ...item,
-        toppings: database
-          .prepare(
-            `SELECT t.toppingName, ot.quantity FROM OrderItemToppings ot
+    )
+    .all(orderId)
+    .map((item) => ({
+      ...item,
+      toppings: database
+        .prepare(
+          `SELECT t.toppingName, ot.quantity FROM OrderItemToppings ot
           JOIN Toppings t ON t.toppingID = ot.toppingID WHERE ot.orderItemID = ?`,
-          )
-          .all(item.orderItemId),
-      })),
-  }));
+        )
+        .all(item.orderItemId),
+    }));
 }
 
 export function createOrderRouter(database) {

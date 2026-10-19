@@ -17,7 +17,11 @@ export function openDatabase(databasePath) {
   database.exec(
     'CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY);',
   );
-  const migrations = ['001-customer-sessions.sql', '002-pizza-preferences.sql'];
+  const migrations = [
+    '001-customer-sessions.sql',
+    '002-pizza-preferences.sql',
+    '003-employees.sql',
+  ];
   migrations.forEach((filename, index) => {
     const version = index + 1;
     if (

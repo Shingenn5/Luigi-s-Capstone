@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
+    "employee:create": "node --env-file-if-exists=.env scripts/create-employee.js",
     "test": "node --test",
     "lint": "eslint .",
     "test:a11y": "playwright test",
