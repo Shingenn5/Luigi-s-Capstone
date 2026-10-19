@@ -482,6 +482,10 @@ test('employee orders are protected from customers and employee logout revokes a
     (await request('/api/employee/orders', undefined, customerCookie)).status,
     401,
   );
+  assert.match(
+    (await request('/employee.html', undefined, customerCookie)).url,
+    /employee-login.html$/,
+  );
   await request(
     '/api/orders',
     {
@@ -510,6 +514,9 @@ test('employee orders are protected from customers and employee logout revokes a
   });
   const login = await request('/api/employee/auth/login', credentials);
   const employeeCookie = login.headers.get('set-cookie').split(';')[0];
+  const workspace = await request('/employee.html', undefined, employeeCookie);
+  assert.equal(workspace.status, 200);
+  assert.equal(workspace.headers.get('cache-control'), 'no-store');
   assert.equal(
     (await request('/api/orders', undefined, employeeCookie)).status,
     401,
