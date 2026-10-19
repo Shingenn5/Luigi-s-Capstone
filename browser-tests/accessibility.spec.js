@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
+import { TEST_EMPLOYEE } from './employee-fixture.js';
 
 const require = createRequire(import.meta.url);
 
@@ -42,6 +43,7 @@ for (const path of [
   'login.html',
   'about.html',
   'visit.html',
+  'employee-login.html',
 ]) {
   test(`${path} has no detected accessibility violations`, async ({ page }) => {
     await page.goto(`/${path}`);
@@ -196,4 +198,86 @@ test('forced colors preserve keyboard controls and selected toppings', async ({
   await expect(page.locator('#topping-option-1')).toBeFocused();
   await expect(page.locator('#topping-option-1')).toBeVisible();
   await checkAccessibility(page);
+});
+
+test('employee sign-in protects orders and supports keyboard access and logout', async ({
+  page,
+}) => {
+  await page.goto('/employee.html');
+  await expect(page).toHaveURL(/employee-login.html$/);
+  const origin = 'http://127.0.0.1:3100';
+  await page.request.post('/api/auth/register', {
+    headers: { Origin: origin },
+    data: {
+      firstName: 'Employee',
+      lastName: 'Browser Customer',
+      email: `employee-order-${Date.now()}@example.com`,
+      password: 'customer browser password',
+    },
+  });
+  expect((await page.request.get('/api/employee/orders')).status()).toBe(401);
+  const order = await page.request.post('/api/orders', {
+    headers: { Origin: origin },
+    data: {
+      customerName: 'Employee Browser Customer',
+      phoneNumber: '555-555-0100',
+      serviceType: 'Pickup',
+      requestId: `employee-browser-order-${Date.now()}`,
+      items: [
+        {
+          menuItemId: 1,
+          quantity: 1,
+          sauce: 'Light',
+          toppings: [{ toppingId: 1, quantity: 2 }],
+        },
+      ],
+    },
+  });
+  expect(order.status()).toBe(201);
+  await page
+    .getByRole('button', { name: 'Employee login', exact: true })
+    .click();
+  await expect(page.locator('[data-error-summary]')).toBeFocused();
+  await checkAccessibility(page);
+  await page.locator('#employeeUsername').fill(TEST_EMPLOYEE.username);
+  await page.locator('#employeePassword').fill('incorrect password');
+  await page.locator('#employeePassword').press('Enter');
+  await expect(page.locator('#employeeLoginStatus')).toContainText('incorrect');
+  await expect(page.locator('#employeeLoginStatus')).toBeFocused();
+  await page.locator('#employeePassword').fill(TEST_EMPLOYEE.password);
+  await page.locator('#employeePassword').press('Enter');
+  await expect(page).toHaveURL(/employee.html$/);
+  await expect(page.locator('#employeeIdentity')).toContainText(
+    TEST_EMPLOYEE.displayName,
+  );
+  await expect(page.locator('#employeeOrders')).toHaveAttribute(
+    'aria-busy',
+    'false',
+  );
+  await expect(page.locator('#employeeOrders')).toContainText(
+    'Employee Browser Customer',
+  );
+  await expect(page.locator('#employeeOrders')).toContainText(
+    'Double Pepperoni, Light sauce',
+  );
+  await checkAccessibility(page);
+  await page
+    .getByRole('button', { name: 'Refresh orders', exact: true })
+    .focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#employeeStatus')).toContainText('pending');
+  await page.setViewportSize({ width: 320, height: 800 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await checkAccessibility(page);
+  await page
+    .getByRole('button', { name: 'Employee logout', exact: true })
+    .focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/employee-login.html$/);
+  await page.goto('/employee.html');
+  await expect(page).toHaveURL(/employee-login.html$/);
 });

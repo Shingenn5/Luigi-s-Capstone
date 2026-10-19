@@ -48,3 +48,13 @@ Approved owner biography, restaurant history, address, phone, hours, and final b
 - Visually reviewed the updated desktop and mobile pizza builder. Browser scripts load only the existing Bootswatch stylesheet.
 
 Accessibility target: WCAG 2.2 AA. These checks do not certify full conformance. NVDA/JAWS/VoiceOver, real browser zoom/text resizing, and disabled-user review remain manual release checks. The automated test server uses an in-memory database and leaves local customer data untouched.
+
+## October 19, 2026 — employee login
+
+- Added employee username/password sign-in with separate accounts and eight-hour SQL sessions. There is no public staff registration or default employee credential.
+- Added interactive `npm run employee:create` setup, with hidden password entry and confirmation. Verified successful creation and clean exit in a normal Windows terminal using a disposable database. A sandbox terminal could not restore raw input mode on exit; the normal terminal check passed. No test employee was added to the application's customer database.
+- Added server checks for both `/employee.html` and `/api/employee/orders`. Customer sessions cannot read employee data. Disabled or expired accounts and logged-out sessions cannot read pending orders.
+- Added a Bootstrap-only, read-only workspace showing the 50 oldest pending orders, contact details, items, modifiers, service, and totals. Order acceptance, status changes, and kitchen operations remain unimplemented.
+- `npm test`: 13 passing tests, including employee provisioning, hash storage, duplicate usernames, failed login, session rotation/expiry, disabled accounts, customer/employee isolation, protected page redirect/cache behavior, logout, cross-origin writes, and throttling.
+- `npm run test:a11y`: 12 passing tests. Added employee login/error states, keyboard submission, signed-in populated workspace, mobile layout, refresh, logout, and protected-page redirects. No axe violations in tested states. This remains automated/keyboard evidence, not a full screen-reader conformance claim.
+- Visually inspected employee login on desktop and a populated workspace on desktop and 375px. A synthetic order with double pepperoni and light sauce rendered correctly. No horizontal overflow or custom CSS.

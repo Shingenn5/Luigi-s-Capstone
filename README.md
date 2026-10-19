@@ -19,6 +19,8 @@ If you copy `.env.example`, keep `APP_ORIGIN` equal to the exact URL used in you
 - `menu.html` and `js/menu.js`: pizza size, topping checkboxes, regular/double options, sauce and cheese preferences, pizza quantities, drinks, and price preview from the SQL menu.
 - `order.html` and `js/order.js`: editable cart, pickup or dine-in details, pending order submission, and the signed-in customer's latest 50 orders.
 - `login.html` and `js/login.js`: customer registration and login.
+- `employee-login.html` and `js/employee-login.js`: employee username/password sign-in.
+- `employee.html` and `js/employee.js`: protected, read-only pending orders, refresh, and employee logout.
 - `about.html`: restaurant introduction with an explicit gap for approved owner/history content.
 - `visit.html`: service information, project hours, and explicit gaps for verified contact details.
 - `js/site.js`: shared navigation, account link, and logout. Login stays outside the mobile menu.
@@ -42,7 +44,19 @@ The existing `POST /api/orders` contract uses each line's `menuItemId`, pizza/dr
 
 ## Current boundaries
 
-Orders are saved as **Pending**. Restaurant acceptance, employee/CSR access, kitchen workflow, preparation times, tax calculation, and payment processing are not connected. Saving an order does not notify a restaurant or charge a card. Password reset, email verification, and account administration are future work.
+Orders are saved as **Pending**. Employees can sign in and view pending orders. Restaurant acceptance, CSR/phone order entry, kitchen workflow, preparation times, tax calculation, and payment processing are not connected. Saving an order does not notify a restaurant or charge a card. Password reset, email verification, and browser-based account administration are future work.
+
+## Employee setup
+
+From this repository folder, run `npm run employee:create` in a normal interactive terminal. Enter a username, display name, password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. There is no default employee account, shared password, or public employee registration.
+
+Open `/employee-login.html` and sign in using the account you created. Employee usernames use 3–32 letters, numbers, periods, underscores, or hyphens; passwords use 8–128 characters and may contain spaces. Usernames are case-insensitive. Password managers and paste are supported.
+
+Migration 003 adds separate employee and employee-session tables. Employees use eight-hour, HTTP-only, SameSite cookies and hashed passwords. The same HTTPS/secure-cookie configuration applies as for customers. The employee login throttles at 20 attempts per IP per 15 minutes. An inactive account cannot log in or use an existing session.
+
+The server checks access on both the employee page and `/api/employee/orders`. Customer accounts cannot grant themselves employee access. The workspace shows up to 50 oldest pending orders with customer contact details, pickup/dine-in selection, items, modifiers, and totals. Refresh is manual. It cannot accept, edit, or complete orders yet.
+
+Customer and employee sessions are separate and can coexist. **Employee logout** ends employee access; **Customer logout** ends the customer session. Account creation is a local setup operation; employee account management and password reset screens are future work.
 
 The restaurant address, phone number, owner's biography, and restaurant history require approved content. The displayed 10 AM–11 PM schedule comes from the existing project page and needs confirmation. No invented contact details, map pin, or owner story are included.
 
