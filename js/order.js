@@ -1,4 +1,9 @@
-import { prepareForm, validateForm, focusMessage } from './form-validation.js';
+import {
+  prepareForm,
+  validateForm,
+  validateField,
+  focusMessage,
+} from './form-validation.js';
 import { apiRequest } from './api.js';
 import { toppingLabel, preferenceLabel } from './pizza-options.js';
 import { readCart, writeCart, describeItem, currency } from './cart.js';
@@ -53,9 +58,14 @@ function renderOrder() {
       input.setAttribute('aria-label', `${description.name} quantity`);
       input.addEventListener('input', () => {
         checkoutFields.disabled = true;
+        if (input.getAttribute('aria-invalid') === 'true') validateField(input);
       });
       input.addEventListener('change', () => {
-        if (isSubmitting || !input.reportValidity()) return;
+        if (isSubmitting) return;
+        if (!validateField(input)) {
+          status.textContent = `Check the quantity for ${description.name}. Use a whole number from 1 to 20.`;
+          return;
+        }
         try {
           cart = writeCart(
             cart.items.map((entry, itemIndex) =>

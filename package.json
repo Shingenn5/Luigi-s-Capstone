@@ -7,8 +7,9 @@
     "start": "node --env-file-if-exists=.env server.js",
     "test": "node --test",
     "lint": "eslint .",
-    "format:check": "prettier --check server.js server js test Database/migrations",
-    "format": "prettier --write server.js server js test Database/migrations"
+    "test:a11y": "playwright test",
+    "format:check": "prettier --check server.js server js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js",
+    "format": "prettier --write server.js server js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "axe-core": "^4.14.0",
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
     "prettier": "^3.9.10"

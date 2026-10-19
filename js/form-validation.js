@@ -31,6 +31,10 @@ function updateField(input) {
   return invalid;
 }
 
+export function validateField(input) {
+  return !updateField(input);
+}
+
 export function validateForm(form) {
   const invalidInputs = [...form.querySelectorAll('input, select')].filter(
     (input) => input.willValidate && updateField(input),
