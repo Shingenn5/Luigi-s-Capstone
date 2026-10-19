@@ -33,7 +33,8 @@
                   <div class="col-sm-8"><label class="form-label" for="pizzaSize">Pizza size</label><select class="form-select" id="pizzaSize" required></select></div>
                   <div class="col-sm-4"><label class="form-label" for="pizzaQuantity">Quantity</label><input class="form-control" type="number" id="pizzaQuantity" value="1" min="1" max="20" required /></div>
                 </div>
-                <fieldset><legend class="h5">Extra ingredients</legend><p class="text-body-secondary" id="toppingHint">Choose 0–10 portions of each topping.</p><div class="row g-3" id="toppingChoices"></div></fieldset>
+                <fieldset aria-describedby="toppingHint"><legend class="h5">Extra toppings</legend><p class="text-body-secondary" id="toppingHint">Select toppings for the whole pizza. Choose regular or double.</p><div class="row g-3" id="toppingChoices"></div></fieldset>
+                <fieldset class="mt-4" aria-describedby="preferenceHint"><legend class="h5">Sauce and cheese</legend><p id="preferenceHint" class="text-body-secondary">These preferences have no extra charge.</p><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="sauceChoice">Sauce</label><select class="form-select" id="sauceChoice"></select></div><div class="col-sm-6"><label class="form-label" for="cheeseChoice">Cheese</label><select class="form-select" id="cheeseChoice"></select></div></div></fieldset>
                 <p class="fw-semibold mt-4" id="pizzaPrice" aria-live="polite"></p>
                 <button class="btn btn-primary py-2" type="submit">Add pizza to order</button>
               </fieldset>

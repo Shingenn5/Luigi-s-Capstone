@@ -39,8 +39,8 @@ function updatePrice() {
     );
     const price = topping[`${selectedPizza.size.toLowerCase()}PriceCents`];
     optionSelect.disabled = !input.checked;
-    optionSelect.options[0].textContent = `Regular � ${currency.format(price / 100)} per pizza`;
-    optionSelect.options[1].textContent = `Double � ${currency.format((price * 2) / 100)} per pizza`;
+    optionSelect.options[0].textContent = `Regular - ${currency.format(price / 100)} per pizza`;
+    optionSelect.options[1].textContent = `Double - ${currency.format((price * 2) / 100)} per pizza`;
   });
   document.querySelector('#toppingHint').textContent =
     'Each selected topping is charged once for the whole pizza, not per slice. Double costs one additional topping charge. Prices below follow your chosen size.';
