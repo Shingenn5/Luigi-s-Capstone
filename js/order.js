@@ -1,4 +1,5 @@
 import { apiRequest } from './api.js';
+import { toppingLabel, preferenceLabel } from './pizza-options.js';
 import { readCart, writeCart, describeItem, currency } from './cart.js';
 
 const orderItems = document.querySelector('#orderItems');
@@ -141,9 +142,16 @@ async function renderHistory() {
       order.items.forEach((item) => {
         const row = document.createElement('li');
         const selectedToppings = item.toppings
-          .map((topping) => `${topping.quantity} × ${topping.toppingName}`)
+          .map((topping) => toppingLabel(topping.toppingName, topping.quantity))
           .join(', ');
-        row.textContent = `${item.quantity} × ${item.size} ${item.itemName}${selectedToppings ? ` — ${selectedToppings}` : ''}`;
+        const preferences =
+          item.itemName === 'Pizza'
+            ? preferenceLabel(item.sauce, item.cheese)
+            : '';
+        const details = [selectedToppings, preferences]
+          .filter(Boolean)
+          .join(', ');
+        row.textContent = `${item.quantity} × ${item.size} ${item.itemName}${details ? ` — ${details}` : ''}`;
         items.append(row);
       });
       body.append(heading, detail, items);

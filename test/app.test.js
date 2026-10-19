@@ -245,6 +245,7 @@ test('a failed line insert rolls back the entire order', async (context) => {
     'Orders',
     'OrderItems',
     'OrderItemToppings',
+    'order_item_preferences',
     'order_details',
   ]) {
     assert.equal(
@@ -283,4 +284,84 @@ test('SQLite data and migration version survive closing and reopening', () => {
     database?.close();
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test('whole-pizza toppings and preferences agree between preview and server', async () => {
+  const { describeItem } = await import('../js/cart.js');
+  const { getMenu, getToppings } = await import('../server/database.js');
+  const database = openDatabase(':memory:');
+  try {
+    const menu = getMenu(database);
+    const toppings = getToppings(database);
+    for (const [quantity, expectedCents] of [
+      [1, 600],
+      [2, 700],
+    ]) {
+      const item = {
+        menuItemId: 1,
+        quantity: 1,
+        toppings: [{ toppingId: 1, quantity }],
+        sauce: 'Light',
+        cheese: 'None',
+      };
+      assert.equal(
+        priceOrder(database, [item])[0].lineTotalCents,
+        expectedCents,
+      );
+      assert.equal(
+        describeItem(item, menu, toppings).lineTotalCents,
+        expectedCents,
+      );
+      assert.match(
+        describeItem(item, menu, toppings).toppingNames,
+        /Light sauce, No cheese/,
+      );
+    }
+    const base = { menuItemId: 1, quantity: 1, toppings: [] };
+    assert.equal(priceOrder(database, [base])[0].sauce, 'Regular');
+    for (const item of [
+      { ...base, sauce: 'Invalid' },
+      { ...base, cheese: 'Extra' },
+      { ...base, toppings: [{ toppingId: 1, quantity: 3 }] },
+      { ...base, menuItemId: 4, sauce: 'Light' },
+    ]) {
+      assert.throws(() => priceOrder(database, [item]), { status: 400 });
+      assert.throws(() => describeItem(item, menu, toppings));
+    }
+  } finally {
+    database.close();
+  }
+});
+
+test('pizza preferences survive order save and appear in history', async (context) => {
+  const { request } = await startApp(context);
+  const registered = await request('/api/auth/register', account);
+  const cookie = registered.headers.get('set-cookie').split(';')[0];
+  const saved = await request(
+    '/api/orders',
+    {
+      customerName: 'Test Customer',
+      phoneNumber: '555-555-0100',
+      serviceType: 'Pickup',
+      requestId: 'preferences-request-0001',
+      items: [
+        {
+          menuItemId: 1,
+          quantity: 1,
+          sauce: 'Light',
+          cheese: 'None',
+          toppings: [{ toppingId: 1, quantity: 2 }],
+        },
+      ],
+    },
+    cookie,
+  );
+  assert.equal(saved.status, 201);
+  assert.equal((await saved.json()).totalCents, 700);
+  const history = await (
+    await request('/api/orders', undefined, cookie)
+  ).json();
+  assert.equal(history[0].items[0].sauce, 'Light');
+  assert.equal(history[0].items[0].cheese, 'None');
+  assert.equal(history[0].items[0].toppings[0].quantity, 2);
 });

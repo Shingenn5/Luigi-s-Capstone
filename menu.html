@@ -28,7 +28,7 @@
           <div class="card"><div class="card-body p-4">
             <h2 class="h3" id="buildTitle">Build your pizza</h2>
             <form id="pizzaForm">
-              <fieldset id="pizzaFields" disabled>
+              <fieldset id="pizzaFields" disabled><legend class="visually-hidden">Pizza configuration</legend>
                 <div class="row g-3 mb-4">
                   <div class="col-sm-8"><label class="form-label" for="pizzaSize">Pizza size</label><select class="form-select" id="pizzaSize" required></select></div>
                   <div class="col-sm-4"><label class="form-label" for="pizzaQuantity">Quantity</label><input class="form-control" type="number" id="pizzaQuantity" value="1" min="1" max="20" required /></div>
@@ -43,7 +43,7 @@
         <section class="col-lg-4" aria-labelledby="drinkTitle">
           <div class="card"><div class="card-body p-4">
             <h2 class="h3" id="drinkTitle">Something to drink?</h2>
-            <form id="drinkForm"><fieldset id="drinkFields" disabled>
+            <form id="drinkForm"><fieldset id="drinkFields" disabled><legend class="visually-hidden">Drink selection</legend>
               <label class="form-label" for="drinkChoice">Drink and size</label><select class="form-select mb-3" id="drinkChoice" required></select>
               <label class="form-label" for="drinkQuantity">Quantity</label><input class="form-control mb-4" type="number" id="drinkQuantity" value="1" min="1" max="20" required />
               <button class="btn btn-outline-primary w-100 py-2" type="submit">Add drink to order</button>

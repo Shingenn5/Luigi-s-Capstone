@@ -17,31 +17,32 @@ export function openDatabase(databasePath) {
   database.exec(
     'CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY);',
   );
-  if (
-    !database
-      .prepare('SELECT version FROM schema_migrations WHERE version = 1')
-      .get()
-  ) {
+  const migrations = ['001-customer-sessions.sql', '002-pizza-preferences.sql'];
+  migrations.forEach((filename, index) => {
+    const version = index + 1;
+    if (
+      database
+        .prepare('SELECT version FROM schema_migrations WHERE version = ?')
+        .get(version)
+    )
+      return;
     database.exec('BEGIN');
     try {
       database.exec(
         readFileSync(
-          new URL(
-            '../Database/migrations/001-customer-sessions.sql',
-            import.meta.url,
-          ),
+          new URL(`../Database/migrations/${filename}`, import.meta.url),
           'utf8',
         ),
       );
       database
         .prepare('INSERT INTO schema_migrations (version) VALUES (?)')
-        .run(1);
+        .run(version);
       database.exec('COMMIT');
     } catch (error) {
       database.exec('ROLLBACK');
       throw error;
     }
-  }
+  });
   return database;
 }
 
