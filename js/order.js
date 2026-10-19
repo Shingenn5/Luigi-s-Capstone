@@ -1,3 +1,4 @@
+import { prepareForm, validateForm, focusMessage } from './form-validation.js';
 import { apiRequest } from './api.js';
 import { toppingLabel, preferenceLabel } from './pizza-options.js';
 import { readCart, writeCart, describeItem, currency } from './cart.js';
@@ -7,6 +8,7 @@ const status = document.querySelector('#orderStatus');
 const checkoutForm = document.querySelector('#checkoutForm');
 const checkoutFields = document.querySelector('#checkoutFields');
 const clearButton = document.querySelector('#clearOrder');
+prepareForm(checkoutForm);
 let cart = readCart();
 let menu = [];
 let toppings = [];
@@ -41,7 +43,7 @@ function renderOrder() {
       label.htmlFor = `quantity-${index}`;
       label.textContent = 'Quantity';
       const input = document.createElement('input');
-      input.className = 'form-control w-auto';
+      input.className = 'form-control border-dark w-auto';
       input.type = 'number';
       input.id = label.htmlFor;
       input.required = true;
@@ -192,6 +194,7 @@ clearButton.addEventListener('click', () => {
     cart = writeCart([]);
     renderOrder();
     status.textContent = 'Your draft order has been cleared.';
+    focusMessage(status);
   } catch (error) {
     status.textContent = error.message;
   }
@@ -200,7 +203,9 @@ clearButton.addEventListener('click', () => {
 checkoutForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (isSubmitting || !cartValid || !customer || !cart.items.length) return;
+  if (!validateForm(checkoutForm)) return;
   isSubmitting = true;
+  checkoutForm.setAttribute('aria-busy', 'true');
   checkoutFields.disabled = true;
   clearButton.disabled = true;
   orderItems.querySelectorAll('button, input').forEach((control) => {
@@ -220,11 +225,14 @@ checkoutForm.addEventListener('submit', async (event) => {
     });
     cart = writeCart([]);
     status.textContent = `Order #${result.orderId} saved as Pending. Restaurant acceptance and payment are not connected.`;
+    focusMessage(status);
     await renderHistory();
   } catch (error) {
     status.textContent = error.message;
+    focusMessage(status);
   } finally {
     isSubmitting = false;
+    checkoutForm.removeAttribute('aria-busy');
     renderOrder();
   }
 });

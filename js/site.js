@@ -21,8 +21,10 @@ header.innerHTML = `
 
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 header.querySelectorAll('a').forEach((link) => {
-  if (link.getAttribute('href') === `./${currentPage}`)
+  if (link.getAttribute('href') === `./${currentPage}`) {
     link.setAttribute('aria-current', 'page');
+    link.classList.add('fw-bold', 'text-decoration-underline');
+  }
 });
 
 try {

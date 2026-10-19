@@ -1,3 +1,4 @@
+import { prepareForm, validateForm, focusMessage } from './form-validation.js';
 import { apiRequest } from './api.js';
 import { addItem, currency, describeItem } from './cart.js';
 import { SAUCE_OPTIONS, CHEESE_OPTIONS } from './pizza-options.js';
@@ -7,6 +8,8 @@ const pizzaSize = document.querySelector('#pizzaSize');
 const pizzaQuantity = document.querySelector('#pizzaQuantity');
 const drinkForm = document.querySelector('#drinkForm');
 const announcement = document.querySelector('#orderAnnouncement');
+prepareForm(pizzaForm);
+prepareForm(drinkForm);
 let menu = [];
 let toppings = [];
 
@@ -77,7 +80,7 @@ try {
     checkLabel.className = 'd-flex align-items-center gap-3 py-2 fw-semibold';
     const input = document.createElement('input');
     input.id = `topping-${topping.toppingId}`;
-    input.className = 'form-check-input mt-0';
+    input.className = 'form-check-input border-dark mt-0';
     input.type = 'checkbox';
     input.dataset.toppingId = topping.toppingId;
     checkLabel.append(input, document.createTextNode(topping.toppingName));
@@ -87,7 +90,7 @@ try {
     optionLabel.textContent = `${topping.toppingName} option`;
     const optionSelect = document.createElement('select');
     optionSelect.id = optionLabel.htmlFor;
-    optionSelect.className = 'form-select';
+    optionSelect.className = 'form-select border-dark';
     optionSelect.disabled = true;
     optionSelect.setAttribute('aria-describedby', 'toppingHint');
     [1, 2].forEach((quantity) => {
@@ -121,6 +124,7 @@ try {
 pizzaForm.addEventListener('input', updatePrice);
 pizzaForm.addEventListener('submit', (event) => {
   event.preventDefault();
+  if (!validateForm(pizzaForm)) return;
   try {
     const item = getPizza();
     const description = describeItem(item, menu, toppings);
@@ -128,11 +132,13 @@ pizzaForm.addEventListener('submit', (event) => {
     announcement.textContent = `${item.quantity} × ${description.name} added. Review your order when you are ready.`;
   } catch (error) {
     announcement.textContent = error.message;
+    focusMessage(announcement);
   }
 });
 
 drinkForm.addEventListener('submit', (event) => {
   event.preventDefault();
+  if (!validateForm(drinkForm)) return;
   try {
     const item = {
       menuItemId: Number(document.querySelector('#drinkChoice').value),
@@ -144,5 +150,6 @@ drinkForm.addEventListener('submit', (event) => {
     announcement.textContent = `${item.quantity} × ${description.name} added to your order.`;
   } catch (error) {
     announcement.textContent = error.message;
+    focusMessage(announcement);
   }
 });

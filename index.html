@@ -12,7 +12,7 @@
     <script src="./js/app.js" defer></script>
   </head>
   <body>
-    <a class="visually-hidden-focusable position-absolute p-3 bg-white text-dark" href="#main">Skip to content</a>
+    <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
 
     <!-- Bootstrap handles the layout, styling, and mobile navigation. -->
     <header class="border-bottom" id="siteHeader">
@@ -34,7 +34,7 @@
       </nav>
     </header>
 
-    <main id="main">
+    <main id="main" tabindex="-1">
       <section class="bg-body-tertiary py-5" aria-labelledby="heroTitle">
         <div class="container py-lg-4">
           <div class="row gy-5 gx-4 align-items-center">
@@ -122,7 +122,7 @@
               </article>
             </div>
           </div>
-          <p class="visually-hidden" id="menuStatus" role="status">Showing all menu sections.</p>
+          <p class="visually-hidden" id="menuStatus" role="status" aria-atomic="true">Showing all menu sections.</p>
             <div class="col-md-6 col-lg-4 mx-auto my-5">
               <aside class="card shadow-sm" aria-labelledby="hoursTitle">
                 <div class="card-header bg-primary text-light text-center">
