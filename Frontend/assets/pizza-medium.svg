@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title">
+  <title id="title">Medium 14-inch pizza illustration</title>
+  <rect width="360" height="240" fill="#fff7e8" />
+  <circle cx="180" cy="109" r="75" fill="#c78032" />
+  <circle cx="180" cy="109" r="68" fill="#c64228" />
+  <circle cx="180" cy="109" r="64" fill="#f4cb65" />
+  <circle cx="221.2" cy="109.0" r="9.0" fill="#b42625" /><circle cx="200.6" cy="144.7" r="9.0" fill="#b42625" /><circle cx="159.4" cy="144.7" r="9.0" fill="#b42625" /><circle cx="138.8" cy="109.0" r="9.0" fill="#b42625" /><circle cx="159.4" cy="73.3" r="9.0" fill="#b42625" /><circle cx="200.6" cy="73.3" r="9.0" fill="#b42625" />
+  <path d="M180 109V44M180 109L240.0 142.8M180 109L120.0 142.8" stroke="#fff3c8" stroke-width="2" />
+  <text x="180" y="228" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#59351f">14-inch · Medium</text>
+</svg>

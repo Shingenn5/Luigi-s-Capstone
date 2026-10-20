@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your order | Luigi's Pizzeria</title>
+    <link rel="icon" href="./assets/logo.png" type="image/png" />
+    <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
+    <script src="./assets/bootstrap.bundle.min.js" defer></script>
+    <script type="module" src="./js/site.js"></script>
+    <script type="module" src="./js/order.js"></script>
+  </head>
+  <body>
+    <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
+    <header class="border-bottom" id="siteHeader"><nav class="container py-3" aria-label="Main navigation"><a href="./index.html">Luigi's Pizzeria</a> · <a href="./menu.html">Menu</a> · <a href="./login.html">Login</a></nav></header>
+    <main class="container py-5" id="main" tabindex="-1">
+      <p class="text-primary fw-semibold text-uppercase mb-2">One more step</p>
+      <h1 class="display-6 fw-bold">Your order</h1>
+      <p id="accountStatus" role="status" aria-atomic="true">Checking your account…</p>
+      <div class="row g-4">
+        <section class="col-lg-7" aria-labelledby="reviewTitle"><h2 class="h4" id="reviewTitle">Review your items</h2><ul class="list-unstyled" id="orderItems"></ul><p class="d-flex justify-content-between border-top pt-3">Subtotal before tax <strong id="orderSubtotal">$0.00</strong></p><div class="d-flex flex-wrap gap-3"><a class="btn btn-outline-primary py-2" href="./menu.html">Add more items</a><button class="btn btn-outline-dark py-2" type="button" id="clearOrder">Clear order</button></div></section>
+        <section class="col-lg-5" aria-labelledby="checkoutTitle"><div class="card"><div class="card-body p-4">
+          <h2 class="h4" id="checkoutTitle">Order details</h2>
+          <p class="small text-body-secondary">Pickup or dine-in only. Saving an order does not confirm restaurant acceptance or collect payment. Tax is not configured.</p>
+          <form id="checkoutForm"><fieldset id="checkoutFields" disabled><legend class="visually-hidden">Customer and service details</legend>
+            <div class="mb-3"><label class="form-label" for="customerName">Name for the order</label><input class="form-control border-dark" id="customerName" autocomplete="name" maxlength="120" required /></div>
+            <div class="mb-3"><label class="form-label" for="phoneNumber">Phone number</label><input class="form-control border-dark" id="phoneNumber" type="tel" autocomplete="tel" minlength="7" maxlength="25" pattern="[0-9+ .\(\)\-]{7,25}" required /></div>
+            <div class="mb-4"><label class="form-label" for="serviceType">Service</label><select class="form-select border-dark" id="serviceType"><option>Pickup</option><option>Dine-in</option></select></div>
+            <button class="btn btn-primary w-100 py-2" id="submitOrder" type="submit">Save pending order</button>
+          </fieldset></form>
+        </div></div></section>
+      </div>
+      <p id="orderStatus" class="mt-4" role="status" aria-atomic="true"></p>
+      <section class="mt-5" aria-labelledby="historyTitle"><h2 class="h3" id="historyTitle">Your recent orders</h2><p class="text-body-secondary">Your latest 50 orders appear here after login.</p><div id="orderHistory"></div></section>
+    </main>
+    <footer class="border-top py-4"><div class="container d-flex flex-wrap justify-content-between gap-3"><span>Luigi's Pizzeria · Capstone project</span><a href="./visit.html">Plan your visit</a></div></footer>
+  </body>
+</html>

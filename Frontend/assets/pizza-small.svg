@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" role="img" aria-labelledby="title">
+  <title id="title">Small 12-inch pizza illustration</title>
+  <rect width="360" height="240" fill="#fff7e8" />
+  <circle cx="180" cy="109" r="60" fill="#c78032" />
+  <circle cx="180" cy="109" r="53" fill="#c64228" />
+  <circle cx="180" cy="109" r="49" fill="#f4cb65" />
+  <circle cx="213.0" cy="109.0" r="7.2" fill="#b42625" /><circle cx="196.5" cy="137.6" r="7.2" fill="#b42625" /><circle cx="163.5" cy="137.6" r="7.2" fill="#b42625" /><circle cx="147.0" cy="109.0" r="7.2" fill="#b42625" /><circle cx="163.5" cy="80.4" r="7.2" fill="#b42625" /><circle cx="196.5" cy="80.4" r="7.2" fill="#b42625" />
+  <path d="M180 109V59M180 109L228.0 136.0M180 109L132.0 136.0" stroke="#fff3c8" stroke-width="2" />
+  <text x="180" y="228" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#59351f">12-inch · Small</text>
+</svg>

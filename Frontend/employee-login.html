@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Employee login | Luigi's Pizzeria</title>
+    <link rel="icon" href="./assets/logo.png" type="image/png" />
+    <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
+    <script src="./assets/bootstrap.bundle.min.js" defer></script>
+    <script type="module" src="./js/site.js"></script>
+    <script type="module" src="./js/employee-login.js"></script>
+  </head>
+  <body>
+    <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
+    <header class="border-bottom" id="siteHeader">
+      <nav class="container d-flex flex-wrap justify-content-between align-items-center gap-3" aria-label="Main navigation">
+        <a class="fs-3 fw-bold text-primary text-decoration-none" href="./index.html">Luigi's Pizzeria</a>
+        <a class="btn btn-outline-dark py-2" href="./index.html">Back to home</a>
+      </nav>
+    </header>
+    <main class="container py-5" id="main" tabindex="-1">
+      <div class="row justify-content-center">
+        <div class="col-sm-10 col-md-7 col-lg-5">
+          <section class="card shadow-sm" aria-labelledby="loginTitle">
+            <div class="card-body p-4">
+              <h1 class="h3 mb-3" id="loginTitle">Employee login</h1>
+              <form id="employeeLoginForm">
+                <div class="mb-3">
+                  <label class="form-label" id="identityLabel" for="employeeUsername">Employee username</label>
+                  <input class="form-control border-dark" id="employeeUsername" name="username" type="text" autocomplete="username" minlength="3" maxlength="32" autocapitalize="none" spellcheck="false" aria-describedby="identityHint" required />
+                  <div class="form-text" id="identityHint">Use 3-32 letters, numbers, periods, underscores, or hyphens.</div>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label" for="employeePassword">Password</label>
+                  <input class="form-control border-dark" id="employeePassword" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" aria-describedby="passwordHint" required />
+                  <div class="form-text" id="passwordHint">Use 8–128 characters. Spaces and password managers are welcome.</div>
+                </div>
+                <button class="btn btn-primary w-100 py-2" type="submit">Employee login</button>
+                <p class="small mt-3 mb-0" id="employeeLoginStatus" role="status" aria-atomic="true"></p>
+              </form>
+              <p class="small text-body-secondary mt-3">Employee accounts are set up by the restaurant. Customer accounts cannot sign in here.</p>
+              <a class="btn btn-outline-dark w-100 py-2" href="./login.html">Customer login</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

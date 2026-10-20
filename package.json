@@ -1,0 +1,41 @@
+{
+  "name": "luigi-s-capstone",
+  "version": "1.0.0",
+  "description": "Luigi's Pizzeria online ordering system using HTML, Bootstrap, JavaScript, Node.js, Express, and SQLite.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "employee:create": "node --env-file-if-exists=.env scripts/create-employee.js",
+    "test": "node --test",
+    "lint": "eslint .",
+    "test:a11y": "playwright test",
+    "format:check": "prettier --check server.js server Frontend/js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js",
+    "format": "prettier --write server.js server Frontend/js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shingenn5/Luigi-s-Capstone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": ">=24.19.0 <25"
+  },
+  "bugs": {
+    "url": "https://github.com/Shingenn5/Luigi-s-Capstone/issues"
+  },
+  "homepage": "https://github.com/Shingenn5/Luigi-s-Capstone#readme",
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "axe-core": "^4.14.0",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10"
+  }
+}

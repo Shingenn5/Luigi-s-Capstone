@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Our menu | Luigi's Pizzeria</title>
+    <link rel="icon" href="./assets/logo.png" type="image/png" />
+    <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
+    <script src="./assets/bootstrap.bundle.min.js" defer></script>
+    <script type="module" src="./js/site.js"></script>
+    <script type="module" src="./js/menu.js"></script>
+  </head>
+  <body>
+    <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
+    <header class="border-bottom" id="siteHeader"><nav class="container py-3" aria-label="Main navigation"><a href="./index.html">Luigi's Pizzeria</a> · <a href="./menu.html">Menu</a> · <a href="./login.html">Login</a></nav></header>
+    <main class="container py-5" id="main" tabindex="-1">
+      <p class="text-primary fw-semibold text-uppercase mb-2">Make it your own</p>
+      <h1 class="display-6 fw-bold">Our menu</h1>
+      <p class="lead text-body-secondary">Marinara, cheese, and room for your favorites.</p>
+      <p class="small text-body-secondary">Sample menu prices. Tax and payment are not configured. This capstone saves pending orders only.</p>
+      <section class="row g-4 mb-5" aria-label="Pizza sizes">
+        <div class="col-md-4"><article class="card h-100"><img class="card-img-top" src="./assets/pizza-small.svg" alt="Small 12-inch pizza size illustration" width="360" height="240" /><div class="card-body"><h2 class="h4">Small pizza</h2><p class="mb-0">12 inches · $5.00 base</p></div></article></div>
+        <div class="col-md-4"><article class="card h-100"><img class="card-img-top" src="./assets/pizza-medium.svg" alt="Medium 14-inch pizza size illustration" width="360" height="240" /><div class="card-body"><h2 class="h4">Medium pizza</h2><p class="mb-0">14 inches · $7.00 base</p></div></article></div>
+        <div class="col-md-4"><article class="card h-100"><img class="card-img-top" src="./assets/pizza-large.svg" alt="Large 18-inch pizza size illustration" width="360" height="240" /><div class="card-body"><h2 class="h4">Large pizza</h2><p class="mb-0">18 inches · $9.00 base</p></div></article></div>
+      </section>
+      <div class="row g-4">
+        <section class="col-lg-8" aria-labelledby="buildTitle">
+          <div class="card"><div class="card-body p-4">
+            <h2 class="h3" id="buildTitle">Build your pizza</h2>
+            <form id="pizzaForm">
+              <fieldset id="pizzaFields" disabled><legend class="visually-hidden">Pizza configuration</legend>
+                <div class="row g-3 mb-4">
+                  <div class="col-sm-8"><label class="form-label" for="pizzaSize">Pizza size</label><select class="form-select border-dark" id="pizzaSize" required></select></div>
+                  <div class="col-sm-4"><label class="form-label" for="pizzaQuantity">Quantity</label><input class="form-control border-dark" type="number" id="pizzaQuantity" value="1" min="1" max="20" required /></div>
+                </div>
+                <fieldset aria-describedby="toppingHint"><legend class="h5">Extra toppings</legend><p class="text-body-secondary" id="toppingHint">Select toppings for the whole pizza. Choose regular or double.</p><div class="row g-3" id="toppingChoices"></div></fieldset>
+                <fieldset class="mt-4" aria-describedby="preferenceHint"><legend class="h5">Sauce and cheese</legend><p id="preferenceHint" class="text-body-secondary">These preferences have no extra charge.</p><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="sauceChoice">Sauce</label><select class="form-select border-dark" id="sauceChoice"></select></div><div class="col-sm-6"><label class="form-label" for="cheeseChoice">Cheese</label><select class="form-select border-dark" id="cheeseChoice"></select></div></div></fieldset>
+                <p class="fw-semibold mt-4" id="pizzaPrice" aria-live="polite"></p>
+                <button class="btn btn-primary py-2" type="submit">Add pizza to order</button>
+              </fieldset>
+            </form>
+          </div></div>
+        </section>
+        <section class="col-lg-4" aria-labelledby="drinkTitle">
+          <div class="card"><div class="card-body p-4">
+            <h2 class="h3" id="drinkTitle">Something to drink?</h2>
+            <form id="drinkForm"><fieldset id="drinkFields" disabled><legend class="visually-hidden">Drink selection</legend>
+              <label class="form-label" for="drinkChoice">Drink and size</label><select class="form-select border-dark mb-3" id="drinkChoice" required></select>
+              <label class="form-label" for="drinkQuantity">Quantity</label><input class="form-control border-dark mb-4" type="number" id="drinkQuantity" value="1" min="1" max="20" required />
+              <button class="btn btn-outline-primary w-100 py-2" type="submit">Add drink to order</button>
+            </fieldset></form>
+          </div></div>
+          <a class="btn btn-primary w-100 mt-3 py-3" href="./order.html">Review your order</a>
+        </section>
+      </div>
+      <p class="mt-4" id="orderAnnouncement" role="status" aria-atomic="true">Loading menu…</p>
+    </main>
+    <footer class="border-top py-4"><div class="container d-flex flex-wrap justify-content-between gap-3"><span>Luigi's Pizzeria · Capstone project</span><a href="./visit.html">Plan your visit</a></div></footer>
+  </body>
+</html>

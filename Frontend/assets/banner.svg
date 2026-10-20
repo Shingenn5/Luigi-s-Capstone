@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200" role="img" aria-labelledby="title">
+  <title id="title">Luigi's Pizzeria — Good company. Better pizza.</title>
+  <rect width="1200" height="200" fill="#a52c25" />
+  <circle cx="1130" cy="90" r="135" fill="#c78032" /><circle cx="1130" cy="90" r="119" fill="#f4cb65" />
+  <circle cx="1080" cy="40" r="20" fill="#bd3328" /><circle cx="1160" cy="120" r="20" fill="#bd3328" /><circle cx="1050" cy="135" r="20" fill="#bd3328" />
+  <text x="54" y="78" font-family="Georgia,serif" font-weight="bold" font-size="42" fill="#fff">Luigi's Pizzeria</text>
+  <text x="54" y="133" font-family="sans-serif" font-size="28" fill="#fff7e8">Good company. Better pizza.</text>
+  <path d="M54 160H610" stroke="#f4cb65" stroke-width="4" />
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 72" role="img" aria-labelledby="title">
+  <title id="title">Luigi's Pizzeria</title>
+  <path d="M9 13L44 60L62 8Q34 1 9 13Z" fill="#f4cb65" stroke="#bd3328" stroke-width="3" />
+  <path d="M9 13Q35 1 62 8" fill="none" stroke="#c78032" stroke-width="9" />
+  <circle cx="35" cy="23" r="5" fill="#bd3328" /><circle cx="43" cy="40" r="5" fill="#bd3328" />
+  <text x="73" y="34" font-family="Georgia,serif" font-weight="bold" font-size="32" fill="#b32b25">Luigi's</text>
+  <text x="75" y="55" font-family="sans-serif" letter-spacing="3" font-size="12" fill="#333">PIZZERIA</text>
+</svg>
