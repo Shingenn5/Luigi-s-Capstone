@@ -16,7 +16,10 @@ export async function apiRequest(path, options = {}) {
     );
   }
   const data = await response.json();
-  if (!response.ok)
-    throw new Error(data.error || 'Unable to complete this request.');
+  if (!response.ok) {
+    const error = new Error(data.error || 'Unable to complete this request.');
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }

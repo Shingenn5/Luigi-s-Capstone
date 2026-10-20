@@ -19,6 +19,7 @@ header.innerHTML = `
           <li class="nav-item"><a class="nav-link py-3" href="./menu.html">Our menu</a></li>
           <li class="nav-item"><a class="nav-link py-3" href="./about.html">About us</a></li>
           <li class="nav-item"><a class="nav-link py-3" href="./visit.html">Visit us</a></li>
+          <li class="nav-item"><a class="nav-link py-3" href="./employee-login.html" id="employeeLink">Employee login</a></li>
           <li class="nav-item"><a class="btn btn-primary py-2 px-3" href="./order.html">Your order</a></li>
           <li class="nav-item"><button class="btn btn-outline-dark py-2" type="button" id="logoutButton" hidden>Logout</button></li>
         </ul>
@@ -29,8 +30,10 @@ header.innerHTML = `
 
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 header.querySelectorAll('a').forEach((link) => {
-  if (link.getAttribute('href') === `./${currentPage}`)
+  if (link.getAttribute('href') === `./${currentPage}`) {
     link.setAttribute('aria-current', 'page');
+    link.classList.add('fw-bold', 'text-decoration-underline');
+  }
 });
 
 try {
@@ -40,6 +43,18 @@ try {
     accountLink.textContent = 'My account';
     accountLink.href = './order.html';
     document.querySelector('#logoutButton').hidden = false;
+  }
+  const { employee } = await apiRequest('employee/auth/session');
+  if (employee) {
+    if (customer)
+      document.querySelector('#logoutButton').textContent = 'Customer logout';
+    const employeeLink = document.querySelector('#employeeLink');
+    employeeLink.textContent = 'Employee orders';
+    employeeLink.href = './employee.html';
+    if (currentPage === 'employee.html') {
+      employeeLink.setAttribute('aria-current', 'page');
+      employeeLink.classList.add('fw-bold', 'text-decoration-underline');
+    }
   }
 } catch {
   // Public restaurant pages remain usable when only static hosting is available.

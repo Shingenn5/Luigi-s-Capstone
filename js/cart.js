@@ -1,3 +1,9 @@
+import {
+  pizzaPreferences,
+  toppingLabel,
+  preferenceLabel,
+} from './pizza-options.js';
+
 const CART_KEY = 'luigis-order-v1';
 export const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -52,6 +58,7 @@ export function describeItem(item, menu, toppings) {
     throw new Error(
       'Your saved order contains an unavailable item. Clear the order and choose again.',
     );
+  const preferences = pizzaPreferences(item, menuItem.category === 'Pizza');
   const seen = new Set();
   let unitPriceCents = menuItem.priceCents;
   const toppingNames = item.toppings.map((selection) => {
@@ -63,7 +70,7 @@ export function describeItem(item, menu, toppings) {
       seen.has(selection.toppingId) ||
       !Number.isInteger(selection.quantity) ||
       selection.quantity < 1 ||
-      selection.quantity > 10
+      selection.quantity > 2
     )
       throw new Error(
         'Your saved toppings are invalid. Clear the order and choose again.',
@@ -71,11 +78,16 @@ export function describeItem(item, menu, toppings) {
     seen.add(selection.toppingId);
     unitPriceCents +=
       topping[`${menuItem.size.toLowerCase()}PriceCents`] * selection.quantity;
-    return `${selection.quantity} × ${topping.toppingName}`;
+    return toppingLabel(topping.toppingName, selection.quantity);
   });
   return {
     name: `${menuItem.size} ${menuItem.itemName}`,
-    toppingNames: toppingNames.join(', '),
+    toppingNames: [
+      ...toppingNames,
+      ...(menuItem.category === 'Pizza'
+        ? [preferenceLabel(preferences.sauce, preferences.cheese)]
+        : []),
+    ].join(', '),
     lineTotalCents: unitPriceCents * item.quantity,
   };
 }

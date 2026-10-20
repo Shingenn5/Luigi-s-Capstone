@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { getMenu, getToppings } from './database.js';
 import { createAuthRouter } from './auth.js';
 import { createOrderRouter } from './orders.js';
+import { createEmployeeRouter, getEmployee } from './employees.js';
 
 export function createApp(database) {
   const app = express();
@@ -37,6 +38,7 @@ export function createApp(database) {
     }
     next();
   });
+  app.use('/api/employee', createEmployeeRouter(database));
   app.use('/api/auth', createAuthRouter(database));
   app.use('/api/orders', createOrderRouter(database));
   app.get('/api/menu', (_request, response) =>
@@ -50,6 +52,12 @@ export function createApp(database) {
   );
   // Serve only public pages and assets; never expose source, SQL, or database files.
   const rootPath = fileURLToPath(new URL('../', import.meta.url));
+  app.get('/employee.html', (request, response) => {
+    response.set('Cache-Control', 'no-store');
+    if (!getEmployee(database, request))
+      return response.redirect('./employee-login.html');
+    response.sendFile('employee.html', { root: rootPath });
+  });
   app.use('/assets', express.static(`${rootPath}/assets`));
   app.use('/js', express.static(`${rootPath}/js`));
   app.get(
@@ -59,6 +67,7 @@ export function createApp(database) {
       '/menu.html',
       '/about.html',
       '/login.html',
+      '/employee-login.html',
       '/visit.html',
       '/order.html',
     ],

@@ -1,8 +1,6 @@
 import { Router } from 'express';
-import { createHash, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
-import { promisify } from 'node:util';
-
-const deriveKey = promisify(scrypt);
+import { createHash, randomBytes } from 'node:crypto';
+import { hashPassword, verifyPassword } from './passwords.js';
 const SESSION_DURATION = 1000 * 60 * 60 * 12;
 const COOKIE_NAME = 'luigiSession';
 
@@ -120,19 +118,13 @@ export function createAuthRouter(database) {
           'Enter your name, a valid email, and a password with 8–128 characters.',
       });
     }
-    const salt = randomBytes(16).toString('hex');
-    const key = await deriveKey(password, salt, 64);
+    const passwordHash = await hashPassword(password);
     try {
       const result = database
         .prepare(
           'INSERT INTO Customer (firstName, lastName, email, passwordHash) VALUES (?, ?, ?, ?)',
         )
-        .run(
-          firstName.trim(),
-          lastName.trim(),
-          email,
-          `${salt}:${key.toString('hex')}`,
-        );
+        .run(firstName.trim(), lastName.trim(), email, passwordHash);
       startSession(request, response, Number(result.lastInsertRowid));
       response.status(201).json({
         customer: getCustomer(database, {
@@ -176,16 +168,7 @@ export function createAuthRouter(database) {
         'SELECT customerID AS customerId, passwordHash FROM Customer WHERE LOWER(email) = ?',
       )
       .get(email);
-    const [salt, storedHash] = (
-      customer?.passwordHash || `${'0'.repeat(32)}:${'0'.repeat(128)}`
-    ).split(':');
-    const key = await deriveKey(password, salt, 64);
-    const expectedKey = Buffer.from(storedHash || '', 'hex');
-    if (
-      !customer ||
-      expectedKey.length !== key.length ||
-      !timingSafeEqual(key, expectedKey)
-    ) {
+    if (!(await verifyPassword(password, customer?.passwordHash))) {
       return response
         .status(401)
         .json({ error: 'Email or password is incorrect.' });

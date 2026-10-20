@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireCustomer } from './auth.js';
 import { getMenu, getToppings } from './database.js';
+import { pizzaPreferences } from '../js/pizza-options.js';
 
 function invalidOrder(message) {
   const error = new Error(message);
@@ -33,6 +34,12 @@ export function priceOrder(database, items) {
     ) {
       invalidOrder('Check the toppings on your order.');
     }
+    let preferences;
+    try {
+      preferences = pizzaPreferences(item, menuItem.category === 'Pizza');
+    } catch (error) {
+      invalidOrder(error.message);
+    }
     const toppingIds = new Set();
     const selectedToppings = item.toppings.map((selection) => {
       const topping = toppings.find(
@@ -43,9 +50,11 @@ export function priceOrder(database, items) {
         toppingIds.has(selection.toppingId) ||
         !Number.isInteger(selection.quantity) ||
         selection.quantity < 1 ||
-        selection.quantity > 10
+        selection.quantity > 2
       ) {
-        invalidOrder('Choose each topping once with 1 to 10 portions.');
+        invalidOrder(
+          'Select each topping once, with regular or double coverage for the whole pizza.',
+        );
       }
       toppingIds.add(selection.toppingId);
       const priceKey = `${menuItem.size.toLowerCase()}PriceCents`;
@@ -63,6 +72,7 @@ export function priceOrder(database, items) {
       );
     return {
       ...menuItem,
+      ...preferences,
       quantity: item.quantity,
       toppings: selectedToppings,
       unitPriceCents,
@@ -82,23 +92,29 @@ function readOrders(database, customerId) {
     .all(customerId);
   return orders.map((order) => ({
     ...order,
-    items: database
-      .prepare(
-        `SELECT oi.orderItemID AS orderItemId, m.itemName, m.size,
-      oi.quantity, oi.unitPriceCents FROM OrderItems oi JOIN MenuItems m ON m.menuItemID = oi.menuItemID
-      WHERE oi.orderID = ? ORDER BY oi.orderItemID`,
-      )
-      .all(order.orderId)
-      .map((item) => ({
-        ...item,
-        toppings: database
-          .prepare(
-            `SELECT t.toppingName, ot.quantity FROM OrderItemToppings ot
-          JOIN Toppings t ON t.toppingID = ot.toppingID WHERE ot.orderItemID = ?`,
-          )
-          .all(item.orderItemId),
-      })),
+    items: readOrderItems(database, order.orderId),
   }));
+}
+
+export function readOrderItems(database, orderId) {
+  return database
+    .prepare(
+      `SELECT oi.orderItemID AS orderItemId, m.itemName, m.size,
+      oi.quantity, oi.unitPriceCents, COALESCE(p.sauce, 'Regular') AS sauce,
+      COALESCE(p.cheese, 'Regular') AS cheese FROM OrderItems oi JOIN MenuItems m ON m.menuItemID = oi.menuItemID
+      LEFT JOIN order_item_preferences p ON p.order_item_id = oi.orderItemID
+      WHERE oi.orderID = ? ORDER BY oi.orderItemID`,
+    )
+    .all(orderId)
+    .map((item) => ({
+      ...item,
+      toppings: database
+        .prepare(
+          `SELECT t.toppingName, ot.quantity FROM OrderItemToppings ot
+          JOIN Toppings t ON t.toppingID = ot.toppingID WHERE ot.orderItemID = ?`,
+        )
+        .all(item.orderItemId),
+    }));
 }
 
 export function createOrderRouter(database) {
@@ -169,6 +185,13 @@ export function createOrderRouter(database) {
             `INSERT INTO OrderItems (orderID, menuItemID, quantity, unitPriceCents) VALUES (?, ?, ?, ?)`,
           )
           .run(orderId, item.menuItemId, item.quantity, item.unitPriceCents);
+        if (item.category === 'Pizza') {
+          database
+            .prepare(
+              'INSERT INTO order_item_preferences (order_item_id, sauce, cheese) VALUES (?, ?, ?)',
+            )
+            .run(Number(line.lastInsertRowid), item.sauce, item.cheese);
+        }
         for (const topping of item.toppings) {
           database
             .prepare(
