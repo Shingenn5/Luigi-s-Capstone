@@ -288,7 +288,7 @@ test('SQLite data and migration version survive closing and reopening', () => {
 });
 
 test('whole-pizza toppings and preferences agree between preview and server', async () => {
-  const { describeItem } = await import('../js/cart.js');
+  const { describeItem } = await import('../Frontend/js/cart.js');
   const { getMenu, getToppings } = await import('../server/database.js');
   const database = openDatabase(':memory:');
   try {

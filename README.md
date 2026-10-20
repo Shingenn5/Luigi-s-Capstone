@@ -15,16 +15,18 @@ If you copy `.env.example`, keep `APP_ORIGIN` equal to the exact URL used in you
 
 ## Pages and scripts
 
-- `index.html`: home, banner, size graphics, and menu category filters.
-- `menu.html` and `js/menu.js`: pizza size, topping checkboxes, regular/double options, sauce and cheese preferences, pizza quantities, drinks, and price preview from the SQL menu.
-- `order.html` and `js/order.js`: editable cart, pickup or dine-in details, pending order submission, and the signed-in customer's latest 50 orders.
-- `login.html` and `js/login.js`: customer registration and login.
-- `employee-login.html` and `js/employee-login.js`: employee username/password sign-in.
-- `employee.html` and `js/employee.js`: protected, read-only pending orders, refresh, and employee logout.
-- `about.html`: restaurant introduction with an explicit gap for approved owner/history content.
-- `visit.html`: service information, project hours, and explicit gaps for verified contact details.
-- `js/site.js`: shared navigation, account link, and logout. Login stays outside the mobile menu.
-- `js/cart.js`: browser draft storage and price display helpers. Changing the cart creates a fresh submission identifier.
+Frontend files live in `Frontend/`: HTML pages, assets, and browser JavaScript. The Node server serves this folder at the website root, so page URLs such as `/menu.html` and asset URLs such as `/assets/logo.svg` stay the same. Backend code, database files, and npm tooling remain at the repository root. Paths below are relative to the repository root.
+
+- `Frontend/index.html`: home, banner, size graphics, and menu category filters.
+- `Frontend/menu.html` and `Frontend/js/menu.js`: pizza size, topping checkboxes, regular/double options, sauce and cheese preferences, pizza quantities, drinks, and price preview from the SQL menu.
+- `Frontend/order.html` and `Frontend/js/order.js`: editable cart, pickup or dine-in details, pending order submission, and the signed-in customer's latest 50 orders.
+- `Frontend/login.html` and `Frontend/js/login.js`: customer registration and login.
+- `Frontend/employee-login.html` and `Frontend/js/employee-login.js`: employee username/password sign-in.
+- `Frontend/employee.html` and `Frontend/js/employee.js`: protected, read-only pending orders, refresh, and employee logout.
+- `Frontend/about.html`: restaurant introduction with an explicit gap for approved owner/history content.
+- `Frontend/visit.html`: service information, project hours, and explicit gaps for verified contact details.
+- `Frontend/js/site.js`: shared navigation, account link, and logout. Login stays outside the mobile menu.
+- `Frontend/js/cart.js`: browser draft storage and price display helpers. Changing the cart creates a fresh submission identifier.
 - `server/auth.js`: salted scrypt password hashes, SQL-backed 12-hour sessions, logout, and throttling at 20 authentication attempts per IP per 15 minutes.
 - `server/orders.js`: server validation, authoritative prices, transactions, duplicate-submit protection, and customer-scoped order history.
 
@@ -64,9 +66,9 @@ GitHub Pages can preview public pages but cannot run the Node server, authentica
 
 ## Graphics
 
-`assets/logo.svg`, `banner.svg`, and `pizza-small.svg`, `pizza-medium.svg`, and `pizza-large.svg` are editable, code-drawn SVG graphics. The size illustrations use different diameters and label the existing 12-, 14-, and 18-inch sizes. They are draft capstone branding, not approved restaurant artwork. No image generation service was used.
+`Frontend/assets/logo.svg`, `banner.svg`, and `pizza-small.svg`, `pizza-medium.svg`, and `pizza-large.svg` are editable, code-drawn SVG graphics. The size illustrations use different diameters and label the existing 12-, 14-, and 18-inch sizes. They are draft capstone branding, not approved restaurant artwork. No image generation service was used.
 
-`assets/pizza.jpg` is the existing illustrative photograph from [Unsplash](https://images.unsplash.com/photo-1513104890138-7c749659a591); it does not depict the restaurant's food.
+`Frontend/assets/pizza.jpg` is the existing illustrative photograph from [Unsplash](https://images.unsplash.com/photo-1513104890138-7c749659a591); it does not depict the restaurant's food.
 
 ## Check changes
 

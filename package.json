@@ -9,8 +9,8 @@
     "test": "node --test",
     "lint": "eslint .",
     "test:a11y": "playwright test",
-    "format:check": "prettier --check server.js server js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js",
-    "format": "prettier --write server.js server js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js"
+    "format:check": "prettier --check server.js server Frontend/js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js",
+    "format": "prettier --write server.js server Frontend/js test Database/migrations browser-tests scripts playwright.config.js eslint.config.js"
   },
   "repository": {
     "type": "git",

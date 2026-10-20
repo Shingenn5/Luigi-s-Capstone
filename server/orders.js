@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireCustomer } from './auth.js';
 import { getMenu, getToppings } from './database.js';
-import { pizzaPreferences } from '../js/pizza-options.js';
+import { pizzaPreferences } from '../Frontend/js/pizza-options.js';
 
 function invalidOrder(message) {
   const error = new Error(message);

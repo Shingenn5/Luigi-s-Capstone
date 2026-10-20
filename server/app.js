@@ -51,7 +51,7 @@ export function createApp(database) {
     response.status(404).json({ error: 'Page not found.' }),
   );
   // Serve only public pages and assets; never expose source, SQL, or database files.
-  const rootPath = fileURLToPath(new URL('../', import.meta.url));
+  const rootPath = fileURLToPath(new URL('../Frontend/', import.meta.url));
   app.get('/employee.html', (request, response) => {
     response.set('Cache-Control', 'no-store');
     if (!getEmployee(database, request))

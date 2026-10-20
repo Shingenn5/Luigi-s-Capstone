@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['assets/**', 'node_modules/**', 'coverage/**'] },
+  { ignores: ['Frontend/assets/**', 'node_modules/**', 'coverage/**'] },
   js.configs.recommended,
   {
     files: ['**/*.js'],
