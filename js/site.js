@@ -2,9 +2,17 @@ import { apiRequest } from './api.js';
 
 const header = document.querySelector('#siteHeader');
 header.innerHTML = `
-  <nav class="navbar navbar-expand-lg py-3" aria-label="Main navigation">
+  <nav class="navbar navbar-expand-lg py-0" aria-label="Main navigation">
     <div class="container">
-      <a class="navbar-brand" href="./index.html"><img src="./assets/logo.svg" alt="Luigi's Pizzeria home" width="120" height="43" /></a>
+      <a class="navbar-brand" href="./">
+        <img
+          src="./assets/Luigis-Logo.png"
+          alt="Luigi's Pizzeria"
+          width="120"
+          height="80"
+          class="img-fluid"
+        />
+      </a>
       <button class="navbar-toggler p-2 ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse order-3 order-lg-0" id="mainNav">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
