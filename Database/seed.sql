@@ -45,4 +45,3 @@ VALUES
     ('Onion', 100, 200, 300),
     ('Black Olives', 100, 200, 300),
     ('Diced Tomatoes', 100, 200, 300);
-
