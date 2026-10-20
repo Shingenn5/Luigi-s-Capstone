@@ -6,9 +6,9 @@ header.innerHTML = `
     <div class="container">
       <a class="navbar-brand" href="./">
         <img
-          src="./assets/Luigis-Logo.png"
+          src="./assets/logo.png"
           alt="Luigi's Pizzeria"
-          width="120"
+          width="130"
           height="80"
           class="img-fluid"
         />
