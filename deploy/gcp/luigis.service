@@ -1,0 +1,24 @@
+[Unit]
+Description=Luigi's Pizzeria Node demo
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=luigis
+Group=luigis
+WorkingDirectory=/opt/luigis
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/luigis.env
+ExecStart=/usr/local/bin/node /opt/luigis/server.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/luigis
+
+[Install]
+WantedBy=multi-user.target

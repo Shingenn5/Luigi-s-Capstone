@@ -238,7 +238,7 @@ checkoutForm.addEventListener('submit', async (event) => {
       }),
     });
     cart = writeCart([]);
-    status.textContent = `Order #${result.orderId} saved as Pending. Restaurant acceptance and payment are not connected.`;
+    status.textContent = `Order #${result.orderId} saved as Pending (New in the kitchen). No payment collected.`;
     focusMessage(status);
     await renderHistory();
   } catch (error) {

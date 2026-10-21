@@ -11,7 +11,7 @@ test('Pages serves the restaurant with a working menu and draft cart under its r
   await expect(page).toHaveTitle(/Luigi's Pizzeria/);
   await expect(page.locator('.navbar-brand img')).toHaveAttribute(
     'src',
-    './assets/logo.png',
+    './assets/Luigis-Logo.png',
   );
   await page.getByRole('link', { name: 'Our menu', exact: true }).click();
   await expect(page.locator('#pizzaFields')).toBeEnabled();

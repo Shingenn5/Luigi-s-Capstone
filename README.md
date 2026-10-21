@@ -4,6 +4,8 @@ A capstone ordering app using HTML, Bootstrap 5.3.8 (Bootswatch Simplex), plain 
 
 ## Run locally
 
+For a portable laptop demo, run `npm run demo` or double-click `start-demo.cmd`. The launcher installs missing server dependencies on first use. See [DEMO.md](DEMO.md) for employee setup, saved data, LAN access, and troubleshooting. `npm run package:demo` creates a clean shareable ZIP in `demo-dist/`; `npm run verify:demo` tests an extracted copy with a fresh database. [GCP hosting instructions](deploy/gcp/README.md) include a Compute Engine installer and systemd service.
+
 1. Install Node.js 24.19 or newer within the 24 LTS release line.
 2. Run `npm ci` in this folder.
 3. Optionally copy `.env.example` to `.env` and change the settings.
@@ -22,7 +24,7 @@ Frontend files live in `Frontend/`: HTML pages, assets, and browser JavaScript. 
 - `Frontend/order.html` and `Frontend/js/order.js`: editable cart, pickup or dine-in details, pending order submission, and the signed-in customer's latest 50 orders.
 - `Frontend/login.html` and `Frontend/js/login.js`: customer registration and login.
 - `Frontend/employee-login.html` and `Frontend/js/employee-login.js`: employee username/password sign-in.
-- `Frontend/employee.html` and `Frontend/js/employee.js`: protected, read-only pending orders, refresh, and employee logout.
+- `Frontend/employee.html` and `Frontend/js/employee.js`: protected kitchen board, manual stages, recall/cancellation, history, and phone/counter order entry.
 - `Frontend/about.html`: restaurant introduction with an explicit gap for approved owner/history content.
 - `Frontend/visit.html`: service information, project hours, and explicit gaps for verified contact details.
 - `Frontend/js/site.js`: shared navigation, account link, and logout. Login stays outside the mobile menu.
@@ -42,21 +44,23 @@ Customers can build a cart before login. The cart stays in browser storage acros
 
 The server recalculates totals from SQL and ignores browser-supplied prices. Orders, their items, toppings, sauce/cheese preferences, and service details save together in one transaction. Retrying the same draft uses its submission identifier to return the existing order instead of creating another one. Saved orders are associated with the signed-in customer.
 
-The existing `POST /api/orders` contract uses each line's `menuItemId`, pizza/drink `quantity`, `toppings: [{ toppingId, quantity }]`, and optional pizza `sauce`/`cheese` fields. Topping `quantity` is an internal value of 1 (regular) or 2 (double), not a slice count or a free-form quantity box. The server validates these values. Migration 002 stores preferences without replacing existing orders; older pizzas default to regular sauce and cheese. Restaurant/kitchen integration remains separate future work.
+The existing `POST /api/orders` contract uses each line's `menuItemId`, pizza/drink `quantity`, `toppings: [{ toppingId, quantity }]`, and optional pizza `sauce`/`cheese` fields. Topping `quantity` is an internal value of 1 (regular) or 2 (double), not a slice count or a free-form quantity box. The server validates these values. Migration 002 stores preferences without replacing existing orders; older pizzas default to regular sauce and cheese. Orders now enter the employee kitchen board as New (stored as Pending for compatibility).
 
 ## Current boundaries
 
-Orders are saved as **Pending**. Employees can sign in and view pending orders. Restaurant acceptance, CSR/phone order entry, kitchen workflow, preparation times, tax calculation, and payment processing are not connected. Saving an order does not notify a restaurant or charge a card. Password reset, email verification, and browser-based account administration are future work.
+Orders are saved as **Pending**, displayed as **New** in the live employee kitchen. Employees process New → Preparing → In oven → Ready → Completed, enter phone/counter orders, recall tickets, and cancel with a recorded reason. Drink-only orders skip the oven. Tax, payments, delivery, printing, and external customer notifications are not connected. Timers do not automatically advance orders or promise a preparation time. Password reset, email verification, and browser-based account administration are future work.
 
 ## Employee setup
 
-From this repository folder, run `npm run employee:create` in a normal interactive terminal. Enter a username, display name, password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. There is no default employee account, shared password, or public employee registration.
+The demo launcher (`npm run demo` or `start-demo.cmd`) provisions `admin` / `adminadmin` if that username is missing. Existing accounts are preserved. This account has normal employee access; there is no separate administrator role. Normal `npm start` and the GCP service do not provision shared demo credentials.
+
+From this repository folder, run `npm run employee:create` in a normal interactive terminal to add individual employees. Enter a username, display name, password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. There is no public employee registration.
 
 Open `/employee-login.html` and sign in using the account you created. Employee usernames use 3–32 letters, numbers, periods, underscores, or hyphens; passwords use 8–128 characters and may contain spaces. Usernames are case-insensitive. Password managers and paste are supported.
 
 Migration 003 adds separate employee and employee-session tables. Employees use eight-hour, HTTP-only, SameSite cookies and hashed passwords. The same HTTPS/secure-cookie configuration applies as for customers. The employee login throttles at 20 attempts per IP per 15 minutes. An inactive account cannot log in or use an existing session.
 
-The server checks access on both the employee page and `/api/employee/orders`. Customer accounts cannot grant themselves employee access. The workspace shows up to 50 oldest pending orders with customer contact details, pickup/dine-in selection, items, modifiers, and totals. Refresh is manual. It cannot accept, edit, or complete orders yet.
+The server checks access on both the employee page and `/api/employee/orders`. Customer accounts cannot grant themselves employee access. The workspace polls active lanes every two seconds, with 50 tickets per stage page. Completed/cancelled history supports search and pagination. Status changes use expected revisions; competing updates return 409 instead of advancing twice. Interrupted connections retain tickets and pause actions. Submitted item contents cannot be edited; cancel and replace an incorrect order.
 
 Customer and employee sessions are separate and can coexist. **Employee logout** ends employee access; **Customer logout** ends the customer session. Account creation is a local setup operation; employee account management and password reset screens are future work.
 
@@ -94,3 +98,13 @@ Automated scans cover all six pages on desktop and at 320px, plus registration e
 Browser checks are documented in `verification.md`. There is no bundling/build command because the frontend is served directly.
 
 The backend uses Node's built-in [SQLite](https://nodejs.org/download/release/latest-v24.x/docs/api/sqlite.html) and [scrypt](https://nodejs.org/download/release/latest-v24.x/docs/api/crypto.html) APIs.
+
+## Kitchen operation
+
+Use the employee workspace after sign-in. Each stage has a labelled next-step button; Ready remains visible until staff completes handoff. Recall returns a ticket one stage (or restores a cancelled ticket to its previous active stage). Cancellation requires a reason. Migration 004 preserves old orders and records revisions, timestamps, and employee-attributed changes in SQLite. Existing pending-order API responses remain compatible.
+
+The board defaults to dark mode with a light toggle. Warning/overdue ages default to 10/20 minutes, with editable per-device demo settings. Sound is off until enabled by the employee. Stage and age cues include text rather than relying on color. Keyboard users can Tab to ticket selectors and actions; arrows navigate selectors, and Enter/Space selects. Polling preserves focus and does not announce ticking timers.
+
+**New order** supports Phone/Counter, Pickup/Dine-in, name, pickup phone, optional dine-in table (40 characters), and kitchen notes (500 characters). It uses the same SQL prices and modifiers as customer ordering. Staff drafts are stored per employee on the device, separately from customer carts; shared devices may retain contact details until drafts are cleared. If a submission response is lost, its draft is locked until a saved-order lookup or an idempotent retry resolves it. No default administrative privileges were added.
+
+Employee APIs: `GET /api/employee/kitchen?status=Pending&page=1&search=`, `POST /api/employee/orders`, `GET /api/employee/orders/submissions/:requestId`, and `POST /api/employee/orders/:orderId/status`. Status requests contain `action` (`advance`, `recall`, or `cancel`), `expectedRevision`, and a cancellation `reason`. Kitchen responses include tickets, stage counts, paging, and server time. Staff creation accepts the existing item contract plus customer/service/source/table/notes and a stable request ID. Unknown, stale, invalid, and unauthenticated operations return appropriate errors.

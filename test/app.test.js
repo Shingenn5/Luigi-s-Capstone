@@ -38,6 +38,17 @@ const account = {
   password: 'a long password',
 };
 
+test('health check confirms the application and database are ready', async (context) => {
+  const { request } = await startApp(context);
+  const response = await request('/healthz');
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.deepEqual(await response.json(), {
+    status: 'ok',
+    service: 'luigis-pizzeria',
+  });
+});
+
 test('registration, case-insensitive login, session rotation and logout', async (context) => {
   const { database, request } = await startApp(context);
   const registered = await request('/api/auth/register', account);

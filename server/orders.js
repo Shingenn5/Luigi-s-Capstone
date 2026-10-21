@@ -117,6 +117,35 @@ export function readOrderItems(database, orderId) {
     }));
 }
 
+export function saveOrderItems(database, orderId, pricedItems) {
+  for (const item of pricedItems) {
+    const line = database
+      .prepare(
+        `INSERT INTO OrderItems (orderID, menuItemID, quantity, unitPriceCents) VALUES (?, ?, ?, ?)`,
+      )
+      .run(orderId, item.menuItemId, item.quantity, item.unitPriceCents);
+    if (item.category === 'Pizza') {
+      database
+        .prepare(
+          'INSERT INTO order_item_preferences (order_item_id, sauce, cheese) VALUES (?, ?, ?)',
+        )
+        .run(Number(line.lastInsertRowid), item.sauce, item.cheese);
+    }
+    for (const topping of item.toppings) {
+      database
+        .prepare(
+          `INSERT INTO OrderItemToppings (orderItemID, toppingID, quantity, unitPriceCents) VALUES (?, ?, ?, ?)`,
+        )
+        .run(
+          Number(line.lastInsertRowid),
+          topping.toppingId,
+          topping.quantity,
+          topping.unitPriceCents,
+        );
+    }
+  }
+}
+
 export function createOrderRouter(database) {
   const router = Router();
   router.use(requireCustomer(database));
@@ -179,38 +208,12 @@ export function createOrderRouter(database) {
           'INSERT INTO order_details (order_id, request_id, customer_id, service_type) VALUES (?, ?, ?, ?)',
         )
         .run(orderId, requestId, customerId, serviceType);
-      for (const item of pricedItems) {
-        const line = database
-          .prepare(
-            `INSERT INTO OrderItems (orderID, menuItemID, quantity, unitPriceCents) VALUES (?, ?, ?, ?)`,
-          )
-          .run(orderId, item.menuItemId, item.quantity, item.unitPriceCents);
-        if (item.category === 'Pizza') {
-          database
-            .prepare(
-              'INSERT INTO order_item_preferences (order_item_id, sauce, cheese) VALUES (?, ?, ?)',
-            )
-            .run(Number(line.lastInsertRowid), item.sauce, item.cheese);
-        }
-        for (const topping of item.toppings) {
-          database
-            .prepare(
-              `INSERT INTO OrderItemToppings (orderItemID, toppingID, quantity, unitPriceCents) VALUES (?, ?, ?, ?)`,
-            )
-            .run(
-              Number(line.lastInsertRowid),
-              topping.toppingId,
-              topping.quantity,
-              topping.unitPriceCents,
-            );
-        }
-      }
+      saveOrderItems(database, orderId, pricedItems);
       database.exec('COMMIT');
       response.status(201).json({
         orderId,
         totalCents,
-        message:
-          'Order saved as Pending. Restaurant acceptance is not connected.',
+        message: 'Order sent to the kitchen as New. Awaiting preparation.',
       });
     } catch (error) {
       database.exec('ROLLBACK');

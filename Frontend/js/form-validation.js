@@ -36,9 +36,9 @@ export function validateField(input) {
 }
 
 export function validateForm(form) {
-  const invalidInputs = [...form.querySelectorAll('input, select')].filter(
-    (input) => input.willValidate && updateField(input),
-  );
+  const invalidInputs = [
+    ...form.querySelectorAll('input, select, textarea'),
+  ].filter((input) => input.willValidate && updateField(input));
   let summary = form.querySelector('[data-error-summary]');
   if (!invalidInputs.length) {
     if (summary) summary.hidden = true;
@@ -61,7 +61,7 @@ export function validateForm(form) {
   invalidInputs.forEach((input) => {
     const row = document.createElement('li');
     const link = document.createElement('a');
-    link.className = 'link-dark';
+    link.className = 'link-body-emphasis';
     link.href = `#${input.id}`;
     const label =
       input.labels?.[0]?.textContent.trim() ||

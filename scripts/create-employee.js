@@ -3,6 +3,7 @@ import { Writable } from 'node:stream';
 import { stdin, stdout } from 'node:process';
 import { openDatabase } from '../server/database.js';
 import { createEmployee } from '../server/employees.js';
+import { readServerConfig } from '../server/config.js';
 
 let database;
 let prompts;
@@ -31,9 +32,7 @@ try {
   stdout.write('\n');
   if (password !== confirmation)
     throw new Error('Passwords do not match. No account was created.');
-  database = openDatabase(
-    process.env.DATABASE_PATH || 'Database/luigis_pizzeria.db',
-  );
+  database = openDatabase(readServerConfig().databasePath);
   await createEmployee(database, { username, displayName, password });
   console.log(
     `Employee ${username.trim().toLowerCase()} created. Sign in at /employee-login.html.`,
