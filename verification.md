@@ -92,3 +92,10 @@ Validated with 13 passing API tests, lint, formatting, and 14 passing browser te
 - `npm run verify:demo`: passed from an extracted package with a production-only first-run dependency install, customer ordering, employee sign-in, staff dine-in entry, kitchen transitions, and persistence across restarts.
 - Visually reviewed four populated lanes at 1536px and a stacked board at 390px. Automated checks also cover 320px without horizontal overflow. Contrast fixes use existing Bootstrap classes. Manual screen-reader/user testing is still needed before asserting full accessibility conformance.
 - Tax, payments, delivery, printing, item edits after submission, external customer notifications, and a separate administrator role remain outside this implementation. No GCP deployment was performed.
+
+## October 21, 2026 — public Pages connection preparation
+
+- Confirmed the local port-3001 Node preview serves its real login/menu/session APIs. The separate Pages build intentionally disables authentication and order submission because its artifact contains no running backend.
+- Added optional `FULL_APP_URL` configuration to the Pages workflow/build. A configured build generates accessible links and automatic entry routing to the full Node application for every page, including the kitchen. Invalid/insecure origins, localhost, credentials, query/path/fragment values, and GitHub Pages destinations are rejected. Without a URL the existing static preview stays explicit about its limitations.
+- All 24 source/package tests, lint, and formatting passed. All three Pages browser tests passed, including a new generated-entry flow that reaches the full app, registers a customer, and submits a saved order against an isolated local backend. The build test confirms configured login/order/kitchen entry pages and excludes server/database files.
+- This is connection preparation, not a public backend deployment. No Node hosting URL or GCP project has been supplied. Public registration/ordering remains unavailable until a host is chosen, deployed, configured, and verified through its actual HTTPS address. Deployment steps are documented in `deploy/PUBLIC-SITE.md`.

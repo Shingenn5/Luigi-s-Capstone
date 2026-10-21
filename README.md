@@ -70,6 +70,8 @@ GitHub Pages can preview public pages but cannot run the Node server, authentica
 
 ## GitHub Pages publishing
 
+For public logins, saved orders, and kitchen access, host the full Node app and set the repository Actions variable `FULL_APP_URL` to its public HTTPS origin. The Pages build then generates entry pages that send visitors to that same route on the full app, with a normal link as a fallback. See [public site setup](deploy/PUBLIC-SITE.md). No public backend URL is configured by source changes alone; without that variable, the limited preview below remains in use.
+
 The live preview is [Luigi's Pizzeria](https://shingenn5.github.io/Luigi-s-Capstone/). GitHub Pages must use **GitHub Actions** as its publishing source. `.github/workflows/deploy-pages.yml` builds and publishes the public frontend on every push to `main`, preserving the existing site address. The repository root contains the backend; publishing it directly displays the wrong content after the `Frontend/` move.
 
 `npm run build:pages` copies `Frontend/` into the ignored `.pages/` artifact and generates public menu/topping JSON from a fresh in-memory seed database. It never copies local customer data, orders, credentials, or server files. The employee workspace is excluded. The build sets a preview flag only in the published artifact; the Node app retains its real API behavior.

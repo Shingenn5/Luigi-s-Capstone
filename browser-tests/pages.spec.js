@@ -1,6 +1,47 @@
 import { test, expect } from '@playwright/test';
+import { hostedEntryHtml } from '../scripts/public-host.js';
+import { randomUUID } from 'node:crypto';
 
 const PAGE_ROOT = '/Luigi-s-Capstone';
+
+test('configured Pages entry opens full app registration and real order submission', async ({
+  page,
+  baseURL,
+}) => {
+  await page.route(`**${PAGE_ROOT}/login.html`, (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: hostedEntryHtml(baseURL, 'login.html'),
+    }),
+  );
+  await page.goto(`${PAGE_ROOT}/login.html`);
+  await expect(page).toHaveURL(`${baseURL}/login.html`);
+  await page.locator('#registerMode').click();
+  await page.locator('#firstName').fill('Public');
+  await page.locator('#lastName').fill('Entry');
+  await page
+    .locator('#loginIdentity')
+    .fill(`public-${randomUUID()}@example.com`);
+  await page.locator('#loginPassword').fill('public entry test password');
+  await page
+    .getByRole('button', { name: 'Create account', exact: true })
+    .click();
+  await expect(page).toHaveURL(`${baseURL}/order.html`);
+  await page.getByRole('link', { name: 'Our menu', exact: true }).click();
+  await expect(page.locator('#pizzaFields')).toBeEnabled();
+  await page
+    .getByRole('button', { name: 'Add pizza to order', exact: true })
+    .click();
+  await page
+    .getByRole('link', { name: 'Review your order', exact: true })
+    .click();
+  await page.locator('#customerName').fill('Public Entry Customer');
+  await page.locator('#phoneNumber').fill('555-555-0100');
+  await page
+    .getByRole('button', { name: 'Save pending order', exact: true })
+    .click();
+  await expect(page.locator('#orderStatus')).toContainText('saved as Pending');
+});
 
 test('Pages serves the restaurant with a working menu and draft cart under its repository URL', async ({
   page,
