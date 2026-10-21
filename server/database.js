@@ -21,6 +21,7 @@ export function openDatabase(databasePath) {
     '001-customer-sessions.sql',
     '002-pizza-preferences.sql',
     '003-employees.sql',
+    '004-kitchen.sql',
   ];
   migrations.forEach((filename, index) => {
     const version = index + 1;

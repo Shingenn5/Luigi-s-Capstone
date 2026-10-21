@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { createHash, randomBytes } from 'node:crypto';
 import { hashPassword, verifyPassword } from './passwords.js';
 import { readOrderItems } from './orders.js';
+import { createKitchenRouter } from './kitchen.js';
 
 const COOKIE_NAME = 'luigiEmployeeSession';
 const SESSION_DURATION = 8 * 60 * 60 * 1000;
@@ -193,5 +194,7 @@ export function createEmployeeRouter(database) {
       })),
     );
   });
+  router.use(['/kitchen', '/orders'], requireEmployee(database));
+  router.use(createKitchenRouter(database));
   return router;
 }
