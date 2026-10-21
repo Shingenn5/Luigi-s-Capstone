@@ -40,7 +40,9 @@ test('configured Pages entry opens full app registration and real order submissi
   await page
     .getByRole('button', { name: 'Save pending order', exact: true })
     .click();
-  await expect(page.locator('#orderStatus')).toContainText('saved as Pending');
+  await expect(page.locator('#orderStatus')).toContainText(
+    'sent to the kitchen',
+  );
 });
 
 test('Pages serves the restaurant with a working menu and draft cart under its repository URL', async ({

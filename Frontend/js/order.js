@@ -8,6 +8,11 @@ import { apiRequest } from './api.js';
 import { STATIC_PREVIEW } from './runtime-config.js';
 import { toppingLabel, preferenceLabel } from './pizza-options.js';
 import { readCart, writeCart, describeItem, currency } from './cart.js';
+import {
+  customerStage,
+  orderTracker,
+  updateOrderClocks,
+} from './order-tracker.js';
 
 const orderItems = document.querySelector('#orderItems');
 const status = document.querySelector('#orderStatus');
@@ -21,6 +26,13 @@ let toppings = [];
 let customer = null;
 let isSubmitting = false;
 let cartValid = false;
+let historyLoading = false;
+let historyTimer;
+let historySnapshot;
+let historyOrders = [];
+let clockOffset = 0;
+let lastHistoryUpdate = 0;
+let historyConnected = false;
 
 function renderOrder() {
   orderItems.replaceChildren();
@@ -133,9 +145,33 @@ function renderOrder() {
 }
 
 async function renderHistory() {
+  if (historyLoading || !customer || document.hidden) return;
+  clearTimeout(historyTimer);
+  historyLoading = true;
   const history = document.querySelector('#orderHistory');
+  const connection = document.querySelector('#trackingConnection');
   try {
     const orders = await apiRequest('orders');
+    historyConnected = true;
+    lastHistoryUpdate = Date.now();
+    clockOffset = orders[0]?.tracking.serverTime - Date.now() || 0;
+    connection.textContent = `Live · Last checked ${new Date(lastHistoryUpdate).toLocaleTimeString()}.`;
+    const snapshot = JSON.stringify(
+      orders.map((order) => [order.orderId, order.tracking.revision]),
+    );
+    if (snapshot === historySnapshot) return;
+    const changes = orders.filter((order) => {
+      const previous = historyOrders.find(
+        (entry) => entry.orderId === order.orderId,
+      );
+      return previous && previous.tracking.revision !== order.tracking.revision;
+    });
+    if (changes.length)
+      document.querySelector('#trackingUpdates').textContent = changes
+        .map((order) => `Order #${order.orderId}: ${customerStage(order)}.`)
+        .join(' ');
+    historySnapshot = snapshot;
+    historyOrders = orders;
     history.replaceChildren();
     if (!orders.length) {
       history.textContent = 'No saved orders yet.';
@@ -147,7 +183,7 @@ async function renderHistory() {
       body.className = 'card-body';
       const heading = document.createElement('h3');
       heading.className = 'h5';
-      heading.textContent = `Order #${order.orderId} · ${order.orderStatus} · ${currency.format(order.totalCents / 100)}`;
+      heading.textContent = `Order #${order.orderId} · ${customerStage(order)} · ${currency.format(order.totalCents / 100)}`;
       const detail = document.createElement('p');
       detail.className = 'small text-body-secondary';
       detail.textContent = `${new Date(order.orderDate.replace(' ', 'T') + 'Z').toLocaleString()} · ${order.serviceType}`;
@@ -167,14 +203,40 @@ async function renderHistory() {
         row.textContent = `${item.quantity} × ${item.size} ${item.itemName}${details ? ` — ${details}` : ''}`;
         items.append(row);
       });
-      body.append(heading, detail, items);
+      body.append(heading, detail, orderTracker(order), items);
       article.append(body);
       history.append(article);
     });
+    updateOrderClocks(Date.now() + clockOffset);
   } catch (error) {
-    history.textContent = `Could not load order history. ${error.message} Reload to try again.`;
+    historyConnected = false;
+    const message =
+      error.status === 401
+        ? 'Your session expired. Log in again to resume order tracking.'
+        : `Updates interrupted. ${error.message} Retrying automatically.`;
+    connection.textContent = `${message}${lastHistoryUpdate ? ` Last checked ${new Date(lastHistoryUpdate).toLocaleTimeString()}; displayed progress may be out of date.` : ''}`;
+    if (error.status === 401) customer = null;
+    if (!historySnapshot)
+      history.textContent = 'Order history is currently unavailable.';
+  } finally {
+    historyLoading = false;
+    if (customer && !document.hidden)
+      historyTimer = setTimeout(renderHistory, 2000);
   }
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) clearTimeout(historyTimer);
+  else renderHistory();
+});
+window.addEventListener('online', renderHistory);
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) renderHistory();
+});
+setInterval(() => {
+  if (historyConnected && !document.hidden)
+    updateOrderClocks(Date.now() + clockOffset);
+}, 1000);
 
 try {
   const [menuData, toppingData, session] = await Promise.all([
@@ -238,7 +300,7 @@ checkoutForm.addEventListener('submit', async (event) => {
       }),
     });
     cart = writeCart([]);
-    status.textContent = `Order #${result.orderId} saved as Pending (New in the kitchen). No payment collected.`;
+    status.textContent = `Order #${result.orderId} sent to the kitchen. Follow its progress under Your recent orders. No payment collected.`;
     focusMessage(status);
     await renderHistory();
   } catch (error) {

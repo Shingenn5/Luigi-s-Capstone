@@ -198,7 +198,9 @@ test('pizza options, registration, checkout and history work by keyboard', async
     .getByRole('button', { name: 'Save pending order', exact: true })
     .focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('#orderStatus')).toContainText('saved as Pending');
+  await expect(page.locator('#orderStatus')).toContainText(
+    'sent to the kitchen',
+  );
   await expect(page.locator('#orderHistory')).toContainText(
     'Double Pepperoni, Light sauce',
   );

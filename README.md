@@ -21,7 +21,7 @@ Frontend files live in `Frontend/`: HTML pages, assets, and browser JavaScript. 
 
 - `Frontend/index.html`: home, banner, size graphics, and menu category filters.
 - `Frontend/menu.html` and `Frontend/js/menu.js`: pizza size, topping checkboxes, regular/double options, sauce and cheese preferences, pizza quantities, drinks, and price preview from the SQL menu.
-- `Frontend/order.html` and `Frontend/js/order.js`: editable cart, pickup or dine-in details, pending order submission, and the signed-in customer's latest 50 orders.
+- `Frontend/order.html` and `Frontend/js/order.js`: editable cart, pickup or dine-in details, pending order submission, and the signed-in customer's latest 50 orders with live progress and elapsed time.
 - `Frontend/login.html` and `Frontend/js/login.js`: customer registration and login.
 - `Frontend/employee-login.html` and `Frontend/js/employee-login.js`: employee username/password sign-in.
 - `Frontend/employee.html` and `Frontend/js/employee.js`: protected kitchen board, manual stages, recall/cancellation, history, and phone/counter order entry.
@@ -112,3 +112,13 @@ The board defaults to dark mode with a light toggle. Warning/overdue ages defaul
 **New order** supports Phone/Counter, Pickup/Dine-in, name, pickup phone, optional dine-in table (40 characters), and kitchen notes (500 characters). It uses the same SQL prices and modifiers as customer ordering. Staff drafts are stored per employee on the device, separately from customer carts; shared devices may retain contact details until drafts are cleared. If a submission response is lost, its draft is locked until a saved-order lookup or an idempotent retry resolves it. No default administrative privileges were added.
 
 Employee APIs: `GET /api/employee/kitchen?status=Pending&page=1&search=`, `POST /api/employee/orders`, `GET /api/employee/orders/submissions/:requestId`, and `POST /api/employee/orders/:orderId/status`. Status requests contain `action` (`advance`, `recall`, or `cancel`), `expectedRevision`, and a cancellation `reason`. Kitchen responses include tickets, stage counts, paging, and server time. Staff creation accepts the existing item contract plus customer/service/source/table/notes and a stable request ID. Unknown, stale, invalid, and unauthenticated operations return appropriate errors.
+
+## Customer order tracking
+
+After placing an order, customers follow it under **Your order → Your recent orders**. The page checks the signed-in customer's orders every two seconds while visible. Each order shows received, preparing, in the oven, cut and boxed, and handed-off milestones, with recorded local times, total elapsed time, and time in the current stage. Drink-only orders skip the oven and use Ready instead of Cut and boxed. Completed/cancelled totals stop at the saved terminal timestamp.
+
+Employees use **Employee login → Kitchen board**, then **Start preparing**, **Send to oven**, **Cut and boxed**, and **Complete handoff** on the ticket. Cut and boxed saves the existing Ready status. All steps remain manual. A button applies to the entire order; staff should mark it only once all its pizzas reach that stage. There is no automatic baking countdown or promised ready time.
+
+The customer-scoped `GET /api/orders` response includes a `tracking` object containing `revision`, `createdAt`, `enteredAt`, `serverTime`, and `milestones` (`stage`, `occurredAt`, epoch milliseconds). It reuses migration 004's persisted SQL event history; no schema change is needed. Recalls remove later milestones, and later re-entry uses its new saved timestamp. Employee identities, kitchen notes, and cancellation reasons are not exposed. Imported historical orders do not receive invented intermediate timestamps.
+
+Interrupted connections retain the last known progress with an explicit stale-data notice and retry automatically. Polling pauses in hidden tabs and resumes on return; expired sessions require login again. Timer ticks are not announced to screen readers, while saved stage changes receive one contextual announcement. Tracking requires the running Node app; the static Pages preview cannot supply live updates or send external notifications.

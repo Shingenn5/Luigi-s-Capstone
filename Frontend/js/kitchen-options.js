@@ -5,7 +5,7 @@ export const advanceLabel = (stage, hasPizza) =>
   ({
     Pending: 'Start preparing',
     Preparing: hasPizza ? 'Send to oven' : 'Mark ready',
-    'In oven': 'Mark ready',
+    'In oven': 'Cut and boxed',
     Ready: 'Complete handoff',
   })[stage];
 export function nextStage(stage, hasPizza) {

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { requireCustomer } from './auth.js';
 import { getMenu, getToppings } from './database.js';
 import { pizzaPreferences } from '../Frontend/js/pizza-options.js';
+import { readOrderTracking } from './order-tracking.js';
 
 function invalidOrder(message) {
   const error = new Error(message);
@@ -92,6 +93,7 @@ function readOrders(database, customerId) {
     .all(customerId);
   return orders.map((order) => ({
     ...order,
+    tracking: readOrderTracking(database, order.orderId),
     items: readOrderItems(database, order.orderId),
   }));
 }
