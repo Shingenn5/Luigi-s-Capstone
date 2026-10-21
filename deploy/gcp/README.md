@@ -6,16 +6,17 @@ These files prepare deployment but do not create a Google Cloud project, enable 
 
 ## 1. Create a VM
 
-Use a dedicated Ubuntu 24.04 LTS VM with at least 2 GB of memory and a persistent disk. Keep the disk when deleting the VM, and arrange backups separately. The following is a template to run from a machine with the Google Cloud CLI installed and authenticated. Replace `YOUR_PROJECT_ID` with your project:
+For the small capstone demo, use a dedicated Ubuntu 24.04 LTS `e2-micro` VM in a free-tier eligible region, with a standard persistent disk. This has 1 GB RAM; run builds and browser tests locally. Keep the disk when deleting the VM, and arrange backups separately. See [the IPv6 free-tier setup](FREE-TIER.md) before creating resources. The following machine/disk template alone does not eliminate public IPv4 charges; use the network flags in that guide. Replace `YOUR_PROJECT_ID` with your project:
 
 ```sh
 gcloud compute instances create luigis-demo \
   --project=YOUR_PROJECT_ID \
   --zone=us-central1-a \
-  --machine-type=e2-small \
+  --machine-type=e2-micro \
   --image-family=ubuntu-2404-lts-amd64 \
   --image-project=ubuntu-os-cloud \
   --boot-disk-size=20GB \
+  --boot-disk-type=pd-standard \
   --no-boot-disk-auto-delete
 ```
 
