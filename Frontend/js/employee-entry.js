@@ -83,7 +83,7 @@ export async function setupStaffOrder(employee, onCreated) {
     $('#staffSubmit').disabled =
       busy || !draft.items.length || !storageAvailable;
     $('#staffSubmit').textContent = busy
-      ? 'Checking saved order�'
+      ? 'Checking saved order - '
       : draft.pending
         ? 'Check and retry same submission'
         : 'Send to kitchen';
@@ -104,9 +104,9 @@ export async function setupStaffOrder(employee, onCreated) {
       row.className = 'border-bottom py-3';
       const text = document.createElement('p');
       text.className = 'mb-2';
-      text.textContent = `${item.quantity} � ${description.name} � ${description.toppingNames} � ${currency.format(description.lineTotalCents / 100)}`;
+      text.textContent = `${item.quantity}  -  ${description.name}  -  ${description.toppingNames}  -  ${currency.format(description.lineTotalCents / 100)}`;
       const remove = document.createElement('button');
-      remove.className = 'btn btn-outline-secondary py-3';
+      remove.className = 'btn btn-secondary border border-dark py-3';
       remove.type = 'button';
       remove.dataset.removeStaff = index;
       remove.textContent = `Remove item ${index + 1}`;
@@ -139,7 +139,7 @@ export async function setupStaffOrder(employee, onCreated) {
   for (const item of menu) {
     const option = document.createElement('option');
     option.value = item.menuItemId;
-    option.textContent = `${item.size} ${item.itemName} � ${currency.format(item.priceCents / 100)}`;
+    option.textContent = `${item.size} ${item.itemName}  -  ${currency.format(item.priceCents / 100)}`;
     $('#staffItem').append(option);
   }
   for (const [selector, options] of [
@@ -213,8 +213,8 @@ export async function setupStaffOrder(employee, onCreated) {
     for (const topping of toppings) {
       const select = $(`#staff-coverage-${topping.toppingId}`);
       const price = topping[`${item.size.toLowerCase()}PriceCents`];
-      select.options[0].textContent = `Regular � ${currency.format(price / 100)}`;
-      select.options[1].textContent = `Double � ${currency.format((price * 2) / 100)}`;
+      select.options[0].textContent = `Regular  -  ${currency.format(price / 100)}`;
+      select.options[1].textContent = `Double  -  ${currency.format((price * 2) / 100)}`;
       select.disabled = !$(`#staff-topping-${topping.toppingId}`).checked;
     }
     try {

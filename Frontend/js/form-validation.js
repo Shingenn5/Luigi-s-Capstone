@@ -61,7 +61,7 @@ export function validateForm(form) {
   invalidInputs.forEach((input) => {
     const row = document.createElement('li');
     const link = document.createElement('a');
-    link.className = 'link-dark';
+    link.className = 'link-body-emphasis';
     link.href = `#${input.id}`;
     const label =
       input.labels?.[0]?.textContent.trim() ||

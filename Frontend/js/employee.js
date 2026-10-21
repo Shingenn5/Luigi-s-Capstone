@@ -132,7 +132,7 @@ function chime() {
 function setConnection(ok) {
   connected = ok;
   $('#connectionStatus').textContent = ok
-    ? `Live � updated ${new Date(lastSuccess).toLocaleTimeString()}`
+    ? `Live  -  updated ${new Date(lastSuccess).toLocaleTimeString()}`
     : `Connection interrupted. Actions paused. Last update: ${lastSuccess ? new Date(lastSuccess).toLocaleTimeString() : 'not yet connected'}.`;
   $('#connectionStatus').className = ok
     ? 'text-body-secondary mb-0'
@@ -142,7 +142,11 @@ function setConnection(ok) {
     .forEach((button) => (button.disabled = !connected || changing));
 }
 function button(label, callback, id) {
-  const node = element('button', 'btn btn-outline-secondary py-3', label);
+  const node = element(
+    'button',
+    'btn btn-secondary border border-dark py-3',
+    label,
+  );
   node.type = 'button';
   if (id) node.id = id;
   node.onclick = callback;
@@ -170,7 +174,7 @@ function ticketCard(ticket) {
     `select-${ticket.orderId}`,
   );
   selector.className =
-    'btn btn-outline-secondary fw-bold fs-5 py-2 w-100 text-start';
+    'btn btn-secondary border border-dark fw-bold fs-5 py-2 w-100 text-start';
   selector.dataset.ticketSelect = ticket.orderId;
   selector.setAttribute('aria-pressed', String(ticket.orderId === selectedId));
   selector.onkeydown = (event) => {
@@ -217,7 +221,7 @@ function ticketCard(ticket) {
     element(
       'p',
       'small mb-2',
-      `${ticket.serviceType} � ${ticket.source}${ticket.tableName ? ` � Table ${ticket.tableName}` : ''}`,
+      `${ticket.serviceType}  -  ${ticket.source}${ticket.tableName ? `  -  Table ${ticket.tableName}` : ''}`,
     ),
   );
   if (ticket.phoneNumber) {
@@ -232,7 +236,7 @@ function ticketCard(ticket) {
       element(
         'span',
         'fw-bold d-block',
-        `${item.quantity} � ${item.size} ${item.itemName}`,
+        `${item.quantity}  -  ${item.size} ${item.itemName}`,
       ),
     );
     const details = item.toppings.map((topping) =>
@@ -252,6 +256,10 @@ function ticketCard(ticket) {
         'border-start border-3 border-warning ps-2 fw-semibold',
         `Kitchen notes: ${ticket.notes}`,
       ),
+    );
+  if (ticket.lastReason)
+    body.append(
+      element('p', 'fw-semibold', `Last change: ${ticket.lastReason}`),
     );
   body.append(element('p', 'mb-2', currency.format(ticket.totalCents / 100)));
   const time = element('p', 'small mb-0');
@@ -281,7 +289,10 @@ function ticketCard(ticket) {
 }
 function updateClocks() {
   document.querySelectorAll('[data-placed]').forEach((node) => {
-    const now = Date.now() + clockOffset;
+    const active = node.dataset.active === 'true';
+    const now = active
+      ? Date.now() + clockOffset
+      : Number(node.dataset.entered);
     const age = Math.max(
       0,
       Math.floor((now - Number(node.dataset.placed)) / 60000),
@@ -290,7 +301,6 @@ function updateClocks() {
       0,
       Math.floor((now - Number(node.dataset.entered)) / 60000),
     );
-    const active = node.dataset.active === 'true';
     const cue =
       active && age >= overdue
         ? 'Overdue'
@@ -299,7 +309,7 @@ function updateClocks() {
           : active
             ? 'On track'
             : 'Closed';
-    node.textContent = `${cue} � ${age} min since placed � ${stageAge} min since stage change`;
+    node.textContent = `${cue}  -  ${age} min since placed  -  ${stageAge} min since stage change`;
     node.className = `small mb-0 ${cue === 'Overdue' ? 'text-danger-emphasis fw-bold' : cue === 'Aging' ? 'text-warning-emphasis fw-bold' : 'text-body-secondary'}`;
   });
 }
@@ -325,7 +335,7 @@ function renderLane(stage, result) {
     element(
       'h2',
       'h4 d-flex flex-wrap gap-2 align-items-center mb-3',
-      `${stageLabel(stage)} � ${result.total}`,
+      `${stageLabel(stage)}  -  ${result.total}`,
     ),
   );
   if (!result.orders.length)
@@ -345,7 +355,7 @@ function renderLane(stage, result) {
     element(
       'span',
       'small',
-      `Page ${result.page} of ${result.pages} � ${result.total} orders`,
+      `Page ${result.page} of ${result.pages}  -  ${result.total} orders`,
     ),
   );
   const previous = button('Previous page', () => {
@@ -443,7 +453,7 @@ async function mutate(ticket, action, reason = '') {
   if (!connected || changing || stopped) return;
   changing = true;
   setConnection(true);
-  message('Saving kitchen change�');
+  message('Saving kitchen change - ');
   try {
     const updated = await apiRequest(
       `employee/orders/${ticket.orderId}/status`,
@@ -526,7 +536,7 @@ async function showView(nextView) {
   document.querySelectorAll('[data-view]').forEach((node) => {
     const active = node.dataset.view === view;
     node.setAttribute('aria-pressed', String(active));
-    node.className = `btn ${active ? 'btn-primary' : 'btn-outline-secondary'} px-3 py-3`;
+    node.className = `btn ${active ? 'btn-primary' : 'btn-secondary border border-dark'} px-3 py-3`;
   });
   $('#workspaceTitle').textContent = {
     board: 'Kitchen board',

@@ -12,19 +12,19 @@
   <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
   <header class="border-bottom bg-body p-3">
     <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
-      <div><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's kitchen</a><p class="small text-body-secondary mb-0" id="employeeIdentity">Checking employee access…</p></div>
+      <div><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's kitchen</a><p class="small text-body-secondary mb-0" id="employeeIdentity">Checking employee accessâ€¦</p></div>
       <nav class="d-flex flex-wrap gap-2" aria-label="Employee workspace">
         <button class="btn btn-primary px-3 py-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
-        <button class="btn btn-outline-secondary px-3 py-3" type="button" data-view="entry" aria-pressed="false">New order</button>
-        <button class="btn btn-outline-secondary px-3 py-3" type="button" data-view="history" aria-pressed="false">Order history</button>
-        <button class="btn btn-outline-secondary px-3 py-3" type="button" id="employeeLogout">Employee logout</button>
+        <button class="btn btn-secondary border border-dark px-3 py-3" type="button" data-view="entry" aria-pressed="false">New order</button>
+        <button class="btn btn-secondary border border-dark px-3 py-3" type="button" data-view="history" aria-pressed="false">Order history</button>
+        <button class="btn btn-secondary border border-dark px-3 py-3" type="button" id="employeeLogout">Employee logout</button>
       </nav>
     </div>
   </header>
   <main class="container-fluid p-3 p-lg-4" id="main" tabindex="-1">
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
-      <div><p class="text-body-secondary text-uppercase fw-semibold small mb-1">Make · Bake · Handoff</p><h1 class="h2 fw-bold" id="workspaceTitle">Kitchen board</h1><p class="mb-0" id="connectionStatus">Connecting to kitchen…</p></div>
-      <div class="d-flex flex-wrap gap-2"><button class="btn btn-outline-secondary py-3" id="refreshOrders" type="button">Refresh orders</button><button class="btn btn-outline-secondary py-3" id="soundToggle" type="button" aria-pressed="false">Enable sound</button><button class="btn btn-outline-secondary py-3" id="themeToggle" type="button">Use light mode</button></div>
+      <div><p class="text-body-secondary text-uppercase fw-semibold small mb-1">Make Â· Bake Â· Handoff</p><h1 class="h2 fw-bold" id="workspaceTitle">Kitchen board</h1><p class="mb-0" id="connectionStatus">Connecting to kitchenâ€¦</p></div>
+      <div class="d-flex flex-wrap gap-2"><button class="btn btn-secondary border border-dark py-3" id="refreshOrders" type="button">Refresh orders</button><button class="btn btn-secondary border border-dark py-3" id="soundToggle" type="button" aria-pressed="false">Enable sound</button><button class="btn btn-secondary border border-dark py-3" id="themeToggle" type="button">Use light mode</button></div>
     </div>
     <p id="employeeStatus" role="status" aria-atomic="true"></p>
     <details class="mb-4 border rounded p-3 bg-body"><summary class="py-2 fw-semibold">Display settings and keyboard help</summary>
@@ -32,7 +32,7 @@
       <form id="thresholdForm" class="row g-3 align-items-end">
         <div class="col-sm-4"><label for="warningMinutes" class="form-label">Demo warning age (minutes)</label><input id="warningMinutes" class="form-control" type="number" min="1" max="179" value="10" required /></div>
         <div class="col-sm-4"><label for="overdueMinutes" class="form-label">Demo overdue age (minutes)</label><input id="overdueMinutes" class="form-control" type="number" min="2" max="180" value="20" required /></div>
-        <div class="col-sm-4"><button class="btn btn-outline-secondary py-3" type="submit">Save thresholds</button></div>
+        <div class="col-sm-4"><button class="btn btn-secondary border border-dark py-3" type="submit">Save thresholds</button></div>
       </form><p class="small text-body-secondary mt-2 mb-0">Display preferences apply to this device. Timers are informational; staff always confirms readiness.</p>
     </details>
     <section id="boardView" aria-label="Active kitchen orders"><div class="row g-3" id="employeeOrders" aria-label="Active order lanes" aria-busy="true"></div></section>
@@ -59,15 +59,15 @@
           <label class="form-label" for="staffSource">Order source</label><select class="form-select mb-3" id="staffSource"><option>Phone</option><option>Counter</option></select>
           <label class="form-label" for="staffName">Customer name</label><input class="form-control mb-3" id="staffName" maxlength="120" autocomplete="off" required />
           <label class="form-label" for="staffService">Service</label><select class="form-select mb-3" id="staffService"><option>Pickup</option><option>Dine-in</option></select>
-          <label class="form-label" for="staffPhone">Phone <span id="phoneHint">(required for pickup)</span></label><input class="form-control mb-3" id="staffPhone" type="tel" maxlength="25" pattern="[+0-9\s().\-]{7,25}" required />
+          <label class="form-label" for="staffPhone">Phone <span id="phoneHint">(required for pickup)</span></label><input class="form-control mb-3" id="staffPhone" type="tel" maxlength="25" pattern="[0-9+ .\(\)\-]{7,25}" required />
           <label class="form-label" for="staffTable">Table (optional, dine-in only)</label><input class="form-control mb-3" id="staffTable" maxlength="40" disabled />
           <label class="form-label" for="staffNotes">Kitchen notes (optional, 500 characters)</label><textarea class="form-control mb-3" id="staffNotes" maxlength="500" rows="3"></textarea>
           <button class="btn btn-primary w-100 py-3" type="submit" id="staffSubmit">Send to kitchen</button>
-          <button class="btn btn-outline-secondary w-100 py-3 mt-3" id="staffClear" type="button">Clear draft</button>
+          <button class="btn btn-secondary border border-dark w-100 py-3 mt-3" id="staffClear" type="button">Clear draft</button>
         </fieldset></form></div>
       </div>
     </section>
-    <dialog class="bg-body text-body border rounded p-4" id="cancelDialog" aria-labelledby="cancelTitle"><form id="cancelForm"><h2 class="h4" id="cancelTitle">Cancel order</h2><p id="cancelDescription"></p><label for="cancelReason" class="form-label">Cancellation reason (required)</label><textarea class="form-control mb-3" id="cancelReason" maxlength="500" required rows="3"></textarea><div class="d-flex flex-wrap gap-3"><button class="btn btn-danger py-3" id="confirmCancel" type="submit">Confirm cancellation</button><button class="btn btn-outline-secondary py-3" id="keepOrder" type="button">Keep order</button></div><p id="cancelError" class="mt-3" role="alert"></p></form></dialog>
+    <dialog class="bg-body text-body border rounded p-4" id="cancelDialog" aria-labelledby="cancelTitle"><form id="cancelForm"><h2 class="h4" id="cancelTitle">Cancel order</h2><p id="cancelDescription"></p><label for="cancelReason" class="form-label">Cancellation reason (required)</label><textarea class="form-control mb-3" id="cancelReason" maxlength="500" required rows="3"></textarea><div class="d-flex flex-wrap gap-3"><button class="btn btn-danger py-3" id="confirmCancel" type="submit">Confirm cancellation</button><button class="btn btn-secondary border border-dark py-3" id="keepOrder" type="button">Keep order</button></div><p id="cancelError" class="mt-3" role="alert"></p></form></dialog>
   </main>
 </body>
 </html>
