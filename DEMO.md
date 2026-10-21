@@ -27,7 +27,9 @@ npm run employee:create
 
 Choose a username, display name, and password. Password entry is hidden. Open **Employee login** on the website and use those credentials.
 
-Customers can create their own accounts through **Login → New customer**. A good demo is: create a customer, build a pizza, save a pending order, then sign in as an employee and refresh the order list. Employee access is read-only; acceptance, kitchen processing, tax, and payment are not implemented.
+Customers can create accounts through **Login → New customer**. For a demo, save a customer order, sign in as an employee, and watch it appear automatically in New. Move it through Preparing, In oven, Ready, then Complete handoff. Try recall, cancellation with a reason, and searchable history. Use **New order** for phone/counter entry without a customer account. Drinks skip the oven. No payment, tax, delivery, or external notification is connected.
+
+The kitchen starts in dark mode. Display settings include a light toggle, per-device aging thresholds (10/20 minutes by default), and optional sound that starts only after Enable sound. Time never advances an order automatically. Staff drafts are stored separately from customer carts; clear drafts on shared devices because they can contain contact details.
 
 ## Saved data
 

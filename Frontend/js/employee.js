@@ -131,6 +131,10 @@ function chime() {
 }
 function setConnection(ok) {
   connected = ok;
+  document.documentElement.dataset.kitchenConnected = String(ok);
+  document.dispatchEvent(
+    new CustomEvent('kitchen-connection', { detail: { connected: ok } }),
+  );
   $('#connectionStatus').textContent = ok
     ? `Live  -  updated ${new Date(lastSuccess).toLocaleTimeString()}`
     : `Connection interrupted. Actions paused. Last update: ${lastSuccess ? new Date(lastSuccess).toLocaleTimeString() : 'not yet connected'}.`;
@@ -209,9 +213,17 @@ function ticketCard(ticket) {
     target?.click();
   };
   heading.append(selector);
+  const stageColors = {
+    Pending: 'bg-primary-subtle text-primary-emphasis',
+    Preparing: 'bg-info-subtle text-info-emphasis',
+    'In oven': 'bg-warning-subtle text-warning-emphasis',
+    Ready: 'bg-success-subtle text-success-emphasis',
+    Completed: 'bg-secondary-subtle text-secondary-emphasis',
+    Cancelled: 'bg-danger-subtle text-danger-emphasis',
+  };
   const stage = element(
     'span',
-    'badge text-bg-secondary',
+    `badge ${stageColors[ticket.orderStatus] || 'text-bg-secondary'}`,
     stageLabel(ticket.orderStatus),
   );
   head.append(heading, stage);
@@ -236,7 +248,7 @@ function ticketCard(ticket) {
       element(
         'span',
         'fw-bold d-block',
-        `${item.quantity}  -  ${item.size} ${item.itemName}`,
+        `${item.quantity} \u00d7 ${item.size} ${item.itemName}`,
       ),
     );
     const details = item.toppings.map((topping) =>
@@ -370,7 +382,7 @@ function renderLane(stage, result) {
     loadOrders();
   });
   next.disabled = result.page >= result.pages;
-  pagination.append(previous, next);
+  if (result.pages > 1) pagination.append(previous, next);
   parent.append(pagination);
   pages[stage] = result.page;
 }

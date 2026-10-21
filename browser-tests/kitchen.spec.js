@@ -262,3 +262,41 @@ test('connection failures retain tickets and pause actions; themes, keyboard and
   ).toBe(true);
   await accessible(page);
 });
+
+test('a committed staff order with a lost response is reconciled without duplicate submission', async ({
+  page,
+  baseURL,
+}) => {
+  await login(page, baseURL);
+  await page.getByRole('button', { name: 'New order', exact: true }).click();
+  await page.getByRole('button', { name: 'Add item to staff order' }).click();
+  await page.locator('#staffName').fill('Lost Response Customer');
+  await page.locator('#staffPhone').fill('555-555-0100');
+  let posts = 0;
+  await page.route('**/api/employee/orders', async (route) => {
+    if (route.request().method() !== 'POST') {
+      await route.continue();
+      return;
+    }
+    posts++;
+    const committed = await route.fetch();
+    expect(committed.status()).toBe(201);
+    await route.abort();
+  });
+  await page
+    .getByRole('button', { name: 'Send to kitchen', exact: true })
+    .click();
+  await expect(page.locator('#staffStatus')).toContainText('Draft locked');
+  await expect(page.locator('#staffName')).toBeDisabled();
+  await page
+    .getByRole('button', {
+      name: 'Check and retry same submission',
+      exact: true,
+    })
+    .click();
+  await expect(page.locator('#boardView')).toBeVisible();
+  await expect(
+    page.locator('article').filter({ hasText: 'Lost Response Customer' }),
+  ).toHaveCount(1);
+  expect(posts).toBe(1);
+});

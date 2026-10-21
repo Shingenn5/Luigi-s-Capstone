@@ -17,6 +17,7 @@ export async function apiRequest(path, options = {}) {
   try {
     response = await fetch(requestPath, {
       ...options,
+      signal: options.signal || AbortSignal.timeout(10000),
       headers: { 'Content-Type': 'application/json', ...options.headers },
     });
   } catch {

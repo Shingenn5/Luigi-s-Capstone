@@ -28,6 +28,7 @@ export async function setupStaffOrder(employee, onCreated) {
   const storageKey = `luigis-staff-draft-${employee.employeeId}`;
   let draft = emptyDraft();
   let busy = false;
+  let connected = document.documentElement.dataset.kitchenConnected === 'true';
   let storageAvailable = true;
   const status = $('#staffStatus');
   const say = (text, focus = false) => {
@@ -81,7 +82,7 @@ export async function setupStaffOrder(employee, onCreated) {
       $(selector).disabled = busy || Boolean(draft.pending);
     $('#staffClear').disabled = busy || Boolean(draft.pending);
     $('#staffSubmit').disabled =
-      busy || !draft.items.length || !storageAvailable;
+      busy || !connected || !draft.items.length || !storageAvailable;
     $('#staffSubmit').textContent = busy
       ? 'Checking saved order - '
       : draft.pending
@@ -104,7 +105,7 @@ export async function setupStaffOrder(employee, onCreated) {
       row.className = 'border-bottom py-3';
       const text = document.createElement('p');
       text.className = 'mb-2';
-      text.textContent = `${item.quantity}  -  ${description.name}  -  ${description.toppingNames}  -  ${currency.format(description.lineTotalCents / 100)}`;
+      text.textContent = `${item.quantity} \u00d7 ${description.name} - ${description.toppingNames} - ${currency.format(description.lineTotalCents / 100)}`;
       const remove = document.createElement('button');
       remove.className = 'btn btn-secondary border border-dark py-3';
       remove.type = 'button';
@@ -260,7 +261,7 @@ export async function setupStaffOrder(employee, onCreated) {
     await onCreated(order.orderId);
   }
   async function submit() {
-    if (busy || !storageAvailable) return;
+    if (busy || !connected || !storageAvailable) return;
     busy = true;
     lock();
     try {
@@ -296,7 +297,7 @@ export async function setupStaffOrder(employee, onCreated) {
   }
   $('#staffCheckout').onsubmit = (event) => {
     event.preventDefault();
-    if (busy) return;
+    if (busy || !connected) return;
     if (!draft.pending) {
       if (!validateForm(event.target) || !draft.items.length) return;
       draft.pending = Object.fromEntries(
@@ -313,6 +314,10 @@ export async function setupStaffOrder(employee, onCreated) {
     }
     submit();
   };
+  document.addEventListener('kitchen-connection', (event) => {
+    connected = event.detail.connected;
+    lock();
+  });
   persist();
   renderDraft();
   updateItem();

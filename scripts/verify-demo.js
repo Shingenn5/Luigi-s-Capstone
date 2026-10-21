@@ -188,8 +188,57 @@ try {
     ).length,
     1,
   );
+  const kitchen = await (
+    await request(
+      '/api/employee/kitchen?status=Pending',
+      undefined,
+      employeeCookie,
+    )
+  ).json();
+  assert.equal(kitchen.orders.length, 1);
+  const ticket = kitchen.orders[0];
+  const moved = await request(
+    `/api/employee/orders/${ticket.orderId}/status`,
+    { action: 'advance', expectedRevision: ticket.revision },
+    employeeCookie,
+  );
+  assert.equal(moved.status, 200);
+  assert.equal((await moved.json()).orderStatus, 'Preparing');
+  const staffOrder = await request(
+    '/api/employee/orders',
+    {
+      customerName: 'Package Counter Customer',
+      phoneNumber: '',
+      source: 'Counter',
+      serviceType: 'Dine-in',
+      tableName: '4',
+      notes: 'Package kitchen test',
+      requestId: 'portable-staff-package-0001',
+      items: [{ menuItemId: 1, quantity: 1, toppings: [] }],
+    },
+    employeeCookie,
+  );
+  assert.equal(staffOrder.status, 201);
+  await stopDemo();
+  origin = await startDemo();
+  const persistedKitchen = await (
+    await request(
+      '/api/employee/kitchen?status=Preparing',
+      undefined,
+      employeeCookie,
+    )
+  ).json();
+  assert.equal(persistedKitchen.orders[0].revision, 1);
+  const counterKitchen = await (
+    await request(
+      '/api/employee/kitchen?status=Pending',
+      undefined,
+      employeeCookie,
+    )
+  ).json();
+  assert.equal(counterKitchen.orders[0].tableName, '4');
   console.log(
-    'Extracted demo passed: first-run dependency install, customer registration, saved order, restart persistence, employee login, and employee order access.',
+    'Extracted demo passed: dependency install, customer registration/orders, employee login, staff order entry, kitchen transitions, and restart persistence.',
   );
 } finally {
   await stopDemo();
