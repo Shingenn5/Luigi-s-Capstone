@@ -3,6 +3,11 @@ import { STATIC_PREVIEW } from './runtime-config.js';
 
 const header = document.querySelector('#siteHeader');
 header.innerHTML = `
+  <div class="bg-black text-center">
+    <a class="d-inline-block" href="./" aria-label="Luigi's Pizzeria home">
+      <img class="img-fluid" src="./assets/banner.png" alt="Luigi's Pizzeria — Since 1968" width="210" height="134" fetchpriority="high" />
+    </a>
+  </div>
   <nav class="navbar navbar-expand-lg py-0" aria-label="Main navigation">
     <div class="container">
       <a class="navbar-brand" href="./">

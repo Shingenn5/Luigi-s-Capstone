@@ -27,12 +27,14 @@ Frontend files live in `Frontend/`: HTML pages, assets, and browser JavaScript. 
 - `Frontend/employee.html` and `Frontend/js/employee.js`: protected kitchen board, manual stages, recall/cancellation, history, and phone/counter order entry.
 - `Frontend/about.html`: restaurant introduction with an explicit gap for approved owner/history content.
 - `Frontend/visit.html`: service information, project hours, and explicit gaps for verified contact details.
-- `Frontend/js/site.js`: shared navigation, footer, account link, and logout. Customer login stays outside the mobile menu. Employee access stays in the footer, including a workspace link for signed-in staff; no employee links appear in the customer header.
+- `Frontend/js/site.js`: shared banner, navigation, footer, account link, and logout. Customer login stays outside the mobile menu. Employee access stays in the footer, including a workspace link for signed-in staff; no employee links appear in the customer header.
 - `Frontend/js/cart.js`: browser draft storage and price display helpers. Changing the cart creates a fresh submission identifier.
 - `server/auth.js`: salted scrypt password hashes, SQL-backed 12-hour sessions, logout, and throttling at 20 authentication attempts per IP per 15 minutes.
 - `server/orders.js`: server validation, authoritative prices, transactions, duplicate-submit protection, and customer-scoped order history.
 
 New JavaScript uses ES modules, camelCase, two spaces, single quotes, and semicolons. Bootstrap provides all layout and styling. The original SQL table and column names remain intact so existing data stays compatible; new migration tables use snake_case.
+
+Pizza-size illustrations are SVG diagrams with a shared canvas and diameter scale (12, 14, and 18 inches). The dashed outline is the 18-inch reference; toppings are illustrative. Regenerate them with `node scripts/build-pizza-graphics.js`. The shared header uses the supplied `Frontend/assets/banner.png` above the navigation.
 
 ## Ordering behavior
 
