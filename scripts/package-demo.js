@@ -42,6 +42,7 @@ export function buildDemoArchive(
     '.prettierrc.json',
     'README.md',
     'DEMO.md',
+    'verification.md',
     'start-demo.cmd',
     'start-demo.sh',
     'eslint.config.js',

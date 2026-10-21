@@ -5,6 +5,25 @@ import { TEST_EMPLOYEE } from './employee-fixture.js';
 
 const require = createRequire(import.meta.url);
 
+test('HTTP LAN demos can save drafts without crypto.randomUUID', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(crypto, 'randomUUID', { value: undefined });
+  });
+  await page.goto('/menu.html');
+  const draft = await page.evaluate(async () => {
+    const { readCart, writeCart } = await import('/js/cart.js');
+    const first = readCart();
+    const saved = writeCart([{ menuItemId: 1, quantity: 1, toppings: [] }]);
+    return { first, saved, restored: readCart() };
+  });
+  expect(draft.first.requestId).toMatch(/^[a-f0-9]{32}$/);
+  expect(draft.saved.requestId).toMatch(/^[a-f0-9]{32}$/);
+  expect(draft.saved.requestId).not.toBe(draft.first.requestId);
+  expect(draft.restored).toEqual(draft.saved);
+});
+
 async function checkAccessibility(page) {
   await page.evaluate(
     readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'),
