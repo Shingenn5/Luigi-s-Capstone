@@ -20,7 +20,7 @@ header.innerHTML = `
           <li class="nav-item"><a class="nav-link py-3" href="./menu.html">Our menu</a></li>
           <li class="nav-item"><a class="nav-link py-3" href="./about.html">About us</a></li>
           <li class="nav-item"><a class="nav-link py-3" href="./visit.html">Visit us</a></li>
-          <li class="nav-item"><a class="nav-link py-3" href="./employee-login.html" id="employeeLink">Employee login</a></li>
+          <li class="nav-item" id="employeeNavItem" hidden><a class="nav-link py-3" href="./employee.html" id="employeeLink">Employee orders</a></li>
           <li class="nav-item"><a class="btn btn-primary py-2 px-3" href="./order.html">Your order</a></li>
           <li class="nav-item"><button class="btn btn-outline-dark py-2" type="button" id="logoutButton" hidden>Logout</button></li>
         </ul>
@@ -38,6 +38,24 @@ if (STATIC_PREVIEW) {
 }
 
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
+// Keep staff access discoverable without competing with customer navigation.
+if (currentPage !== 'employee.html') {
+  const footer =
+    document.querySelector('footer') || document.createElement('footer');
+  footer.className = 'border-top bg-body-tertiary py-4';
+  footer.innerHTML = `
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div><a class="fw-bold text-body text-decoration-none" href="./">Luigi's Pizzeria</a><p class="small text-body-secondary mb-0 mt-1">A little slice of happiness. · Capstone project</p></div>
+      <nav class="d-flex flex-wrap align-items-center gap-3 small" aria-label="Footer navigation">
+        <a class="text-body-secondary py-2" href="./about.html">About us</a>
+        <a class="text-body-secondary py-2" href="./visit.html">Visit us</a>
+        <a class="text-body-secondary py-2" href="./employee-login.html" id="employeeFooterLink">Employee login</a>
+      </nav>
+    </div>`;
+  if (!footer.isConnected) document.body.append(footer);
+}
+
 header.querySelectorAll('a').forEach((link) => {
   if (link.getAttribute('href') === `./${currentPage}`) {
     link.setAttribute('aria-current', 'page');
@@ -58,8 +76,12 @@ try {
     if (customer)
       document.querySelector('#logoutButton').textContent = 'Customer logout';
     const employeeLink = document.querySelector('#employeeLink');
-    employeeLink.textContent = 'Employee orders';
-    employeeLink.href = './employee.html';
+    document.querySelector('#employeeNavItem').hidden = false;
+    const employeeFooterLink = document.querySelector('#employeeFooterLink');
+    if (employeeFooterLink) {
+      employeeFooterLink.textContent = 'Employee workspace';
+      employeeFooterLink.href = './employee.html';
+    }
     if (currentPage === 'employee.html') {
       employeeLink.setAttribute('aria-current', 'page');
       employeeLink.classList.add('fw-bold', 'text-decoration-underline');
