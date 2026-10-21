@@ -71,6 +71,44 @@ for (const path of [
   });
 }
 
+test('staff access stays in the footer before and after sign-in', async ({
+  page,
+}) => {
+  await page.goto('/login.html');
+  const staffHeaderLinks = page.locator(
+    '#siteHeader a[href="./employee-login.html"], #siteHeader a[href="./employee.html"]',
+  );
+  await expect(staffHeaderLinks).toHaveCount(0);
+  await expect(
+    page.locator('main').getByRole('link', { name: 'Employee login' }),
+  ).toHaveCount(0);
+  await page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'Employee login' })
+    .focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/employee-login.html$/);
+  await page.locator('#employeeUsername').fill(TEST_EMPLOYEE.username);
+  await page.locator('#employeePassword').fill(TEST_EMPLOYEE.password);
+  await page
+    .getByRole('button', { name: 'Employee login', exact: true })
+    .click();
+  await expect(page).toHaveURL(/employee.html$/);
+  await page.goto('/about.html');
+  const workspaceLink = page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'Employee workspace' });
+  await expect(workspaceLink).toBeVisible();
+  await expect(staffHeaderLinks).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Toggle navigation' }).click();
+  await expect(page.locator('#mainNav')).toBeVisible();
+  await expect(staffHeaderLinks).toHaveCount(0);
+  await workspaceLink.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/employee.html$/);
+});
+
 test('login and registration errors stay linked to fields and receive focus', async ({
   page,
 }) => {

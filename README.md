@@ -27,7 +27,7 @@ Frontend files live in `Frontend/`: HTML pages, assets, and browser JavaScript. 
 - `Frontend/employee.html` and `Frontend/js/employee.js`: protected kitchen board, manual stages, recall/cancellation, history, and phone/counter order entry.
 - `Frontend/about.html`: restaurant introduction with an explicit gap for approved owner/history content.
 - `Frontend/visit.html`: service information, project hours, and explicit gaps for verified contact details.
-- `Frontend/js/site.js`: shared navigation, account link, and logout. Login stays outside the mobile menu.
+- `Frontend/js/site.js`: shared navigation, footer, account link, and logout. Customer login stays outside the mobile menu. Employee access stays in the footer, including a workspace link for signed-in staff; no employee links appear in the customer header.
 - `Frontend/js/cart.js`: browser draft storage and price display helpers. Changing the cart creates a fresh submission identifier.
 - `server/auth.js`: salted scrypt password hashes, SQL-backed 12-hour sessions, logout, and throttling at 20 authentication attempts per IP per 15 minutes.
 - `server/orders.js`: server validation, authoritative prices, transactions, duplicate-submit protection, and customer-scoped order history.
@@ -69,6 +69,8 @@ The restaurant address, phone number, owner's biography, and restaurant history 
 GitHub Pages can preview public pages but cannot run the Node server, authentication, SQL menu API, or order submission. Those features require running this app on a Node host with persistent disk storage. API failures are shown on the relevant form.
 
 ## GitHub Pages publishing
+
+For public logins, saved orders, and kitchen access, host the full Node app and set the repository Actions variable `FULL_APP_URL` to its public HTTPS origin. The Pages build then generates entry pages that send visitors to that same route on the full app, with a normal link as a fallback. See [public site setup](deploy/PUBLIC-SITE.md). No public backend URL is configured by source changes alone; without that variable, the limited preview below remains in use.
 
 The live preview is [Luigi's Pizzeria](https://shingenn5.github.io/Luigi-s-Capstone/). GitHub Pages must use **GitHub Actions** as its publishing source. `.github/workflows/deploy-pages.yml` builds and publishes the public frontend on every push to `main`, preserving the existing site address. The repository root contains the backend; publishing it directly displays the wrong content after the `Frontend/` move.
 

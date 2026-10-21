@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Get to know Luigi's Pizzeria. Choose your pizza, make it your own, and share a little happiness." />
     <title>About us | Luigi's Pizzeria</title>
-    <link rel="icon" href="./assets/logo.png" type="image/png" />
+    <link rel="icon" href="./assets/Luigis-Logo.png" type="image/png" />
     <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
     <script src="./assets/bootstrap.bundle.min.js" defer></script>
     <script type="module" src="./js/site.js"></script>
@@ -12,12 +13,69 @@
   <body>
     <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
     <header class="border-bottom" id="siteHeader"><nav class="container py-3" aria-label="Main navigation"><a href="./index.html">Luigi's Pizzeria</a> · <a href="./menu.html">Menu</a> · <a href="./login.html">Login</a></nav></header>
-    <main class="container py-5" id="main" tabindex="-1">
-      <div class="row gy-5 gx-4 align-items-center">
-        <div class="col-lg-6"><img class="img-fluid rounded-3" src="./assets/pizza.jpg" alt="Illustrative cheese pizza on a wooden table" width="1200" height="900" /><p class="small text-body-secondary mt-2">Sample photograph; not restaurant food photography.</p></div>
-        <section class="col-lg-6"><p class="text-primary fw-semibold text-uppercase">About Luigi's</p><h1 class="display-6 fw-bold">A little slice of happiness.</h1><p class="lead text-body-secondary">Good company. Your favorite toppings. Pizza made for sharing.</p><p>Explore three pizza sizes, build your own combination of ingredients, and add a drink to your order.</p><p class="text-body-secondary">The owner's biography, restaurant history, and team photos are awaiting approved content. This page will tell their story once those details are confirmed.</p><div class="d-flex flex-wrap gap-3"><a class="btn btn-primary py-2 px-4" href="./menu.html">Build your pizza</a><a class="btn btn-outline-dark py-2" href="./visit.html">Visit us</a></div></section>
-      </div>
+    <main id="main" tabindex="-1">
+      <section class="bg-body-tertiary py-5" aria-labelledby="aboutTitle">
+        <div class="container py-lg-4">
+          <div class="row gy-5 gx-4 align-items-center">
+            <div class="col-lg-6">
+              <p class="text-primary fw-semibold text-uppercase mb-3">A seat at Luigi's</p>
+              <h1 class="display-3 fw-bold mb-4" id="aboutTitle">Good pizza.<br />Better company.</h1>
+              <p class="lead text-body-secondary mb-4">Some of the best moments happen around a pizza. A favorite topping, another slice, and a little more time together.</p>
+              <p class="mb-4">Make room for a Luigi's night. Build a pizza your way, add something to sip, and bring your favorite people.</p>
+              <div class="d-flex flex-wrap gap-3">
+                <a class="btn btn-primary btn-lg px-4" href="./menu.html">Find your favorite <span aria-hidden="true">&rarr;</span></a>
+                <a class="btn btn-outline-dark btn-lg px-4" href="./visit.html">Plan a visit</a>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <figure class="mb-0">
+                <img class="img-fluid rounded-4 shadow-sm" src="./assets/pizza.jpg" alt="Illustrative cheese and mushroom pizza on a wooden table" width="1200" height="900" fetchpriority="high" />
+                <figcaption class="small text-body-secondary mt-3">A little inspiration for pizza night. Sample photograph.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="container py-5" aria-labelledby="yourWayTitle">
+        <div class="row g-4 py-lg-3">
+          <div class="col-lg-4">
+            <p class="text-primary fw-semibold text-uppercase mb-2">The Luigi's way</p>
+            <h2 class="display-6 fw-bold" id="yourWayTitle">Your kind<br class="d-none d-lg-inline" /> of pizza night.</h2>
+          </div>
+          <div class="col-lg-8">
+            <div class="row g-4">
+              <div class="col-md-4 border-start ps-4">
+                <p class="text-primary fw-bold mb-3" aria-hidden="true">01 /</p>
+                <h3 class="h4">Pick your size</h3>
+                <p class="text-body-secondary mb-0">Small, medium, or large. Start with the size that suits your table.</p>
+              </div>
+              <div class="col-md-4 border-start ps-4">
+                <p class="text-primary fw-bold mb-3" aria-hidden="true">02 /</p>
+                <h3 class="h4">Make it yours</h3>
+                <p class="text-body-secondary mb-0">Choose your toppings and adjust the sauce and cheese to your taste.</p>
+              </div>
+              <div class="col-md-4 border-start ps-4">
+                <p class="text-primary fw-bold mb-3" aria-hidden="true">03 /</p>
+                <h3 class="h4">Enjoy together</h3>
+                <p class="text-body-secondary mb-0">Pick it up for a night at home, or choose dine-in at checkout.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <details class="border-top mt-4 pt-3 text-body-secondary small">
+          <summary class="py-2">About this capstone</summary>
+          <p class="mt-2 mb-0">The owner's biography, restaurant history, and team photos are awaiting approved content. The photograph above is illustrative, not restaurant food photography.</p>
+        </details>
+      </section>
+
+      <section class="container pb-5" aria-labelledby="pizzaNightTitle">
+        <div class="bg-dark text-white rounded-4 p-4 p-lg-5 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
+          <div><p class="small text-uppercase mb-2">Good company. Your favorite toppings.</p><h2 class="h1 fw-bold mb-0" id="pizzaNightTitle">A little slice of happiness.</h2></div>
+          <a class="btn btn-light btn-lg px-4 align-self-start align-self-lg-center flex-shrink-0" href="./menu.html">Explore the menu <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </section>
     </main>
-    <footer class="border-top py-4"><div class="container d-flex flex-wrap justify-content-between gap-3"><span>Luigi's Pizzeria · Capstone project</span><a href="./visit.html">Plan your visit</a></div></footer>
+    <footer class="border-top py-4"><div class="container d-flex flex-wrap justify-content-between gap-3"><span>Luigi's Pizzeria · Capstone project</span><a href="./employee-login.html">Employee login</a></div></footer>
   </body>
 </html>
