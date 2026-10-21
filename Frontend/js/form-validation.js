@@ -36,9 +36,9 @@ export function validateField(input) {
 }
 
 export function validateForm(form) {
-  const invalidInputs = [...form.querySelectorAll('input, select')].filter(
-    (input) => input.willValidate && updateField(input),
-  );
+  const invalidInputs = [
+    ...form.querySelectorAll('input, select, textarea'),
+  ].filter((input) => input.willValidate && updateField(input));
   let summary = form.querySelector('[data-error-summary]');
   if (!invalidInputs.length) {
     if (summary) summary.hidden = true;

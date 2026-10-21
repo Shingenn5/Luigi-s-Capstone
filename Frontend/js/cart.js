@@ -5,7 +5,7 @@ import {
 } from './pizza-options.js';
 
 const CART_KEY = 'luigis-order-v1';
-function createRequestId() {
+export function createRequestId() {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   // LAN demos over HTTP still have getRandomValues, but not randomUUID.
   return [...crypto.getRandomValues(new Uint8Array(16))]

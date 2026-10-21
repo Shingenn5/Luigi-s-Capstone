@@ -284,7 +284,7 @@ test('employee sign-in protects orders and supports keyboard access and logout',
     .getByRole('button', { name: 'Refresh orders', exact: true })
     .focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('#employeeStatus')).toContainText('pending');
+  await expect(page.locator('#employeeStatus')).toContainText('active orders');
   await page.setViewportSize({ width: 320, height: 800 });
   expect(
     await page.evaluate(

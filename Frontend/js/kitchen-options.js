@@ -12,5 +12,6 @@ export function nextStage(stage, hasPizza) {
   const flow = hasPizza
     ? [...STAGES, 'Completed']
     : ['Pending', 'Preparing', 'Ready', 'Completed'];
-  return flow[flow.indexOf(stage) + 1];
+  const index = flow.indexOf(stage);
+  return index < 0 ? undefined : flow[index + 1];
 }

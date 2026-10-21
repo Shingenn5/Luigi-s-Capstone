@@ -15,7 +15,8 @@ const ticketQuery = `SELECT o.orderID AS orderId, o.customerName, o.phoneNumber,
   o.orderDate, o.totalCents, o.orderStatus, w.revision, w.entered_at AS enteredAt,
   COALESCE(d.service_type, s.service_type, 'Pickup') AS serviceType,
   COALESCE(s.source, 'Website') AS source, COALESCE(s.table_name, '') AS tableName,
-  COALESCE(s.notes, '') AS notes
+  COALESCE(s.notes, '') AS notes,
+  COALESCE((SELECT reason FROM order_events WHERE order_id = o.orderID ORDER BY revision DESC LIMIT 1), '') AS lastReason
   FROM Orders o JOIN order_workflow w ON w.order_id = o.orderID
   LEFT JOIN order_details d ON d.order_id = o.orderID
   LEFT JOIN staff_order_details s ON s.order_id = o.orderID`;
@@ -117,9 +118,9 @@ export function changeStatus(
 
 export function saveStaffOrder(database, employeeId, body = {}) {
   const { customerName, serviceType, source, requestId, items } = body;
-  const phoneNumber = body.phoneNumber || '';
-  const tableName = body.tableName || '';
-  const notes = body.notes || '';
+  const phoneNumber = body.phoneNumber ?? '';
+  const tableName = body.tableName ?? '';
+  const notes = body.notes ?? '';
   if (
     typeof customerName !== 'string' ||
     !customerName.trim() ||
@@ -265,6 +266,9 @@ export function createKitchenRouter(database) {
       pageSize: 50,
       pages,
       serverTime: Date.now(),
+      newestOrderId: database
+        .prepare('SELECT COALESCE(MAX(orderID), 0) AS id FROM Orders')
+        .get().id,
     });
   });
   router.get('/orders/submissions/:requestId', (request, response) => {
@@ -279,7 +283,7 @@ export function createKitchenRouter(database) {
     const result = saveStaffOrder(
       database,
       request.employee.employeeId,
-      request.body,
+      request.body || {},
     );
     response.status(result.created ? 201 : 200).json(result.order);
   });
