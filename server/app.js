@@ -5,8 +5,9 @@ import { createAuthRouter } from './auth.js';
 import { createOrderRouter } from './orders.js';
 import { createEmployeeRouter, getEmployee } from './employees.js';
 
-export function createApp(database) {
+export function createApp(database, { trustProxy = false } = {}) {
   const app = express();
+  if (trustProxy) app.set('trust proxy', trustProxy);
   app.disable('x-powered-by');
   app.use((_request, response, next) => {
     response.set({
@@ -22,6 +23,12 @@ export function createApp(database) {
     next();
   });
   app.use(express.json({ limit: '32kb' }));
+  app.get('/healthz', (_request, response) => {
+    database.prepare('SELECT 1').get();
+    response
+      .set('Cache-Control', 'no-store')
+      .json({ status: 'ok', service: 'luigis-pizzeria' });
+  });
   app.use('/api', (request, response, next) => {
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
       const expectedOrigin =

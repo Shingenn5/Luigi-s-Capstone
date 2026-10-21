@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
+    "demo": "node scripts/start-demo.js",
+    "demo:lan": "node scripts/start-demo.js --lan",
     "build:pages": "node scripts/build-pages.js",
     "employee:create": "node --env-file-if-exists=.env scripts/create-employee.js",
     "test": "node --test",
@@ -36,6 +38,7 @@
     "@playwright/test": "^1.64.1",
     "axe-core": "^4.14.0",
     "eslint": "^10.13.0",
+    "fflate": "^0.8.3",
     "globals": "^17.13.0",
     "prettier": "^3.9.10"
   }

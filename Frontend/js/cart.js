@@ -5,6 +5,13 @@ import {
 } from './pizza-options.js';
 
 const CART_KEY = 'luigis-order-v1';
+function createRequestId() {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  // LAN demos over HTTP still have getRandomValues, but not randomUUID.
+  return [...crypto.getRandomValues(new Uint8Array(16))]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
 export const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -22,11 +29,11 @@ export function readCart() {
   } catch {
     // An invalid saved draft should not prevent starting a new order.
   }
-  return { items: [], requestId: crypto.randomUUID() };
+  return { items: [], requestId: createRequestId() };
 }
 
 export function writeCart(items) {
-  const cart = { items, requestId: crypto.randomUUID() };
+  const cart = { items, requestId: createRequestId() };
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
   } catch {
