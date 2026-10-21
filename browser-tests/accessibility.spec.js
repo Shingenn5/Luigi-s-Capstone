@@ -205,7 +205,7 @@ test('employee sign-in protects orders and supports keyboard access and logout',
 }) => {
   await page.goto('/employee.html');
   await expect(page).toHaveURL(/employee-login.html$/);
-  const origin = 'http://127.0.0.1:3100';
+  const origin = new URL(page.url()).origin;
   await page.request.post('/api/auth/register', {
     headers: { Origin: origin },
     data: {

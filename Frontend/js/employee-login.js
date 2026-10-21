@@ -1,9 +1,17 @@
 import { apiRequest } from './api.js';
+import { STATIC_PREVIEW } from './runtime-config.js';
 import { prepareForm, validateForm, focusMessage } from './form-validation.js';
 
 const form = document.querySelector('#employeeLoginForm');
 const status = document.querySelector('#employeeLoginStatus');
 prepareForm(form);
+if (STATIC_PREVIEW) {
+  form.querySelectorAll('input, button').forEach((control) => {
+    control.disabled = true;
+  });
+  status.textContent =
+    'Employee sign-in is unavailable in this public preview.';
+}
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();

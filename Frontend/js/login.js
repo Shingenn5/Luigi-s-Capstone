@@ -1,5 +1,6 @@
 import { prepareForm, validateForm, focusMessage } from './form-validation.js';
 import { apiRequest } from './api.js';
+import { STATIC_PREVIEW } from './runtime-config.js';
 
 const loginForm = document.querySelector('#loginForm');
 const identityInput = document.querySelector('#loginIdentity');
@@ -8,6 +9,14 @@ const loginStatus = document.querySelector('#loginStatus');
 const registerButton = document.querySelector('#registerMode');
 let isRegistering = false;
 prepareForm(loginForm);
+if (STATIC_PREVIEW) {
+  loginForm.querySelectorAll('input, button').forEach((control) => {
+    control.disabled = true;
+  });
+  registerButton.disabled = true;
+  loginStatus.textContent =
+    'Customer sign-in is unavailable in this preview. You can still browse the menu and build a draft order.';
+}
 
 loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();

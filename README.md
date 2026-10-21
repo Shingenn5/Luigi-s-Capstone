@@ -64,6 +64,14 @@ The restaurant address, phone number, owner's biography, and restaurant history 
 
 GitHub Pages can preview public pages but cannot run the Node server, authentication, SQL menu API, or order submission. Those features require running this app on a Node host with persistent disk storage. API failures are shown on the relevant form.
 
+## GitHub Pages publishing
+
+The live preview is [Luigi's Pizzeria](https://shingenn5.github.io/Luigi-s-Capstone/). GitHub Pages must use **GitHub Actions** as its publishing source. `.github/workflows/deploy-pages.yml` builds and publishes the public frontend on every push to `main`, preserving the existing site address. The repository root contains the backend; publishing it directly displays the wrong content after the `Frontend/` move.
+
+`npm run build:pages` copies `Frontend/` into the ignored `.pages/` artifact and generates public menu/topping JSON from a fresh in-memory seed database. It never copies local customer data, orders, credentials, or server files. The employee workspace is excluded. The build sets a preview flag only in the published artifact; the Node app retains its real API behavior.
+
+On Pages, visitors can browse the current menu and build/review a draft cart. Sign-in and sending orders are explicitly unavailable, and their submit buttons are disabled. Running `npm start` continues to support the full local application. Browser tests exercise both modes and the `/Luigi-s-Capstone/` project path. If the default test port is busy, set `TEST_PORT` to an unused port before `npm run test:a11y`.
+
 ## Graphics
 
 `Frontend/assets/logo.svg`, `banner.svg`, and `pizza-small.svg`, `pizza-medium.svg`, and `pizza-large.svg` are editable, code-drawn SVG graphics. The size illustrations use different diameters and label the existing 12-, 14-, and 18-inch sizes. They are draft capstone branding, not approved restaurant artwork. No image generation service was used.

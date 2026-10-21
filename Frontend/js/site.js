@@ -1,4 +1,5 @@
 import { apiRequest } from './api.js';
+import { STATIC_PREVIEW } from './runtime-config.js';
 
 const header = document.querySelector('#siteHeader');
 header.innerHTML = `
@@ -27,6 +28,14 @@ header.innerHTML = `
       <a class="btn btn-outline-primary py-2 ms-2" href="./login.html" id="accountLink">Login</a>
     </div>
   </nav>`;
+
+if (STATIC_PREVIEW) {
+  const notice = document.createElement('p');
+  notice.className = 'container small text-body-secondary py-2 mb-0';
+  notice.textContent =
+    'Website preview: browse the menu and build a draft. Sign-in and sending orders are unavailable here.';
+  header.append(notice);
+}
 
 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 header.querySelectorAll('a').forEach((link) => {

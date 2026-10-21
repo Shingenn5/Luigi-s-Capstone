@@ -58,3 +58,11 @@ Accessibility target: WCAG 2.2 AA. These checks do not certify full conformance.
 - `npm test`: 13 passing tests, including employee provisioning, hash storage, duplicate usernames, failed login, session rotation/expiry, disabled accounts, customer/employee isolation, protected page redirect/cache behavior, logout, cross-origin writes, and throttling.
 - `npm run test:a11y`: 12 passing tests. Added employee login/error states, keyboard submission, signed-in populated workspace, mobile layout, refresh, logout, and protected-page redirects. No axe violations in tested states. This remains automated/keyboard evidence, not a full screen-reader conformance claim.
 - Visually inspected employee login on desktop and a populated workspace on desktop and 375px. A synthetic order with double pepperoni and light sauce rendered correctly. No horizontal overflow or custom CSS.
+
+## October 20, 2026 — GitHub Pages publishing fix
+
+The frontend had moved into `Frontend/`, while Pages still used legacy publishing from the repository root. The old deployment completed successfully but served repository documentation instead of the restaurant home page.
+
+Added a Pages workflow that publishes only the built frontend from `main` at the existing project URL. The artifact contains a seed-only menu snapshot, keeps account/order submission explicitly unavailable, and excludes the employee workspace and all server/database/customer files. The Node app keeps its existing API behavior.
+
+Validated with 13 passing API tests, lint, formatting, and 14 passing browser tests, including Pages under `/Luigi-s-Capstone/`, pizza selection, draft persistence, disabled sign-in/submission, artifact exclusions, and mobile layout. The test suite supports an alternate port so an already-running local server can remain untouched.

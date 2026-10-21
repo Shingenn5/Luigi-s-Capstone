@@ -5,6 +5,7 @@ import {
   focusMessage,
 } from './form-validation.js';
 import { apiRequest } from './api.js';
+import { STATIC_PREVIEW } from './runtime-config.js';
 import { toppingLabel, preferenceLabel } from './pizza-options.js';
 import { readCart, writeCart, describeItem, currency } from './cart.js';
 
@@ -190,6 +191,9 @@ try {
     document.querySelector('#customerName').value =
       `${customer.firstName} ${customer.lastName}`;
     await renderHistory();
+  } else if (STATIC_PREVIEW) {
+    document.querySelector('#accountStatus').textContent =
+      'Review your draft below. Sending orders is unavailable in this preview.';
   } else {
     document.querySelector('#accountStatus').innerHTML =
       'Please <a href="./login.html">log in or create an account</a> to save your order. Your draft will stay here.';
