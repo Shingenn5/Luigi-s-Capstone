@@ -7,10 +7,10 @@ header.innerHTML = `
     <div class="container">
       <a class="navbar-brand" href="./">
         <img
-          src="./assets/logo.png"
+          src="./assets/Luigis-Logo.png"
           alt="Luigi's Pizzeria"
-          width="130"
-          height="80"
+          width="110"
+          height="60"
           class="img-fluid"
         />
       </a>
