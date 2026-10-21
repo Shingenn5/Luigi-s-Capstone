@@ -39,6 +39,15 @@ try {
         'Dependency installation failed. Install Node.js with npm and check your internet connection, then retry.',
       );
   }
+  const { openDatabase } = await import('../server/database.js');
+  const { ensureDemoEmployee } = await import('../server/demo-employee.js');
+  const database = openDatabase(config.databasePath);
+  try {
+    if (await ensureDemoEmployee(database))
+      console.log('Created demo employee: admin / adminadmin');
+  } finally {
+    database.close();
+  }
   console.log(
     'Full local demo: customer accounts, saved orders, and employee access. Stop with Ctrl+C.',
   );

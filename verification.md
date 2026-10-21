@@ -75,3 +75,9 @@ Validated with 13 passing API tests, lint, formatting, and 14 passing browser te
 - `npm test`: 17 passed. `npm run verify:demo`: passed. Lint and formatting checks passed. Local HTTP/npm checks required running outside the restricted sandbox, which blocked localhost connections and package downloads.
 - `npm run test:a11y`: 15 passed in Edge on isolated port 3102. Includes the existing desktop/mobile accessibility and keyboard checks, static Pages preview, and a new draft-persistence check with `crypto.randomUUID` unavailable as on LAN HTTP. Updated the Pages logo assertion to match the previously committed `Luigis-Logo.png` artwork. These checks do not certify full accessibility.
 - Included a Compute Engine installer, dedicated systemd service account, persistent SQLite data directory, SSH tunnel instructions, and optional Nginx/HTTPS setup. Both shell launch/install scripts passed Bash syntax checks. No GCP VM was provisioned and no Linux installation, systemd execution, or public HTTPS deployment was performed; those steps still need verification on the target VM.
+
+## October 21, 2026 — requested demo employee account
+
+- The demo launcher creates `admin` / `adminadmin` using the existing password-hashing implementation when that username is missing. Existing passwords and disabled accounts are preserved. This is normal employee access, not a new administrator permission level. Normal server/GCP startup does not create demo accounts.
+- Created the account in the running port-3001 demo and verified employee login and access to the employee orders API, then logged out the verification session. Updated the clean-package smoke check to verify the generated account too.
+- Restricted test discovery to the source `test/` directory so extracted demo copies do not run duplicate tests. All 18 source tests, lint, formatting, and extracted-demo verification passed.

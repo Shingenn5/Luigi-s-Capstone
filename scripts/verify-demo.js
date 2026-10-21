@@ -100,6 +100,15 @@ try {
     });
   }
   assert.equal((await (await request('/healthz')).json()).status, 'ok');
+  assert.equal(
+    (
+      await request('/api/employee/auth/login', {
+        username: 'admin',
+        password: 'adminadmin',
+      })
+    ).status,
+    200,
+  );
   for (const page of ['/', '/menu.html', '/employee-login.html']) {
     const response = await request(page);
     assert.equal(response.status, 200, `${page} must be included in the demo`);

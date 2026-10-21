@@ -52,7 +52,9 @@ Orders are saved as **Pending**. Employees can sign in and view pending orders. 
 
 ## Employee setup
 
-From this repository folder, run `npm run employee:create` in a normal interactive terminal. Enter a username, display name, password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. There is no default employee account, shared password, or public employee registration.
+The demo launcher (`npm run demo` or `start-demo.cmd`) provisions `admin` / `adminadmin` if that username is missing. Existing accounts are preserved. This account has normal employee access; there is no separate administrator role. Normal `npm start` and the GCP service do not provision shared demo credentials.
+
+From this repository folder, run `npm run employee:create` in a normal interactive terminal to add individual employees. Enter a username, display name, password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. There is no public employee registration.
 
 Open `/employee-login.html` and sign in using the account you created. Employee usernames use 3–32 letters, numbers, periods, underscores, or hyphens; passwords use 8–128 characters and may contain spaces. Usernames are case-insensitive. Password managers and paste are supported.
 

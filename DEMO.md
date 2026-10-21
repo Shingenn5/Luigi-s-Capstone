@@ -15,13 +15,17 @@ If port 3000 is busy, use `npm run demo -- --port 3001` and open the URL it prin
 
 ## Add an employee
 
-In a second terminal, open this same folder and run:
+The demo launcher creates **username `admin`, password `adminadmin`** if that username does not exist. Use it on **Employee login**. It has the existing employee access to pending orders; there is no separate administrator role. Restarting never resets an existing account's password or active status.
+
+These are shared demo credentials. `npm start` and the GCP service do not create this account; use individually provisioned accounts for public hosting.
+
+To add another employee, open this same folder in a second terminal and run:
 
 ```text
 npm run employee:create
 ```
 
-Choose a username, display name, and password. Password entry is hidden. There are no built-in accounts or shared passwords. Open **Employee login** on the website and use those credentials.
+Choose a username, display name, and password. Password entry is hidden. Open **Employee login** on the website and use those credentials.
 
 Customers can create their own accounts through **Login → New customer**. A good demo is: create a customer, build a pizza, save a pending order, then sign in as an employee and refresh the order list. Employee access is read-only; acceptance, kitchen processing, tax, and payment are not implemented.
 
@@ -31,7 +35,7 @@ By default, data stays in `Database/luigis_pizzeria.db` inside this folder. Rest
 
 For a simple backup, stop the app, then copy the entire `Database` folder somewhere safe. Do not overwrite that folder when upgrading. An optional `.env` can set `DATABASE_PATH` to a separate absolute location; the server and employee-creation command use the same setting.
 
-The distributed ZIP contains **no existing customer data, staff accounts, passwords, `.env`, or installed dependencies**. Do not forward your used demo folder to someone else; generate a fresh ZIP from the source repo with `npm run package:demo` instead.
+The distributed ZIP contains **no existing customer data, employee database, `.env`, or installed dependencies**. The demo launcher provisions the documented demo login on first use. Do not forward your used demo folder to someone else; generate a fresh ZIP from the source repo with `npm run package:demo` instead.
 
 ## Show it to another device
 
