@@ -4,6 +4,8 @@ A capstone ordering app using HTML, Bootstrap 5.3.8 (Bootswatch Simplex), plain 
 
 ## Run locally
 
+For a portable laptop demo, run `npm run demo` or double-click `start-demo.cmd`. The launcher installs missing server dependencies on first use. See [DEMO.md](DEMO.md) for employee setup, saved data, LAN access, and troubleshooting. `npm run package:demo` creates a clean shareable ZIP in `demo-dist/`; `npm run verify:demo` tests an extracted copy with a fresh database. [GCP hosting instructions](deploy/gcp/README.md) include a Compute Engine installer and systemd service.
+
 1. Install Node.js 24.19 or newer within the 24 LTS release line.
 2. Run `npm ci` in this folder.
 3. Optionally copy `.env.example` to `.env` and change the settings.

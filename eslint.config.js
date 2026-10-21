@@ -6,6 +6,8 @@ export default [
     ignores: [
       'Frontend/assets/**',
       '.pages/**',
+      'demo-dist/**',
+      '.demo-smoke/**',
       'node_modules/**',
       'coverage/**',
     ],

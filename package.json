@@ -7,6 +7,8 @@
     "start": "node --env-file-if-exists=.env server.js",
     "demo": "node scripts/start-demo.js",
     "demo:lan": "node scripts/start-demo.js --lan",
+    "package:demo": "node scripts/package-demo.js",
+    "verify:demo": "node scripts/verify-demo.js",
     "build:pages": "node scripts/build-pages.js",
     "employee:create": "node --env-file-if-exists=.env scripts/create-employee.js",
     "test": "node --test",
