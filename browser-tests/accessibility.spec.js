@@ -71,11 +71,14 @@ for (const path of [
   });
 }
 
-test('staff access stays secondary for visitors and opens the workspace after sign-in', async ({
+test('staff access stays in the footer before and after sign-in', async ({
   page,
 }) => {
   await page.goto('/login.html');
-  await expect(page.locator('#employeeNavItem')).toBeHidden();
+  const staffHeaderLinks = page.locator(
+    '#siteHeader a[href="./employee-login.html"], #siteHeader a[href="./employee.html"]',
+  );
+  await expect(staffHeaderLinks).toHaveCount(0);
   await expect(
     page.locator('main').getByRole('link', { name: 'Employee login' }),
   ).toHaveCount(0);
@@ -92,11 +95,17 @@ test('staff access stays secondary for visitors and opens the workspace after si
     .click();
   await expect(page).toHaveURL(/employee.html$/);
   await page.goto('/about.html');
-  const navigation = page.getByRole('navigation', { name: 'Main navigation' });
-  await expect(
-    navigation.getByRole('link', { name: 'Employee orders' }),
-  ).toBeVisible();
-  await navigation.getByRole('link', { name: 'Employee orders' }).click();
+  const workspaceLink = page
+    .getByRole('contentinfo')
+    .getByRole('link', { name: 'Employee workspace' });
+  await expect(workspaceLink).toBeVisible();
+  await expect(staffHeaderLinks).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Toggle navigation' }).click();
+  await expect(page.locator('#mainNav')).toBeVisible();
+  await expect(staffHeaderLinks).toHaveCount(0);
+  await workspaceLink.focus();
+  await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/employee.html$/);
 });
 

@@ -20,7 +20,6 @@ header.innerHTML = `
           <li class="nav-item"><a class="nav-link py-3" href="./menu.html">Our menu</a></li>
           <li class="nav-item"><a class="nav-link py-3" href="./about.html">About us</a></li>
           <li class="nav-item"><a class="nav-link py-3" href="./visit.html">Visit us</a></li>
-          <li class="nav-item" id="employeeNavItem" hidden><a class="nav-link py-3" href="./employee.html" id="employeeLink">Employee orders</a></li>
           <li class="nav-item"><a class="btn btn-primary py-2 px-3" href="./order.html">Your order</a></li>
           <li class="nav-item"><button class="btn btn-outline-dark py-2" type="button" id="logoutButton" hidden>Logout</button></li>
         </ul>
@@ -75,16 +74,10 @@ try {
   if (employee) {
     if (customer)
       document.querySelector('#logoutButton').textContent = 'Customer logout';
-    const employeeLink = document.querySelector('#employeeLink');
-    document.querySelector('#employeeNavItem').hidden = false;
     const employeeFooterLink = document.querySelector('#employeeFooterLink');
     if (employeeFooterLink) {
       employeeFooterLink.textContent = 'Employee workspace';
       employeeFooterLink.href = './employee.html';
-    }
-    if (currentPage === 'employee.html') {
-      employeeLink.setAttribute('aria-current', 'page');
-      employeeLink.classList.add('fw-bold', 'text-decoration-underline');
     }
   }
 } catch {

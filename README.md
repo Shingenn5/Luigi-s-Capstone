@@ -27,7 +27,7 @@ Frontend files live in `Frontend/`: HTML pages, assets, and browser JavaScript. 
 - `Frontend/employee.html` and `Frontend/js/employee.js`: protected kitchen board, manual stages, recall/cancellation, history, and phone/counter order entry.
 - `Frontend/about.html`: restaurant introduction with an explicit gap for approved owner/history content.
 - `Frontend/visit.html`: service information, project hours, and explicit gaps for verified contact details.
-- `Frontend/js/site.js`: shared navigation, footer, account link, and logout. Customer login stays outside the mobile menu. Employee login is a secondary footer link; signed-in staff also see Employee orders in the header.
+- `Frontend/js/site.js`: shared navigation, footer, account link, and logout. Customer login stays outside the mobile menu. Employee access stays in the footer, including a workspace link for signed-in staff; no employee links appear in the customer header.
 - `Frontend/js/cart.js`: browser draft storage and price display helpers. Changing the cart creates a fresh submission identifier.
 - `server/auth.js`: salted scrypt password hashes, SQL-backed 12-hour sessions, logout, and throttling at 20 authentication attempts per IP per 15 minutes.
 - `server/orders.js`: server validation, authoritative prices, transactions, duplicate-submit protection, and customer-scoped order history.
