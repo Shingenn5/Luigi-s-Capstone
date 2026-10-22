@@ -29,6 +29,16 @@ Validation: 25 backend tests passed. All 27 browser scenarios passed across the 
 
 Use [the acceptance-testing walkthrough](../../TESTING.md) for customer and staff order steps.
 
+## Staff account creation — October 21, 2026
+
+Runtime commit `e5db8cdb85ff38da04104d0607ed6acd82978ed5` is deployed at the same HTTPS origin. Migration 005 adds employee/admin roles; existing accounts retain employee access. The existing private cloud `admin` account was explicitly granted the admin role during this release, with its password preserved. Sign in through **Employee login → Staff accounts** to create either role. New servers can bootstrap an admin with `npm run admin:create` against their configured database.
+
+The previous source, stopped SQLite data directory, and environment configuration are backed up under `/var/backups/luigis/e5db8cd-20261022T015338Z`. The release archive SHA-256 was verified before installation, and deployed account code/migration matched that archive. Both app and tunnel services remained active after the release and an app-only persistence restart; the tunnel hostname was preserved.
+
+Validation: lint and formatting passed, all 27 backend tests and all 29 browser scenarios passed, and the desktop/mobile renders were visually inspected. On the public HTTPS site, Chrome created labelled temporary employee and admin accounts through the form at 1280px and 390px. Both roles logged in before and after an app restart, and ordinary employees were rejected when attempting account creation. Verification sessions were logged out; both temporary accounts and their associated sessions were deleted, and cleanup metadata was removed. Test passwords remained in memory. Edge automation could not navigate to the public employee page in this environment; Chrome completed the live checks.
+
+This entry is deployment evidence added after the runtime release; its documentation commit is separate from the deployed runtime SHA.
+
 ## Verified behavior
 
 All 24 existing Node tests passed before publishing. Public HTTPS probes verified health, unauthorized kitchen rejection, customer registration/login/logout, Secure session cookies, server-calculated prices, duplicate-submit protection, all four kitchen advances and HTTP 409 for stale revisions. A synthetic $22 order labelled `Deployment test - no food` reached Completed. Employee/customer login, the order and completed history survived a Node service restart. Browser verification confirmed signed-in customer history and the live Pages redirect. The synthetic browser session was logged out afterward.
