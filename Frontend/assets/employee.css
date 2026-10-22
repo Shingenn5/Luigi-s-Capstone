@@ -1,0 +1,109 @@
+/* Bootstrap supplies layout and controls. These exceptions support kitchen scanning,
+   stable ticket selection, and large touch targets on the employee workspace only. */
+.employee-workspace {
+  --kitchen-new: var(--bs-primary);
+  --kitchen-preparing: var(--bs-info-text-emphasis);
+  --kitchen-oven: var(--bs-warning-text-emphasis);
+  --kitchen-ready: var(--bs-success);
+  font-size: 1rem;
+}
+
+.employee-workspace
+  :is(
+    .btn,
+    .form-control,
+    .form-select,
+    summary,
+    #staffToppings > div > label
+  ) {
+  min-height: 44px;
+}
+
+.employee-workspace .btn-outline-secondary {
+  --bs-btn-color: var(--bs-dark-text-emphasis);
+}
+
+/* Switch navigation states together so text never fades through a low-contrast pair. */
+.employee-workspace [data-view] {
+  transition: none;
+}
+
+.employee-workspace :is(article, .kitchen-lane, #employeeIdentity) {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.employee-workspace .kitchen-lane {
+  border-top: 4px solid var(--lane-color);
+  background: var(--bs-secondary-bg);
+  border-radius: var(--bs-border-radius);
+}
+
+.employee-workspace [data-lane='Pending'] {
+  --lane-color: var(--kitchen-new);
+}
+.employee-workspace [data-lane='Preparing'] {
+  --lane-color: var(--kitchen-preparing);
+}
+.employee-workspace [data-lane='In oven'] {
+  --lane-color: var(--kitchen-oven);
+}
+.employee-workspace [data-lane='Ready'] {
+  --lane-color: var(--kitchen-ready);
+}
+
+.employee-workspace .kitchen-ticket {
+  border: 1px solid var(--bs-border-color);
+  box-shadow: var(--bs-box-shadow-sm);
+}
+
+.employee-workspace .kitchen-ticket.is-selected {
+  outline: 3px solid var(--bs-primary);
+  outline-offset: 1px;
+}
+
+.employee-workspace .ticket-selector {
+  color: var(--bs-emphasis-color);
+  background: var(--bs-primary-bg-subtle);
+  border: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 0;
+}
+
+.employee-workspace .ticket-selector:hover {
+  background: var(--bs-primary-border-subtle);
+}
+
+.employee-workspace :is(.ticket-selector:focus-visible, summary:focus-visible) {
+  outline: 3px solid var(--bs-primary);
+  outline-offset: -3px;
+  box-shadow: none;
+}
+
+.employee-workspace .ticket-clock {
+  font-variant-numeric: tabular-nums;
+}
+
+.employee-workspace .ticket-clock > strong {
+  font-size: 1.125rem;
+}
+
+.employee-workspace .ticket-clock small {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-weight: 400;
+}
+
+.employee-workspace .ticket-quantity {
+  min-width: 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.employee-workspace #cancelDialog {
+  width: min(36rem, calc(100% - 2rem));
+}
+
+.employee-workspace #cancelDialog::backdrop {
+  background: rgba(var(--bs-dark-rgb), 0.5);
+}

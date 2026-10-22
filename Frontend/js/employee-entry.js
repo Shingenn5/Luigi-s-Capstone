@@ -158,13 +158,21 @@ export async function setupStaffOrder(employee, onCreated) {
     const column = document.createElement('div');
     column.className = 'col-sm-6';
     const label = document.createElement('label');
-    label.className = 'd-flex gap-3 align-items-center py-3 fw-semibold';
+    label.className =
+      'd-flex gap-2 align-items-center border rounded p-2 fw-semibold';
     const check = document.createElement('input');
     check.type = 'checkbox';
     check.className = 'form-check-input m-0';
     check.id = `staff-topping-${topping.toppingId}`;
     check.dataset.staffTopping = topping.toppingId;
     label.append(check, document.createTextNode(topping.toppingName));
+    const price = document.createElement('span');
+    price.id = `staff-topping-price-${topping.toppingId}`;
+    price.className = 'ms-auto small text-body-secondary';
+    label.append(price);
+    const coverage = document.createElement('div');
+    coverage.className = 'pb-2';
+    coverage.hidden = true;
     const optionLabel = document.createElement('label');
     optionLabel.className = 'form-label';
     optionLabel.htmlFor = `staff-coverage-${topping.toppingId}`;
@@ -178,7 +186,8 @@ export async function setupStaffOrder(employee, onCreated) {
       option.value = amount;
       select.append(option);
     }
-    column.append(label, optionLabel, select);
+    coverage.append(optionLabel, select);
+    column.append(label, coverage);
     $('#staffToppings').append(column);
   }
   function currentItem() {
@@ -217,6 +226,12 @@ export async function setupStaffOrder(employee, onCreated) {
       select.options[0].textContent = `Regular  -  ${currency.format(price / 100)}`;
       select.options[1].textContent = `Double  -  ${currency.format((price * 2) / 100)}`;
       select.disabled = !$(`#staff-topping-${topping.toppingId}`).checked;
+      select.parentElement.hidden = select.disabled;
+      $(`#staff-topping-price-${topping.toppingId}`).textContent =
+        currency.format(price / 100);
+      $(`#staff-topping-${topping.toppingId}`)
+        .closest('label')
+        .classList.toggle('bg-primary-subtle', !select.disabled);
     }
     try {
       $('#staffItemPrice').textContent =

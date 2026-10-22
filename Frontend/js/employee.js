@@ -9,6 +9,7 @@ const pages = Object.fromEntries(
   [...STAGES, 'Completed', 'Cancelled'].map((stage) => [stage, 1]),
 );
 const snapshots = new Map();
+const expandedContacts = new Set();
 let view = 'board';
 let connected = false;
 let stopped = false;
@@ -49,18 +50,6 @@ function savePreference(key, value) {
     message('This browser cannot save display preferences.');
   }
 }
-function theme(value) {
-  document.documentElement.dataset.bsTheme = value;
-  $('#themeToggle').textContent =
-    value === 'dark' ? 'Use light mode' : 'Use dark mode';
-}
-theme(preference('luigis-kitchen-theme', 'dark'));
-$('#themeToggle').onclick = () => {
-  const value =
-    document.documentElement.dataset.bsTheme === 'dark' ? 'light' : 'dark';
-  theme(value);
-  savePreference('luigis-kitchen-theme', value);
-};
 try {
   const saved = JSON.parse(preference('luigis-kitchen-thresholds', 'null'));
   if (
@@ -136,21 +125,17 @@ function setConnection(ok) {
     new CustomEvent('kitchen-connection', { detail: { connected: ok } }),
   );
   $('#connectionStatus').textContent = ok
-    ? `Live  -  updated ${new Date(lastSuccess).toLocaleTimeString()}`
+    ? `Live · Updated ${new Date(lastSuccess).toLocaleTimeString()}`
     : `Connection interrupted. Actions paused. Last update: ${lastSuccess ? new Date(lastSuccess).toLocaleTimeString() : 'not yet connected'}.`;
   $('#connectionStatus').className = ok
-    ? 'text-body-secondary mb-0'
+    ? 'small text-body-secondary mb-0'
     : 'text-warning-emphasis fw-bold mb-0';
   document
     .querySelectorAll('[data-mutation]')
     .forEach((button) => (button.disabled = !connected || changing));
 }
 function button(label, callback, id) {
-  const node = element(
-    'button',
-    'btn btn-secondary border border-dark py-3',
-    label,
-  );
+  const node = element('button', 'btn btn-outline-secondary', label);
   node.type = 'button';
   if (id) node.id = id;
   node.onclick = callback;
@@ -161,24 +146,22 @@ function selectTicket(orderId) {
   document.querySelectorAll('[data-ticket-select]').forEach((node) => {
     const selected = Number(node.dataset.ticketSelect) === selectedId;
     node.setAttribute('aria-pressed', String(selected));
-    node.closest('article').classList.toggle('border-primary', selected);
-    node.closest('article').classList.toggle('border-3', selected);
+    node.closest('article').classList.toggle('is-selected', selected);
   });
 }
 function ticketCard(ticket) {
-  const card = element('article', 'card mb-3');
+  const card = element('article', 'card kitchen-ticket mb-3');
   card.id = `ticket-${ticket.orderId}`;
   card.setAttribute('aria-labelledby', `ticket-heading-${ticket.orderId}`);
-  const head = element('div', 'card-header p-3');
-  const heading = element('h3', 'h5 mb-2');
+  const head = element('div', 'card-header bg-white p-0');
+  const heading = element('h3', 'h5 mb-0');
   heading.id = `ticket-heading-${ticket.orderId}`;
   const selector = button(
     `Order #${ticket.orderId}`,
     () => selectTicket(ticket.orderId),
     `select-${ticket.orderId}`,
   );
-  selector.className =
-    'btn btn-secondary border border-dark fw-bold fs-5 py-2 w-100 text-start';
+  selector.className = 'btn ticket-selector px-3 py-2 w-100 text-start';
   selector.dataset.ticketSelect = ticket.orderId;
   selector.setAttribute('aria-pressed', String(ticket.orderId === selectedId));
   selector.onkeydown = (event) => {
@@ -226,30 +209,29 @@ function ticketCard(ticket) {
     `badge ${stageColors[ticket.orderStatus] || 'text-bg-secondary'}`,
     stageLabel(ticket.orderStatus),
   );
-  head.append(heading, stage);
+  head.append(heading);
   const body = element('div', 'card-body p-3');
-  body.append(
-    element('p', 'fw-bold mb-1', ticket.customerName),
+  const service = element('div', 'd-flex flex-wrap gap-2 mb-2');
+  service.append(
+    stage,
     element(
-      'p',
-      'small mb-2',
-      `${ticket.serviceType}  -  ${ticket.source}${ticket.tableName ? `  -  Table ${ticket.tableName}` : ''}`,
+      'span',
+      'badge bg-secondary-subtle text-secondary-emphasis',
+      `${ticket.serviceType}${ticket.tableName ? ` · Table ${ticket.tableName}` : ''}`,
     ),
   );
-  if (ticket.phoneNumber) {
-    const phone = element('a', 'd-block mb-2', ticket.phoneNumber);
-    phone.href = `tel:${ticket.phoneNumber.replace(/[^0-9+]/g, '')}`;
-    body.append(phone);
-  }
-  const list = element('ul', 'ps-3 mb-3');
+  const time = element('div', 'ticket-clock mb-3');
+  time.dataset.placed = Date.parse(`${ticket.orderDate.replace(' ', 'T')}Z`);
+  time.dataset.entered = ticket.enteredAt;
+  time.dataset.active = String(STAGES.includes(ticket.orderStatus));
+  time.append(element('strong'), element('small'));
+  body.append(service, element('p', 'fw-bold mb-1', ticket.customerName), time);
+  const list = element('ul', 'list-unstyled mb-0');
   for (const item of ticket.items) {
-    const row = element('li', 'mb-3');
-    row.append(
-      element(
-        'span',
-        'fw-bold d-block',
-        `${item.quantity} \u00d7 ${item.size} ${item.itemName}`,
-      ),
+    const row = element('li', 'd-flex gap-2 border-top py-3');
+    const description = element('div', 'flex-grow-1');
+    description.append(
+      element('span', 'fw-bold d-block', `${item.size} ${item.itemName}`),
     );
     const details = item.toppings.map((topping) =>
       toppingLabel(topping.toppingName, topping.quantity),
@@ -257,7 +239,11 @@ function ticketCard(ticket) {
     if (item.itemName === 'Pizza')
       details.push(preferenceLabel(item.sauce, item.cheese));
     if (details.length)
-      row.append(element('span', 'd-block', details.join(', ')));
+      description.append(element('span', 'd-block', details.join(', ')));
+    row.append(
+      element('span', 'ticket-quantity fw-bold', `${item.quantity} \u00d7`),
+      description,
+    );
     list.append(row);
   }
   body.append(list);
@@ -265,7 +251,7 @@ function ticketCard(ticket) {
     body.append(
       element(
         'p',
-        'border-start border-3 border-warning ps-2 fw-semibold',
+        'bg-warning-subtle text-warning-emphasis rounded p-2 fw-semibold',
         `Kitchen notes: ${ticket.notes}`,
       ),
     );
@@ -273,13 +259,36 @@ function ticketCard(ticket) {
     body.append(
       element('p', 'fw-semibold', `Last change: ${ticket.lastReason}`),
     );
-  body.append(element('p', 'mb-2', currency.format(ticket.totalCents / 100)));
-  const time = element('p', 'small mb-0');
-  time.dataset.placed = Date.parse(`${ticket.orderDate.replace(' ', 'T')}Z`);
-  time.dataset.entered = ticket.enteredAt;
-  time.dataset.active = String(STAGES.includes(ticket.orderStatus));
-  body.append(time);
-  const actions = element('div', 'card-footer d-grid gap-2 p-3');
+  const contact = element('details', 'border-top small');
+  const contactSummary = element(
+    'summary',
+    'py-2',
+    'Contact and order details',
+  );
+  contactSummary.id = `contact-${ticket.orderId}`;
+  contact.open = expandedContacts.has(ticket.orderId);
+  contact.ontoggle = () => {
+    if (contact.open) expandedContacts.add(ticket.orderId);
+    else expandedContacts.delete(ticket.orderId);
+  };
+  contact.append(contactSummary);
+  contact.append(
+    element(
+      'p',
+      'mb-2',
+      `${ticket.source} · ${currency.format(ticket.totalCents / 100)}`,
+    ),
+  );
+  if (ticket.phoneNumber) {
+    const phone = element('a', 'd-inline-block py-2', ticket.phoneNumber);
+    phone.href = `tel:${ticket.phoneNumber.replace(/[^0-9+]/g, '')}`;
+    contact.append(phone);
+  }
+  body.append(contact);
+  const actions = element(
+    'div',
+    'card-footer bg-white d-flex flex-wrap gap-2 p-3',
+  );
   const addAction = (label, action, primary = false) => {
     const node = button(
       label,
@@ -287,7 +296,9 @@ function ticketCard(ticket) {
         action === 'cancel' ? openCancellation(ticket) : mutate(ticket, action),
       `${action}-${ticket.orderId}`,
     );
-    if (primary) node.className = 'btn btn-primary py-3 fw-bold';
+    node.className = primary
+      ? 'btn btn-primary py-3 fw-bold w-100'
+      : `btn ${action === 'cancel' ? 'btn-outline-danger' : 'btn-outline-secondary'} flex-grow-1`;
     node.dataset.mutation = '';
     node.disabled = !connected || changing;
     actions.append(node);
@@ -321,8 +332,11 @@ function updateClocks() {
           : active
             ? 'On track'
             : 'Closed';
-    node.textContent = `${cue}  -  ${age} min since placed  -  ${stageAge} min since stage change`;
-    node.className = `small mb-0 ${cue === 'Overdue' ? 'text-danger-emphasis fw-bold' : cue === 'Aging' ? 'text-warning-emphasis fw-bold' : 'text-body-secondary'}`;
+    node.querySelector('strong').textContent = `${age} min · ${cue}`;
+    node.querySelector('small').textContent = active
+      ? `${stageAge} min in this stage`
+      : 'Total time to close';
+    node.className = `ticket-clock mb-3 ${cue === 'Overdue' ? 'text-danger-emphasis' : cue === 'Aging' ? 'text-warning-emphasis' : 'text-body'}`;
   });
 }
 function renderLane(stage, result) {
@@ -343,19 +357,21 @@ function renderLane(stage, result) {
   parent.dataset.stage = stage;
   snapshots.set(stage, signature);
   parent.replaceChildren();
-  parent.append(
-    element(
-      'h2',
-      'h4 d-flex flex-wrap gap-2 align-items-center mb-3',
-      `${stageLabel(stage)}  -  ${result.total}`,
-    ),
+  const heading = element(
+    'h2',
+    'h5 fw-bold d-flex justify-content-between align-items-center gap-2 p-2 mb-2',
   );
+  heading.append(
+    element('span', '', stageLabel(stage)),
+    element('span', 'badge bg-white text-dark border', String(result.total)),
+  );
+  parent.append(heading);
   if (!result.orders.length)
     parent.append(
       element(
         'p',
-        'border rounded p-3 bg-body text-body-secondary',
-        `No ${stageLabel(stage).toLowerCase()} orders right now.`,
+        'rounded p-3 bg-body text-body-secondary mb-0',
+        `No ${stageLabel(stage).toLowerCase()} orders.`,
       ),
     );
   for (const ticket of result.orders) parent.append(ticketCard(ticket));
@@ -383,14 +399,16 @@ function renderLane(stage, result) {
   });
   next.disabled = result.page >= result.pages;
   if (result.pages > 1) pagination.append(previous, next);
-  parent.append(pagination);
+  if (result.pages > 1) parent.append(pagination);
   pages[stage] = result.page;
 }
 for (const stage of STAGES) {
-  const lane = element('section', 'col-12 col-lg-6 col-xxl-3');
+  const column = element('div', 'col-12 col-md-6 col-xl-3');
+  const lane = element('section', 'kitchen-lane p-2');
   lane.dataset.lane = stage;
   lane.setAttribute('aria-label', `${stageLabel(stage)} orders`);
-  $('#employeeOrders').append(lane);
+  column.append(lane);
+  $('#employeeOrders').append(column);
 }
 async function loadOrders() {
   if (stopped || loading || document.hidden) return;
@@ -548,7 +566,7 @@ async function showView(nextView) {
   document.querySelectorAll('[data-view]').forEach((node) => {
     const active = node.dataset.view === view;
     node.setAttribute('aria-pressed', String(active));
-    node.className = `btn ${active ? 'btn-primary' : 'btn-secondary border border-dark'} px-3 py-3`;
+    node.className = `btn ${active ? 'btn-primary' : node.dataset.view === 'entry' ? 'btn-outline-primary' : 'btn-outline-secondary'} px-3`;
   });
   $('#workspaceTitle').textContent = {
     board: 'Kitchen board',

@@ -111,6 +111,15 @@ test('live kitchen supports two employees, focus, stage changes, cancellation an
       'New kitchen order',
     );
     await expect(page.locator(`#select-${ticket.orderId}`)).toBeFocused();
+    const contact = page.locator(`#contact-${ticket.orderId}`);
+    await contact.click();
+    await contact.focus();
+    await order(other, baseURL, 'Another incoming ticket');
+    await expect(
+      page.getByText('Another incoming ticket', { exact: true }),
+    ).toBeVisible();
+    await expect(contact).toBeFocused();
+    await expect(contact.locator('..')).toHaveAttribute('open', '');
     await page.locator(`#advance-${ticket.orderId}`).click();
     await expect(
       other.locator(`[data-lane="Preparing"] #ticket-${ticket.orderId}`),
@@ -179,7 +188,9 @@ test('staff order draft persists separately and submits authoritative modifiers 
   );
   await page.getByRole('button', { name: 'New order', exact: true }).click();
   await page.locator('#staffItem').selectOption('1');
+  await expect(page.locator('#staff-coverage-1')).toBeHidden();
   await page.locator('#staff-topping-1').check();
+  await expect(page.locator('#staff-coverage-1')).toBeVisible();
   await page.locator('#staff-coverage-1').selectOption('2');
   await page.locator('#staffSauce').selectOption('Light');
   await expect(page.locator('#staffItemPrice')).toContainText('$7.00');
@@ -223,11 +234,16 @@ test('staff order draft persists separately and submits authoritative modifiers 
   ).toBe('untouched-customer-draft');
 });
 
-test('connection failures retain tickets and pause actions; themes, keyboard and mobile remain accessible', async ({
+test('connection failures retain tickets and pause actions; light workspace, keyboard and mobile remain accessible', async ({
   page,
   baseURL,
 }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('luigis-kitchen-theme', 'dark');
+  });
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
   await login(page, baseURL);
+  await expect(page.locator('html')).toHaveAttribute('data-bs-theme', 'light');
   const ticket = await order(page, baseURL, 'Reconnect Browser');
   await expect(page.locator(`#ticket-${ticket.orderId}`)).toBeVisible();
   await page.route('**/api/employee/kitchen?**', (route) => route.abort());
@@ -248,9 +264,6 @@ test('connection failures retain tickets and pause actions; themes, keyboard and
   await page.keyboard.press('Home');
   await expect(page.locator('[data-ticket-select]').first()).toBeFocused();
   await accessible(page);
-  await page.getByRole('button', { name: 'Use light mode' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-bs-theme', 'light');
-  await accessible(page);
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-bs-theme', 'light');
   await page.setViewportSize({ width: 320, height: 800 });
@@ -260,6 +273,14 @@ test('connection failures retain tickets and pause actions; themes, keyboard and
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await accessible(page);
+  await page
+    .getByText('Kitchen settings and keyboard help', { exact: true })
+    .click();
+  await page.getByRole('button', { name: 'Enable sound', exact: true }).focus();
+  await expect(
+    page.getByRole('button', { name: 'Enable sound', exact: true }),
+  ).toBeFocused();
   await accessible(page);
 });
 
