@@ -86,7 +86,8 @@ function readOrders(database, customerId) {
   const orders = database
     .prepare(
       `SELECT o.orderID AS orderId, o.customerName, o.phoneNumber,
-    o.orderDate, o.totalCents, o.orderStatus, d.service_type AS serviceType
+    o.orderDate, o.totalCents, o.orderStatus, d.service_type AS serviceType,
+    d.table_name AS tableName, d.notes
     FROM Orders o JOIN order_details d ON d.order_id = o.orderID
     WHERE o.customerID = ? ORDER BY o.orderID DESC LIMIT 50`,
     )
@@ -157,6 +158,8 @@ export function createOrderRouter(database) {
   router.post('/', (request, response) => {
     const { customerName, phoneNumber, serviceType, requestId, items } =
       request.body || {};
+    const tableName = request.body?.tableName ?? '';
+    const notes = request.body?.notes ?? '';
     if (
       typeof customerName !== 'string' ||
       !customerName.trim() ||
@@ -165,12 +168,17 @@ export function createOrderRouter(database) {
       !/^[+\d\s().-]{7,25}$/.test(phoneNumber) ||
       phoneNumber.replace(/\D/g, '').length < 7 ||
       !['Pickup', 'Dine-in'].includes(serviceType) ||
+      typeof tableName !== 'string' ||
+      tableName.length > 40 ||
+      (serviceType !== 'Dine-in' && tableName.trim()) ||
+      typeof notes !== 'string' ||
+      notes.length > 500 ||
       typeof requestId !== 'string' ||
       !/^[a-zA-Z0-9-]{16,64}$/.test(requestId)
     ) {
       return response.status(400).json({
         error:
-          'Enter your name, phone number, and a pickup or dine-in selection.',
+          'Check your name, phone, service, table (40 characters, dine-in only), and kitchen notes (500 characters).',
       });
     }
     const customerId = request.customer.customerId;
@@ -207,9 +215,16 @@ export function createOrderRouter(database) {
       const orderId = Number(order.lastInsertRowid);
       database
         .prepare(
-          'INSERT INTO order_details (order_id, request_id, customer_id, service_type) VALUES (?, ?, ?, ?)',
+          'INSERT INTO order_details (order_id, request_id, customer_id, service_type, table_name, notes) VALUES (?, ?, ?, ?, ?, ?)',
         )
-        .run(orderId, requestId, customerId, serviceType);
+        .run(
+          orderId,
+          requestId,
+          customerId,
+          serviceType,
+          tableName.trim(),
+          notes.trim(),
+        );
       saveOrderItems(database, orderId, pricedItems);
       database.exec('COMMIT');
       response.status(201).json({

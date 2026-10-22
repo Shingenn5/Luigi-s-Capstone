@@ -215,7 +215,7 @@ function ticketCard(ticket) {
   );
   head.append(heading);
   const body = element('div', 'ticket-items col-12 col-md-6 col-xl-7 p-3');
-  const service = element('div', 'small fw-semibold mb-1');
+  const service = element('div', 'small fw-semibold mb-1 text-break');
   service.append(
     stage,
     element(
@@ -273,7 +273,7 @@ function ticketCard(ticket) {
     body.append(
       element(
         'p',
-        'ticket-note border-start border-warning border-3 ps-2 my-2 fw-semibold',
+        'ticket-note border-start border-warning border-3 ps-2 my-2 fw-semibold text-break',
         `Kitchen notes: ${ticket.notes}`,
       ),
     );
@@ -289,9 +289,50 @@ function ticketCard(ticket) {
   );
   contactSummary.id = `contact-${ticket.orderId}`;
   contact.open = expandedContacts.has(ticket.orderId);
-  contact.ontoggle = () => {
-    if (contact.open) expandedContacts.add(ticket.orderId);
-    else expandedContacts.delete(ticket.orderId);
+  let activityLoaded = false;
+  const activity = element('div', 'mt-2 text-break');
+  activity.setAttribute('aria-label', 'Order activity');
+  contact.ontoggle = async () => {
+    if (contact.open) {
+      expandedContacts.add(ticket.orderId);
+      if (activityLoaded) return;
+      activityLoaded = true;
+      activity.textContent = 'Loading order activity…';
+      try {
+        const events = await apiRequest(
+          `employee/orders/${ticket.orderId}/activity`,
+        );
+        const list = element('ol', 'ps-3 mb-2');
+        for (const event of events) {
+          const actions = {
+            Created: 'Received',
+            Imported: 'Imported',
+            advance: 'Advanced',
+            recall: 'Recalled',
+            cancel: 'Cancelled',
+          };
+          const row = element('li', 'mb-2');
+          const time = element(
+            'time',
+            '',
+            new Date(event.occurredAt).toLocaleString(),
+          );
+          time.dateTime = new Date(event.occurredAt).toISOString();
+          row.append(
+            time,
+            ` · ${actions[event.action] || event.action}: ${stageLabel(event.stage)} · ${event.employeeName}${event.reason ? ` · ${event.reason}` : ''}`,
+          );
+          list.append(row);
+        }
+        activity.replaceChildren(
+          element('h4', 'h6 mt-2', 'Order activity'),
+          list,
+        );
+      } catch (error) {
+        activityLoaded = false;
+        activity.textContent = `${error.message} Close and reopen details to retry.`;
+      }
+    } else expandedContacts.delete(ticket.orderId);
   };
   contact.append(contactSummary);
   contact.append(
@@ -306,6 +347,7 @@ function ticketCard(ticket) {
     phone.href = `tel:${ticket.phoneNumber.replace(/[^0-9+]/g, '')}`;
     contact.append(phone);
   }
+  contact.append(activity);
   body.append(contact);
   const actions = element(
     'div',

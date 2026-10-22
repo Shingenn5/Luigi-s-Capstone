@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
+import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
 import { TEST_EMPLOYEE } from './employee-fixture.js';
+
+const require = createRequire(import.meta.url);
 
 async function buildOrder(page) {
   await page.goto('/menu.html');
@@ -51,6 +55,21 @@ for (const serviceType of ['Pickup', 'Dine-in']) {
     await expect(page.locator('#orderSubtotal')).toHaveText('$8.00');
     await page.locator('#phoneNumber').fill('555-555-0100');
     await page.locator('#serviceType').selectOption(serviceType);
+    await page
+      .locator('#kitchenNotes')
+      .fill('Cut into squares. <b>Plain text</b>');
+    if (serviceType === 'Dine-in') {
+      await page.locator('#tableName').fill('12');
+      await page.locator('#serviceType').selectOption('Pickup');
+      await expect(page.locator('#tableName')).toBeDisabled();
+      await expect(page.locator('#tableName')).toHaveValue('');
+      await page.locator('#serviceType').selectOption('Dine-in');
+      await page.locator('#tableName').fill('12');
+    }
+    await page.screenshot({
+      path: `test-results/checkout-${serviceType}-mobile.png`,
+      fullPage: true,
+    });
     let savedOrder;
     let firstPost = true;
     await page.route('**/api/orders', async (route) => {
@@ -77,6 +96,8 @@ for (const serviceType of ['Pickup', 'Dine-in']) {
       `Order #${savedOrder.orderId} sent to the kitchen`,
     );
     await expect(page.locator('#orderSubtotal')).toHaveText('$0.00');
+    await page.getByRole('link', { name: 'Track your latest order' }).click();
+    await expect(page.locator(`#order-${savedOrder.orderId}`)).toBeFocused();
     const orders = await (await page.request.get('/api/orders')).json();
     expect(orders).toHaveLength(1);
     expect(orders[0].totalCents).toBe(800);
@@ -84,6 +105,14 @@ for (const serviceType of ['Pickup', 'Dine-in']) {
     await expect(page.locator('#orderHistory')).toContainText(
       `Order #${savedOrder.orderId}`,
     );
+    await expect(page.locator('#orderHistory')).toContainText(
+      'Your kitchen instructions: Cut into squares. <b>Plain text</b>',
+    );
+    await expect(page.locator('#orderHistory b')).toHaveCount(0);
+    await page.screenshot({
+      path: `test-results/receipt-${serviceType}-mobile.png`,
+      fullPage: true,
+    });
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -98,6 +127,37 @@ for (const serviceType of ['Pickup', 'Dine-in']) {
     await expect(ticket).toContainText(serviceType);
     await expect(ticket).toContainText('Double Pepperoni');
     await expect(ticket).toContainText('Light sauce');
+    await expect(ticket).toContainText(
+      'Kitchen notes: Cut into squares. <b>Plain text</b>',
+    );
+    if (serviceType === 'Dine-in')
+      await expect(ticket).toContainText('Table 12');
+    await ticket
+      .getByText('Contact and order details', { exact: true })
+      .click();
+    await expect(ticket).toContainText('Order activity');
+    await expect(ticket).toContainText('Received: New');
+    await page.locator(`#advance-${savedOrder.orderId}`).click();
+    await expect(ticket).toContainText('Advanced: Preparing');
+    await expect(ticket).toContainText('Browser Employee');
+    await page.evaluate(
+      readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'),
+    );
+    const violations = await page.evaluate(async () =>
+      (
+        await window.axe.run(document, {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'],
+          },
+        })
+      ).violations.map((entry) => entry.id),
+    );
+    expect(violations).toEqual([]);
+    await page.screenshot({
+      path: `test-results/handoff-${serviceType}-mobile.png`,
+      fullPage: true,
+    });
     await expect(ticket).toContainText('$8.00');
   });
 }

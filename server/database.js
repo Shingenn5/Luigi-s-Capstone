@@ -23,6 +23,7 @@ export function openDatabase(databasePath) {
     '003-employees.sql',
     '004-kitchen.sql',
     '005-employee-roles.sql',
+    '006-customer-order-details.sql',
   ];
   migrations.forEach((filename, index) => {
     const version = index + 1;

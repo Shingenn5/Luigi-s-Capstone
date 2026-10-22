@@ -7,7 +7,9 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: testOrigin,
-    channel: process.env.PLAYWRIGHT_CHANNEL || 'msedge',
+    channel:
+      process.env.PLAYWRIGHT_CHANNEL ||
+      (process.platform === 'win32' ? 'msedge' : 'chromium'),
     viewport: { width: 1280, height: 900 },
   },
   webServer: {

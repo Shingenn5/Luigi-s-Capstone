@@ -5,6 +5,40 @@ import { TEST_EMPLOYEE } from './employee-fixture.js';
 
 const require = createRequire(import.meta.url);
 
+test('home logo keeps its square aspect ratio on desktop, mobile and without shared navigation', async ({
+  page,
+}) => {
+  for (const sharedNavigation of [true, false]) {
+    if (!sharedNavigation)
+      await page.route('**/js/site.js', (route) => route.abort());
+    for (const width of [1280, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      const logo = page.locator('.navbar-brand img');
+      await expect(logo).toBeVisible();
+      const geometry = await logo.evaluate((image) => ({
+        loaded: image.complete && image.naturalWidth > 0,
+        naturalRatio: image.naturalWidth / image.naturalHeight,
+        displayedRatio:
+          image.getBoundingClientRect().width /
+          image.getBoundingClientRect().height,
+      }));
+      expect(geometry.loaded).toBe(true);
+      expect(geometry.displayedRatio).toBeCloseTo(geometry.naturalRatio, 2);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      if (sharedNavigation)
+        await page.screenshot({
+          path: `test-results/home-${width}.png`,
+          fullPage: true,
+        });
+    }
+  }
+});
+
 test('HTTP LAN demos can save drafts without crypto.randomUUID', async ({
   page,
 }) => {
@@ -312,9 +346,11 @@ test('employee sign-in protects orders and supports keyboard access and logout',
   await expect(page.locator('#employeeOrders')).toContainText(
     'Employee Browser Customer',
   );
-  await expect(page.locator('#employeeOrders')).toContainText(
-    'Double Pepperoni, Light sauce',
-  );
+  const ticket = page
+    .getByRole('article')
+    .filter({ hasText: 'Employee Browser Customer' });
+  await expect(ticket).toContainText('Double Pepperoni');
+  await expect(ticket).toContainText('Light sauce, Regular cheese');
   await checkAccessibility(page);
   await page
     .getByRole('button', { name: 'Refresh orders', exact: true })

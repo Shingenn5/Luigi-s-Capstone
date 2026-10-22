@@ -19,6 +19,14 @@ const status = document.querySelector('#orderStatus');
 const checkoutForm = document.querySelector('#checkoutForm');
 const checkoutFields = document.querySelector('#checkoutFields');
 const clearButton = document.querySelector('#clearOrder');
+const serviceType = document.querySelector('#serviceType');
+const tableName = document.querySelector('#tableName');
+serviceType.addEventListener('change', () => {
+  const dineIn = serviceType.value === 'Dine-in';
+  document.querySelector('#tableDetails').hidden = !dineIn;
+  tableName.disabled = !dineIn;
+  if (!dineIn) tableName.value = '';
+});
 prepareForm(checkoutForm);
 let cart = readCart();
 let menu = [];
@@ -194,6 +202,8 @@ async function renderHistory() {
     }
     orders.forEach((order) => {
       const article = document.createElement('article');
+      article.id = `order-${order.orderId}`;
+      article.tabIndex = -1;
       article.className = 'card mb-3';
       const body = document.createElement('div');
       body.className = 'card-body';
@@ -201,8 +211,8 @@ async function renderHistory() {
       heading.className = 'h5';
       heading.textContent = `Order #${order.orderId} · ${customerStage(order)} · ${currency.format(order.totalCents / 100)}`;
       const detail = document.createElement('p');
-      detail.className = 'small text-body-secondary';
-      detail.textContent = `${new Date(order.orderDate.replace(' ', 'T') + 'Z').toLocaleString()} · ${order.serviceType}`;
+      detail.className = 'small text-body-secondary text-break';
+      detail.textContent = `${new Date(order.orderDate.replace(' ', 'T') + 'Z').toLocaleString()} · ${order.serviceType}${order.tableName ? ` · Table ${order.tableName}` : ''}`;
       const items = document.createElement('ul');
       order.items.forEach((item) => {
         const row = document.createElement('li');
@@ -220,6 +230,12 @@ async function renderHistory() {
         items.append(row);
       });
       body.append(heading, detail, orderTracker(order), items);
+      if (order.notes) {
+        const notes = document.createElement('p');
+        notes.className = 'small border-start border-3 ps-2 mb-0 text-break';
+        notes.textContent = `Your kitchen instructions: ${order.notes}`;
+        body.append(notes);
+      }
       article.append(body);
       history.append(article);
     });
@@ -312,11 +328,18 @@ checkoutForm.addEventListener('submit', async (event) => {
         customerName: document.querySelector('#customerName').value,
         phoneNumber: document.querySelector('#phoneNumber').value,
         serviceType: document.querySelector('#serviceType').value,
+        tableName: serviceType.value === 'Dine-in' ? tableName.value : '',
+        notes: document.querySelector('#kitchenNotes').value,
         requestId: cart.requestId,
         items: cart.items,
       }),
     });
     cart = writeCart([]);
+    document.querySelector('#kitchenNotes').value = '';
+    tableName.value = '';
+    const trackLink = document.querySelector('#trackLatestOrder');
+    trackLink.hidden = false;
+    trackLink.href = `#order-${result.orderId}`;
     status.textContent = `Order #${result.orderId} sent to the kitchen. Follow its progress under Your recent orders. No payment collected.`;
     focusMessage(status);
     await renderHistory();

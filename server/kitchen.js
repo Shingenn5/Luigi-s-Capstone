@@ -14,8 +14,8 @@ function problem(status, message) {
 const ticketQuery = `SELECT o.orderID AS orderId, o.customerName, o.phoneNumber,
   o.orderDate, o.totalCents, o.orderStatus, w.revision, w.entered_at AS enteredAt,
   COALESCE(d.service_type, s.service_type, 'Pickup') AS serviceType,
-  COALESCE(s.source, 'Website') AS source, COALESCE(s.table_name, '') AS tableName,
-  COALESCE(s.notes, '') AS notes,
+  COALESCE(s.source, 'Website') AS source, COALESCE(d.table_name, s.table_name, '') AS tableName,
+  COALESCE(d.notes, s.notes, '') AS notes,
   COALESCE((SELECT reason FROM order_events WHERE order_id = o.orderID ORDER BY revision DESC LIMIT 1), '') AS lastReason
   FROM Orders o JOIN order_workflow w ON w.order_id = o.orderID
   LEFT JOIN order_details d ON d.order_id = o.orderID
@@ -278,6 +278,21 @@ export function createKitchenRouter(database) {
       )
       .get(request.employee.employeeId, request.params.requestId);
     response.json({ order: row ? readTicket(database, row.orderId) : null });
+  });
+  router.get('/orders/:orderId/activity', (request, response) => {
+    const orderId = Number(request.params.orderId);
+    if (!Number.isSafeInteger(orderId) || orderId < 1)
+      problem(400, 'Choose a valid order.');
+    readTicket(database, orderId);
+    const events = database
+      .prepare(
+        `SELECT e.to_status AS stage, e.action, e.reason, e.occurred_at AS occurredAt,
+      e.revision, COALESCE(s.display_name, 'Website / system') AS employeeName
+      FROM order_events e LEFT JOIN employees s ON s.employee_id = e.employee_id
+      WHERE e.order_id = ? ORDER BY e.revision`,
+      )
+      .all(orderId);
+    response.json(events);
   });
   router.post('/orders', (request, response) => {
     const result = saveStaffOrder(

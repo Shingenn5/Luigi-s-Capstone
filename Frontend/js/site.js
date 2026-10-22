@@ -14,9 +14,9 @@ header.innerHTML = `
         <img
           src="./assets/Luigis-Logo.png"
           alt="Luigi's Pizzeria"
-          width="110"
-          height="60"
-          class="img-fluid"
+          width="72"
+          height="72"
+          class="object-fit-contain"
         />
       </a>
       <button class="navbar-toggler p-2 ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>

@@ -7,8 +7,8 @@ Use the [full test app](https://pipeline-alberta-drawing-inner.trycloudflare.com
 1. Choose a pizza size, toppings (regular or double), sauce/cheese, and quantity. Add a drink if wanted.
 2. Select **Review your order**. Check quantities and subtotal.
 3. Follow the sign-in link. Create a customer account or use an existing account on this test server. The cart stays with you.
-4. Enter the order name and phone number, choose Pickup or Dine-in, then select **Place order**.
-5. Check the confirmation number and **Your recent orders**. A matching New ticket appears in the employee kitchen. Keep checkout open to watch progress.
+4. Enter the order name and phone number, choose Pickup or Dine-in, and optionally add kitchen instructions (500 characters). Dine-in also offers a table reference (40 characters). Switching back to Pickup clears the table. Select **Place order**.
+5. Check the confirmation number and select **Track your latest order** to reach its receipt and progress. The receipt retains your instructions and table. A matching New ticket appears in the employee kitchen. Keep checkout open to watch progress.
 
 ## Kitchen and phone orders
 
@@ -18,6 +18,7 @@ Open [Employee login](https://pipeline-alberta-drawing-inner.trycloudflare.com/e
 - Drink-only tickets skip the oven. Timers record elapsed time; staff advances every stage manually.
 - Use **New order** for phone/counter entry, including optional dine-in table and kitchen notes.
 - Try cancellation with a reason and recall. Completed/cancelled tickets appear in searchable history.
+- On a website ticket, confirm the customer's kitchen instructions and dine-in table match checkout. Expand **Contact and order details** to see **Order activity**, including recorded stage changes, employee names, times, and cancellation reasons. These staff details are unavailable to customer accounts.
 
 ## Employee and admin accounts
 

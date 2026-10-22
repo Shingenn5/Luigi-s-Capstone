@@ -26,6 +26,20 @@ export function orderTracker(order) {
   const tracker = element('section', 'border rounded p-3 mb-3');
   tracker.setAttribute('aria-label', `Order #${order.orderId} progress`);
   tracker.append(element('h4', 'h6 fw-bold', customerStage(order)));
+  const guidance = {
+    Pending:
+      'Your order is in the kitchen queue. An employee will start preparing it next.',
+    Preparing:
+      'The team is preparing your items and checking your instructions.',
+    'In oven':
+      'Your pizza is baking. Staff will mark it ready after cutting and boxing.',
+    Completed:
+      order.serviceType === 'Pickup'
+        ? 'Your order has been handed over. Thank you!'
+        : 'Your order has been served. Enjoy!',
+  };
+  if (guidance[order.orderStatus])
+    tracker.append(element('p', 'small mb-2', guidance[order.orderStatus]));
   const terminal = ['Completed', 'Cancelled'].includes(order.orderStatus);
   const elapsed = element('p', 'small mb-3');
   elapsed.dataset.orderClock = '';
