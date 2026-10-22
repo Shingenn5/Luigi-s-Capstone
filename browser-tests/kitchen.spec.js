@@ -330,10 +330,7 @@ test('stage filters keep tickets current and keyboard focus out of hidden stages
   const ticket = await order(page, baseURL, 'Stage filter customer');
   const card = page.locator(`#ticket-${ticket.orderId}`);
   await expect(card).toBeVisible();
-  const newFilter = page.getByRole('button', {
-    name: 'New orders',
-    exact: true,
-  });
+  const newFilter = page.getByRole('button', { name: /^New \d+$/ });
   await newFilter.click();
   await expect(newFilter).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-lane="Preparing"]')).toBeHidden();
@@ -347,9 +344,7 @@ test('stage filters keep tickets current and keyboard focus out of hidden stages
       Boolean(document.activeElement.closest('[hidden]')),
     ),
   ).toBe(false);
-  await page
-    .getByRole('button', { name: 'Preparing orders', exact: true })
-    .click();
+  await page.getByRole('button', { name: /^Preparing \d+$/ }).click();
   await expect(card).toBeVisible();
   await page.locator(`#select-${ticket.orderId}`).focus();
   await page.keyboard.press('Home');

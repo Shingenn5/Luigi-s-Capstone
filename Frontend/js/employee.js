@@ -161,7 +161,7 @@ function ticketFocusTarget(...ids) {
 function ticketCard(ticket) {
   const card = element(
     'article',
-    'kitchen-ticket row g-0 bg-body border rounded mb-2',
+    'kitchen-ticket row g-0 bg-body border border-2 border-secondary rounded-3 shadow-sm mb-3',
   );
   card.id = `ticket-${ticket.orderId}`;
   card.setAttribute('aria-labelledby', `ticket-heading-${ticket.orderId}`);
@@ -434,10 +434,9 @@ for (const stage of STAGES) {
   lane.dataset.lane = stage;
   lane.setAttribute('aria-label', `${stageLabel(stage)} orders`);
   $('#employeeOrders').append(lane);
-  const filter = button(stageLabel(stage), () => filterStages(stage));
+  const filter = button(`${stageLabel(stage)} `, () => filterStages(stage));
   filter.className = 'btn stage-filter px-3';
   filter.dataset.stageFilter = stage;
-  filter.setAttribute('aria-label', `${stageLabel(stage)} orders`);
   filter.setAttribute('aria-pressed', 'false');
   const count = element('span', 'ms-2', '0');
   count.dataset.stageCount = stage;
