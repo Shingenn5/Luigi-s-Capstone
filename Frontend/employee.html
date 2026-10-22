@@ -17,6 +17,7 @@
         <button class="btn btn-primary px-3 py-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
         <button class="btn btn-secondary border border-dark px-3 py-3" type="button" data-view="entry" aria-pressed="false">New order</button>
         <button class="btn btn-secondary border border-dark px-3 py-3" type="button" data-view="history" aria-pressed="false">Order history</button>
+        <button class="btn btn-secondary border border-dark px-3 py-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
         <button class="btn btn-secondary border border-dark px-3 py-3" type="button" id="employeeLogout">Employee logout</button>
       </nav>
     </div>
@@ -36,6 +37,23 @@
       </form><p class="small text-body-secondary mt-2 mb-0">Display preferences apply to this device. Timers are informational; staff always confirms readiness.</p>
     </details>
     <section id="boardView" aria-label="Active kitchen orders"><div class="row g-3" id="employeeOrders" aria-label="Active order lanes" aria-busy="true"></div></section>
+    <section id="accountsView" hidden aria-labelledby="accountsTitle">
+      <div class="row"><div class="col-12 col-md-8 col-xl-5">
+        <h2 id="accountsTitle" class="h4">Create a staff account</h2>
+        <p>Employees can take orders and use the kitchen. Admins can also create employee and admin accounts.</p>
+        <p id="accountStatus" role="status" aria-atomic="true" tabindex="-1"></p>
+        <form id="staffAccountForm" class="card card-body">
+          <fieldset id="staffAccountFields" disabled><legend class="h5">New account</legend>
+            <div class="mb-3"><label class="form-label" for="accountDisplayName">Display name</label><input class="form-control" id="accountDisplayName" name="displayName" maxlength="80" autocomplete="off" required /></div>
+            <div class="mb-3"><label class="form-label" for="accountUsername">Username</label><input class="form-control" id="accountUsername" name="username" minlength="3" maxlength="32" pattern="[a-zA-Z0-9._\-]{3,32}" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="accountUsernameHint" required /><div class="form-text" id="accountUsernameHint">3–32 letters, numbers, dots, underscores, or hyphens.</div></div>
+            <div class="mb-3"><label class="form-label" for="accountRole">Role</label><select class="form-select" id="accountRole" name="role"><option value="employee">Employee</option><option value="admin">Admin</option></select></div>
+            <div class="mb-3"><label class="form-label" for="accountPassword">Password</label><input class="form-control" type="password" id="accountPassword" name="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="accountPasswordHint" required /><div class="form-text" id="accountPasswordHint">8–128 characters. Give these credentials to the staff member privately.</div></div>
+            <div class="mb-3"><label class="form-label" for="accountConfirmation">Confirm password</label><input class="form-control" type="password" id="accountConfirmation" minlength="8" maxlength="128" autocomplete="new-password" required /></div>
+            <button class="btn btn-primary py-3" type="submit" id="createStaffAccount">Create account</button>
+          </fieldset>
+        </form>
+      </div></div>
+    </section>
     <section id="historyView" hidden aria-labelledby="historyTitle"><h2 id="historyTitle" class="h4">Completed and cancelled orders</h2>
       <form id="historyForm" class="row g-3 align-items-end mb-4"><div class="col-sm-4"><label for="historyStage" class="form-label">History stage</label><select id="historyStage" class="form-select"><option>Completed</option><option>Cancelled</option></select></div><div class="col-sm-5"><label for="historySearch" class="form-label">Order number or customer name</label><input class="form-control" id="historySearch" maxlength="120" type="search" /></div><div class="col-sm-3"><button class="btn btn-primary py-3" type="submit">Search history</button></div></form>
       <div id="historyOrders"></div>

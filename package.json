@@ -11,6 +11,7 @@
     "verify:demo": "node scripts/verify-demo.js",
     "build:pages": "node scripts/build-pages.js",
     "employee:create": "node --env-file-if-exists=.env scripts/create-employee.js",
+    "admin:create": "node --env-file-if-exists=.env scripts/create-employee.js --admin",
     "test": "node --test \"test/*.test.js\"",
     "lint": "eslint .",
     "test:a11y": "playwright test",

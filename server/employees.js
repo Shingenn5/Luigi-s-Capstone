@@ -23,7 +23,8 @@ function getToken(request) {
 
 export async function createEmployee(
   database,
-  { username, displayName, password },
+  { username, displayName, password, role = 'employee' },
+  { adminId } = {},
 ) {
   if (
     typeof username !== 'string' ||
@@ -33,25 +34,48 @@ export async function createEmployee(
     displayName.trim().length > 80 ||
     typeof password !== 'string' ||
     password.length < 8 ||
-    password.length > 128
+    password.length > 128 ||
+    !['employee', 'admin'].includes(role)
   ) {
     throw new Error(
-      'Use a 3–32 character username, a display name, and an 8–128 character password.',
+      'Use a 3–32 character username, a display name (1–80 characters), an 8–128 character password, and an employee or admin role.',
+      { cause: 'validation' },
     );
   }
   const passwordHash = await hashPassword(password);
+  // Password hashing yields; recheck privileges before the synchronous insert.
+  if (
+    adminId !== undefined &&
+    !database
+      .prepare(
+        "SELECT employee_id FROM employees WHERE employee_id = ? AND role = 'admin' AND is_active = 1",
+      )
+      .get(adminId)
+  ) {
+    throw Object.assign(new Error('An active admin account is required.'), {
+      status: 403,
+    });
+  }
   try {
     const result = database
       .prepare(
-        'INSERT INTO employees (username, display_name, password_hash) VALUES (?, ?, ?)',
+        'INSERT INTO employees (username, display_name, password_hash, role) VALUES (?, ?, ?, ?)',
       )
-      .run(username.trim().toLowerCase(), displayName.trim(), passwordHash);
+      .run(
+        username.trim().toLowerCase(),
+        displayName.trim(),
+        passwordHash,
+        role,
+      );
     return Number(result.lastInsertRowid);
   } catch (error) {
     if (error.message.includes('UNIQUE'))
-      throw new Error('That employee username already exists.', {
-        cause: error,
-      });
+      throw Object.assign(
+        new Error('That employee username already exists.', {
+          cause: error,
+        }),
+        { status: 409 },
+      );
     throw error;
   }
 }
@@ -59,7 +83,7 @@ export async function createEmployee(
 export function getEmployee(database, request) {
   return database
     .prepare(
-      `SELECT e.employee_id AS employeeId, e.username, e.display_name AS displayName
+      `SELECT e.employee_id AS employeeId, e.username, e.display_name AS displayName, e.role
     FROM employee_sessions s JOIN employees e ON e.employee_id = s.employee_id
     WHERE s.token_hash = ? AND s.expires_at > ? AND e.is_active = 1`,
     )
@@ -89,6 +113,33 @@ export function createEmployeeRouter(database) {
   router.get('/auth/session', (request, response) => {
     response.json({ employee: getEmployee(database, request) || null });
   });
+  router.post(
+    '/accounts',
+    requireEmployee(database),
+    async (request, response, next) => {
+      if (request.employee.role !== 'admin') {
+        return response
+          .status(403)
+          .json({ error: 'Only admins can create staff accounts.' });
+      }
+      try {
+        const employeeId = await createEmployee(database, request.body || {}, {
+          adminId: request.employee.employeeId,
+        });
+        const employee = database
+          .prepare(
+            'SELECT employee_id AS employeeId, username, display_name AS displayName, role FROM employees WHERE employee_id = ?',
+          )
+          .get(employeeId);
+        response.status(201).json({ employee });
+      } catch (error) {
+        const status = error.cause === 'validation' ? 400 : error.status;
+        if ([400, 403, 409].includes(status))
+          return response.status(status).json({ error: error.message });
+        next(error);
+      }
+    },
+  );
   router.post('/auth/login', async (request, response) => {
     const now = Date.now();
     for (const [key, attempt] of attempts) {

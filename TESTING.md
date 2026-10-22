@@ -19,6 +19,15 @@ Open [Employee login](https://pipeline-alberta-drawing-inner.trycloudflare.com/e
 - Use **New order** for phone/counter entry, including optional dine-in table and kitchen notes.
 - Try cancellation with a reason and recall. Completed/cancelled tickets appear in searchable history.
 
+## Employee and admin accounts
+
+1. Sign in through **Employee login** using an admin account.
+2. Open **Staff accounts**. Enter a display name, a unique username, a password and matching confirmation, then choose **Employee** or **Admin** and select **Create account**.
+3. Sign out and sign in with the new credentials. Both roles can use the kitchen and phone-order screens; only admins see **Staff accounts** or can create accounts.
+4. Try a duplicate username and mismatched passwords. The form should explain the error without creating an extra account.
+
+For the first admin on a new server, run `npm run admin:create` in an interactive terminal using that server's database configuration. `npm run employee:create` also lets you choose either role. The local demo account keeps ordinary employee access; its username does not grant admin permissions. Password reset and changing an existing account's role are not included in this screen.
+
 ## Recovery checks
 
 - Refresh before submitting: the cart should remain. Refresh afterward: the saved order should appear in history with its original number.

@@ -52,13 +52,13 @@ The existing `POST /api/orders` contract uses each line's `menuItemId`, pizza/dr
 
 ## Current boundaries
 
-Orders are saved as **Pending**, displayed as **New** in the live employee kitchen. Employees process New → Preparing → In oven → Ready → Completed, enter phone/counter orders, recall tickets, and cancel with a recorded reason. Drink-only orders skip the oven. Tax, payments, delivery, printing, and external customer notifications are not connected. Timers do not automatically advance orders or promise a preparation time. Password reset, email verification, and browser-based account administration are future work.
+Orders are saved as **Pending**, displayed as **New** in the live employee kitchen. Employees process New → Preparing → In oven → Ready → Completed, enter phone/counter orders, recall tickets, and cancel with a recorded reason. Drink-only orders skip the oven. Tax, payments, delivery, printing, and external customer notifications are not connected. Timers do not automatically advance orders or promise a preparation time. Password reset and email verification are future work. Admins can create staff accounts from the kitchen workspace.
 
 ## Employee setup
 
-The demo launcher (`npm run demo` or `start-demo.cmd`) provisions `admin` / `adminadmin` if that username is missing. Existing accounts are preserved. This account has normal employee access; there is no separate administrator role. Normal `npm start` and the GCP service do not provision shared demo credentials.
+The demo launcher (`npm run demo` or `start-demo.cmd`) provisions `admin` / `adminadmin` if that username is missing. Existing accounts are preserved. This account keeps normal employee access, despite its username. Normal `npm start` and the GCP service do not provision shared demo credentials.
 
-From this repository folder, run `npm run employee:create` in a normal interactive terminal to add individual employees. Enter a username, display name, password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. There is no public employee registration.
+From this repository folder, run `npm run employee:create` in a normal interactive terminal to add individual employees. Enter a username, display name, role (employee or admin), password, and password confirmation. Password input is hidden, and the command does not print or save the plaintext password. To create your first administrator, run `npm run admin:create` in an interactive terminal on the server using the same `DATABASE_PATH` as the running application. This creates a new account; it never silently promotes or resets an existing username. On GCP, run it from `/opt/luigis` as the service user with `/etc/luigis.env` loaded by an administrator. Accounts created on your laptop are separate from cloud accounts. There is no public employee registration.
 
 Open `/employee-login.html` and sign in using the account you created. Employee usernames use 3–32 letters, numbers, periods, underscores, or hyphens; passwords use 8–128 characters and may contain spaces. Usernames are case-insensitive. Password managers and paste are supported.
 
@@ -66,7 +66,7 @@ Migration 003 adds separate employee and employee-session tables. Employees use 
 
 The server checks access on both the employee page and `/api/employee/orders`. Customer accounts cannot grant themselves employee access. The workspace polls active lanes every two seconds, with 50 tickets per stage page. Completed/cancelled history supports search and pagination. Status changes use expected revisions; competing updates return 409 instead of advancing twice. Interrupted connections retain tickets and pause actions. Submitted item contents cannot be edited; cancel and replace an incorrect order.
 
-Customer and employee sessions are separate and can coexist. **Employee logout** ends employee access; **Customer logout** ends the customer session. Account creation is a local setup operation; employee account management and password reset screens are future work.
+Customer and employee sessions are separate and can coexist. **Employee logout** ends employee access; **Customer logout** ends the customer session. After signing in as an admin, choose **Staff accounts**, enter the new staff member details, select **Employee** or **Admin**, and choose **Create account**. Both roles sign in through **Employee login**. Admins retain all kitchen and phone-order features. `POST /api/employee/accounts` requires an active admin session, validates the requested role, and returns only public account details. Migration 005 adds roles and preserves existing employees without granting admin access. Password reset, role changes, and disabling accounts through the browser are future work.
 
 The restaurant address, phone number, owner's biography, and restaurant history require approved content. The displayed 10 AM–11 PM schedule comes from the existing project page and needs confirmation. No invented contact details, map pin, or owner story are included.
 

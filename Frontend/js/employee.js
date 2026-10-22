@@ -543,7 +543,7 @@ $('#historyForm').onsubmit = (event) => {
 };
 async function showView(nextView) {
   view = nextView;
-  for (const name of ['board', 'entry', 'history'])
+  for (const name of ['board', 'entry', 'history', 'accounts'])
     $(`#${name}View`).hidden = name !== view;
   document.querySelectorAll('[data-view]').forEach((node) => {
     const active = node.dataset.view === view;
@@ -554,6 +554,7 @@ async function showView(nextView) {
     board: 'Kitchen board',
     history: 'Order history',
     entry: 'New staff order',
+    accounts: 'Staff accounts',
   }[view];
   await waitForLoad();
   await loadOrders();
@@ -591,7 +592,12 @@ try {
     window.location.replace('./employee-login.html');
   } else {
     $('#employeeIdentity').textContent =
-      `Signed in as ${employee.displayName}.`;
+      `Signed in as ${employee.displayName} (${employee.role}).`;
+    if (employee.role === 'admin') {
+      $('#staffAccountsButton').hidden = false;
+      const { setupStaffAccounts } = await import('./employee-accounts.js');
+      setupStaffAccounts();
+    }
     await loadOrders();
     const { setupStaffOrder } = await import('./employee-entry.js');
     await setupStaffOrder(employee, async (orderId) => {

@@ -23,6 +23,13 @@ try {
   prompts = createInterface({ input: stdin, output, terminal: true });
   const username = await prompts.question('Employee username: ');
   const displayName = await prompts.question('Display name: ');
+  const role = process.argv.includes('--admin')
+    ? 'admin'
+    : (await prompts.question('Role (employee/admin) [employee]: '))
+        .trim()
+        .toLowerCase() || 'employee';
+  if (!['employee', 'admin'].includes(role))
+    throw new Error('Choose employee or admin. No account was created.');
   stdout.write('Password (8–128 characters; hidden): ');
   hideInput = true;
   const password = await prompts.question('');
@@ -33,9 +40,9 @@ try {
   if (password !== confirmation)
     throw new Error('Passwords do not match. No account was created.');
   database = openDatabase(readServerConfig().databasePath);
-  await createEmployee(database, { username, displayName, password });
+  await createEmployee(database, { username, displayName, password, role });
   console.log(
-    `Employee ${username.trim().toLowerCase()} created. Sign in at /employee-login.html.`,
+    `${role === 'admin' ? 'Admin' : 'Employee'} ${username.trim().toLowerCase()} created. Sign in at /employee-login.html.`,
   );
 } catch (error) {
   console.error(error.message);

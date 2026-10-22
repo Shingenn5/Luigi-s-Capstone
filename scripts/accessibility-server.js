@@ -10,6 +10,11 @@ import './build-pages.js';
 delete process.env.APP_ORIGIN;
 const database = openDatabase(':memory:');
 await createEmployee(database, TEST_EMPLOYEE);
+await createEmployee(database, {
+  ...TEST_EMPLOYEE,
+  username: 'browser.admin',
+  role: 'admin',
+});
 const app = createApp(database);
 app.use(
   '/Luigi-s-Capstone',
