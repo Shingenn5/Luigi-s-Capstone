@@ -2,7 +2,7 @@
 
 This setup uses **one Compute Engine VM** and its persistent disk for SQLite. Node runs as a dedicated `luigis` user under systemd, and restarts after a reboot or process failure. No Docker is required. Cloud Run's local filesystem is ephemeral; using it would require a different database integration.
 
-These files prepare deployment but do not create a Google Cloud project, enable billing, or deploy anything by themselves. GCP compute, disk, and network resources may incur charges. The installer has been syntax-checked; this repository's delivery does not claim an executed GCP deployment.
+An existing test VM is deployed; see [current deployment evidence](LIVE-DEMO.md). These setup files do not create a Google Cloud project or enable billing by themselves. GCP compute, disk, and network resources may incur charges. For changes to the existing app, follow [local development and release rules](DEVELOPMENT.md): test locally, commit and push, deploy that exact commit, then retest on GCP. See [team access](ACCESS.md) for individual VM permissions and the database location.
 
 ## 1. Create a VM
 

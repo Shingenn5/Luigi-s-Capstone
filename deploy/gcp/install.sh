@@ -38,7 +38,8 @@ if ! id luigis >/dev/null 2>&1; then
 fi
 install -d -m 0755 /opt/luigis
 install -d -o luigis -g luigis -m 0750 /var/lib/luigis
-tar -C "$source_dir" --exclude='./node_modules' --exclude='./.git' --exclude='./.env' --exclude='./.env.*' --exclude='*.db*' --exclude='./demo-dist' --exclude='./.demo-smoke' --exclude='./test-results' --exclude='./playwright-report' --exclude='./.pages' -cf - . | tar -C /opt/luigis -xf -
+# A private staging folder may be mode 0700; keep the installed app traversable by its service user.
+tar -C "$source_dir" --exclude='./node_modules' --exclude='./.git' --exclude='./.env' --exclude='./.env.*' --exclude='*.db*' --exclude='./demo-dist' --exclude='./.demo-smoke' --exclude='./test-results' --exclude='./playwright-report' --exclude='./.pages' -cf - . | tar --no-overwrite-dir --no-same-owner -C /opt/luigis -xf -
 cd /opt/luigis
 /usr/local/bin/npm ci --omit=dev
 if [[ ! -f /etc/luigis.env ]]; then

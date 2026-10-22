@@ -54,5 +54,8 @@ These instructions apply to all work in this repository. Follow explicit user in
 - Before editing, inspect the current branch and working tree. Preserve unrelated staged and unstaged changes; stage only files belonging to the requested work.
 - After making a change in this GitHub repository, always commit and push to the branch currently being worked on. Use a concise, descriptive commit message.
 - Never force-push, discard user changes, or switch branches unless explicitly authorized. If committing or pushing is blocked, preserve the changes and report the exact blocker.
+- All development belongs in this GitHub repository's local working tree. Develop and test locally, then commit and push to the current branch before deploying that exact pushed commit to the GCP VM. Never develop application code directly in `/opt/luigis` or deploy an uncommitted working-tree package.
+- After deployment, retest on the GCP VM and through the public HTTPS site as appropriate to the change. Local tests, a successful push, and GitHub Pages publication do not prove the VM is updated or working. Record the deployed commit and verification separately.
+- Before VM updates, back up the existing application, SQLite data, and environment configuration. Preserve `/var/lib/luigis`, `/etc/luigis.env`, and the running tunnel. Keep credentials, customer data, and backups out of Git. Follow `deploy/gcp/DEVELOPMENT.md` for the release sequence and `deploy/gcp/ACCESS.md` for teammate access.
 - Keep responses direct and practical. A little sarcasm is welcome; clarity and accuracy take priority.
 - Always include a small **TL;DR** at the bottom of responses.
