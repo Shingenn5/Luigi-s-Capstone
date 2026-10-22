@@ -1,13 +1,15 @@
-/* Bootstrap supplies layout and controls. These exceptions support kitchen scanning,
-   stable ticket selection, and large touch targets on the employee workspace only. */
+/* Bootstrap owns the grid, forms and controls. Employee-only rules provide the
+   flat POS navigation, compact ticket hierarchy, touch sizes and selection. */
 .employee-workspace {
-  --kitchen-new: var(--bs-primary);
-  --kitchen-preparing: var(--bs-info-text-emphasis);
-  --kitchen-oven: var(--bs-warning-text-emphasis);
-  --kitchen-ready: var(--bs-success);
-  font-size: 1rem;
+  --workspace-accent: #b3262f;
+  --workspace-action: #174b73;
+  --workspace-action-hover: #103953;
+  --kitchen-new: #b3262f;
+  --kitchen-preparing: #174b73;
+  --kitchen-oven: #8a5a0b;
+  --kitchen-ready: #247347;
+  --bs-border-radius: 0.25rem;
 }
-
 .employee-workspace
   :is(
     .btn,
@@ -18,27 +20,59 @@
   ) {
   min-height: 44px;
 }
-
+.employee-workspace .workspace-header {
+  border-top: 3px solid var(--workspace-accent);
+}
+.employee-workspace .workspace-tab {
+  --bs-btn-color: var(--bs-secondary-color);
+  --bs-btn-hover-color: var(--bs-emphasis-color);
+  --bs-btn-hover-bg: var(--bs-tertiary-bg);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding-block: 1.25rem;
+  transition: none;
+}
+.employee-workspace .workspace-tab[aria-pressed='true'] {
+  color: var(--workspace-accent);
+  border-bottom-color: var(--workspace-accent);
+  font-weight: 700;
+}
+.employee-workspace .btn-primary {
+  --bs-btn-bg: var(--workspace-action);
+  --bs-btn-border-color: var(--workspace-action);
+  --bs-btn-hover-bg: var(--workspace-action-hover);
+  --bs-btn-hover-border-color: var(--workspace-action-hover);
+  --bs-btn-active-bg: var(--workspace-action-hover);
+  --bs-btn-active-border-color: var(--workspace-action-hover);
+  --bs-btn-disabled-bg: var(--workspace-action);
+  --bs-btn-disabled-border-color: var(--workspace-action);
+}
 .employee-workspace .btn-outline-secondary {
   --bs-btn-color: var(--bs-dark-text-emphasis);
 }
-
-/* Switch navigation states together so text never fades through a low-contrast pair. */
-.employee-workspace [data-view] {
+.employee-workspace .stage-filter {
+  --bs-btn-color: var(--bs-dark-text-emphasis);
+  --bs-btn-hover-bg: var(--bs-secondary-bg);
+  --bs-btn-hover-color: var(--bs-emphasis-color);
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-body-bg);
   transition: none;
 }
-
+.employee-workspace .stage-filter[aria-pressed='true'] {
+  color: var(--workspace-action);
+  border-color: var(--workspace-action);
+  background: var(--bs-primary-bg-subtle);
+  font-weight: 700;
+}
 .employee-workspace :is(article, .kitchen-lane, #employeeIdentity) {
   overflow-wrap: anywhere;
   min-width: 0;
 }
-
-.employee-workspace .kitchen-lane {
-  border-top: 4px solid var(--lane-color);
-  background: var(--bs-secondary-bg);
-  border-radius: var(--bs-border-radius);
+.employee-workspace .lane-heading {
+  border-left: 3px solid var(--lane-color);
+  padding-left: 0.625rem;
 }
-
 .employee-workspace [data-lane='Pending'] {
   --lane-color: var(--kitchen-new);
 }
@@ -51,59 +85,67 @@
 .employee-workspace [data-lane='Ready'] {
   --lane-color: var(--kitchen-ready);
 }
-
-.employee-workspace .kitchen-ticket {
-  border: 1px solid var(--bs-border-color);
-  box-shadow: var(--bs-box-shadow-sm);
-}
-
 .employee-workspace .kitchen-ticket.is-selected {
-  outline: 3px solid var(--bs-primary);
+  outline: 2px solid var(--workspace-action);
   outline-offset: 1px;
 }
-
 .employee-workspace .ticket-selector {
-  color: var(--bs-emphasis-color);
-  background: var(--bs-primary-bg-subtle);
+  color: var(--workspace-action);
   border: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.2;
   border-radius: 0;
 }
-
 .employee-workspace .ticket-selector:hover {
-  background: var(--bs-primary-border-subtle);
+  color: var(--workspace-action-hover);
+  text-decoration: underline;
 }
-
 .employee-workspace :is(.ticket-selector:focus-visible, summary:focus-visible) {
-  outline: 3px solid var(--bs-primary);
-  outline-offset: -3px;
+  outline: 3px solid var(--workspace-action);
+  outline-offset: 2px;
   box-shadow: none;
 }
-
 .employee-workspace .ticket-clock {
   font-variant-numeric: tabular-nums;
 }
-
 .employee-workspace .ticket-clock > strong {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
-
 .employee-workspace .ticket-clock small {
   display: block;
-  color: var(--bs-secondary-color);
-  font-weight: 400;
+  font-size: 0.75rem;
 }
-
+.employee-workspace .ticket-product {
+  font-size: 1.125rem;
+}
 .employee-workspace .ticket-quantity {
   min-width: 2rem;
+  font-size: 1.125rem;
   font-variant-numeric: tabular-nums;
 }
-
+.employee-workspace .ticket-note {
+  font-size: 0.875rem;
+}
 .employee-workspace #cancelDialog {
   width: min(36rem, calc(100% - 2rem));
 }
-
 .employee-workspace #cancelDialog::backdrop {
   background: rgba(var(--bs-dark-rgb), 0.5);
+}
+@media (min-width: 768px) {
+  .employee-workspace .ticket-items {
+    border-left: 1px solid var(--bs-border-color);
+  }
+}
+@media (max-width: 767.98px) {
+  .employee-workspace .workspace-nav {
+    width: 100%;
+  }
+  .employee-workspace .workspace-tab {
+    padding-block: 0.75rem;
+  }
+  .employee-workspace .ticket-identity {
+    border-bottom: 1px solid var(--bs-border-color);
+  }
 }

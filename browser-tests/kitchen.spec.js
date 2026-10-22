@@ -321,3 +321,44 @@ test('a committed staff order with a lost response is reconciled without duplica
   ).toHaveCount(1);
   expect(posts).toBe(1);
 });
+
+test('stage filters keep tickets current and keyboard focus out of hidden stages', async ({
+  page,
+  baseURL,
+}) => {
+  await login(page, baseURL);
+  const ticket = await order(page, baseURL, 'Stage filter customer');
+  const card = page.locator(`#ticket-${ticket.orderId}`);
+  await expect(card).toBeVisible();
+  const newFilter = page.getByRole('button', {
+    name: 'New orders',
+    exact: true,
+  });
+  await newFilter.click();
+  await expect(newFilter).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-lane="Preparing"]')).toBeHidden();
+  await page.locator(`#advance-${ticket.orderId}`).click();
+  await expect(
+    page.locator(`[data-lane="Preparing"] #ticket-${ticket.orderId}`),
+  ).toHaveCount(1);
+  await expect(card).toBeHidden();
+  expect(
+    await page.evaluate(() =>
+      Boolean(document.activeElement.closest('[hidden]')),
+    ),
+  ).toBe(false);
+  await page
+    .getByRole('button', { name: 'Preparing orders', exact: true })
+    .click();
+  await expect(card).toBeVisible();
+  await page.locator(`#select-${ticket.orderId}`).focus();
+  await page.keyboard.press('Home');
+  expect(
+    await page.evaluate(
+      () => document.activeElement.closest('[data-lane]').dataset.lane,
+    ),
+  ).toBe('Preparing');
+  await accessible(page);
+  await page.locator('[data-stage-filter="all"]').click();
+  await expect(page.locator('[data-lane="Pending"]')).toBeVisible();
+});

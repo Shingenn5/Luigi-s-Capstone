@@ -26,6 +26,7 @@ let soundEnabled = false;
 let warning = 10;
 let overdue = 20;
 let historySearch = '';
+let stageFilter = 'all';
 
 export function message(text) {
   status.textContent = text;
@@ -149,11 +150,22 @@ function selectTicket(orderId) {
     node.closest('article').classList.toggle('is-selected', selected);
   });
 }
+function ticketFocusTarget(...ids) {
+  return (
+    [
+      ...ids.map((id) => document.getElementById(id)),
+      ...document.querySelectorAll('[data-ticket-select]'),
+    ].find((node) => node && !node.closest('[hidden]')) || $('#workspaceTitle')
+  );
+}
 function ticketCard(ticket) {
-  const card = element('article', 'card kitchen-ticket mb-3');
+  const card = element(
+    'article',
+    'kitchen-ticket row g-0 bg-body border rounded mb-2',
+  );
   card.id = `ticket-${ticket.orderId}`;
   card.setAttribute('aria-labelledby', `ticket-heading-${ticket.orderId}`);
-  const head = element('div', 'card-header bg-white p-0');
+  const head = element('div', 'ticket-identity col-12 col-md-3 col-xl-2 p-3');
   const heading = element('h3', 'h5 mb-0');
   heading.id = `ticket-heading-${ticket.orderId}`;
   const selector = button(
@@ -161,7 +173,7 @@ function ticketCard(ticket) {
     () => selectTicket(ticket.orderId),
     `select-${ticket.orderId}`,
   );
-  selector.className = 'btn ticket-selector px-3 py-2 w-100 text-start';
+  selector.className = 'btn ticket-selector p-0 text-start';
   selector.dataset.ticketSelect = ticket.orderId;
   selector.setAttribute('aria-pressed', String(ticket.orderId === selectedId));
   selector.onkeydown = (event) => {
@@ -196,52 +208,62 @@ function ticketCard(ticket) {
     target?.click();
   };
   heading.append(selector);
-  const stageColors = {
-    Pending: 'bg-primary-subtle text-primary-emphasis',
-    Preparing: 'bg-info-subtle text-info-emphasis',
-    'In oven': 'bg-warning-subtle text-warning-emphasis',
-    Ready: 'bg-success-subtle text-success-emphasis',
-    Completed: 'bg-secondary-subtle text-secondary-emphasis',
-    Cancelled: 'bg-danger-subtle text-danger-emphasis',
-  };
   const stage = element(
     'span',
-    `badge ${stageColors[ticket.orderStatus] || 'text-bg-secondary'}`,
+    'visually-hidden',
     stageLabel(ticket.orderStatus),
   );
   head.append(heading);
-  const body = element('div', 'card-body p-3');
-  const service = element('div', 'd-flex flex-wrap gap-2 mb-2');
+  const body = element('div', 'ticket-items col-12 col-md-6 col-xl-7 p-3');
+  const service = element('div', 'small fw-semibold mb-1');
   service.append(
     stage,
     element(
       'span',
-      'badge bg-secondary-subtle text-secondary-emphasis',
+      '',
       `${ticket.serviceType}${ticket.tableName ? ` · Table ${ticket.tableName}` : ''}`,
     ),
   );
-  const time = element('div', 'ticket-clock mb-3');
+  const time = element('div', 'ticket-clock mt-2');
   time.dataset.placed = Date.parse(`${ticket.orderDate.replace(' ', 'T')}Z`);
   time.dataset.entered = ticket.enteredAt;
   time.dataset.active = String(STAGES.includes(ticket.orderStatus));
   time.append(element('strong'), element('small'));
-  body.append(service, element('p', 'fw-bold mb-1', ticket.customerName), time);
+  head.append(
+    service,
+    element('p', 'small text-body-secondary mb-0', ticket.customerName),
+    time,
+  );
   const list = element('ul', 'list-unstyled mb-0');
   for (const item of ticket.items) {
-    const row = element('li', 'd-flex gap-2 border-top py-3');
+    const row = element('li', 'd-flex gap-3 mb-2');
     const description = element('div', 'flex-grow-1');
     description.append(
-      element('span', 'fw-bold d-block', `${item.size} ${item.itemName}`),
+      element(
+        'span',
+        'ticket-product fw-bold d-block',
+        `${item.size} ${item.itemName}`,
+      ),
     );
     const details = item.toppings.map((topping) =>
       toppingLabel(topping.toppingName, topping.quantity),
     );
-    if (item.itemName === 'Pizza')
-      details.push(preferenceLabel(item.sauce, item.cheese));
     if (details.length)
       description.append(element('span', 'd-block', details.join(', ')));
+    if (item.itemName === 'Pizza') {
+      const modified = item.sauce !== 'Regular' || item.cheese !== 'Regular';
+      description.append(
+        element(
+          'span',
+          modified
+            ? 'd-block fw-semibold text-danger-emphasis'
+            : 'd-block small text-body-secondary',
+          preferenceLabel(item.sauce, item.cheese),
+        ),
+      );
+    }
     row.append(
-      element('span', 'ticket-quantity fw-bold', `${item.quantity} \u00d7`),
+      element('span', 'ticket-quantity fw-bold', `${item.quantity}\u00d7`),
       description,
     );
     list.append(row);
@@ -251,7 +273,7 @@ function ticketCard(ticket) {
     body.append(
       element(
         'p',
-        'bg-warning-subtle text-warning-emphasis rounded p-2 fw-semibold',
+        'ticket-note border-start border-warning border-3 ps-2 my-2 fw-semibold',
         `Kitchen notes: ${ticket.notes}`,
       ),
     );
@@ -259,7 +281,7 @@ function ticketCard(ticket) {
     body.append(
       element('p', 'fw-semibold', `Last change: ${ticket.lastReason}`),
     );
-  const contact = element('details', 'border-top small');
+  const contact = element('details', 'small text-body-secondary');
   const contactSummary = element(
     'summary',
     'py-2',
@@ -287,7 +309,11 @@ function ticketCard(ticket) {
   body.append(contact);
   const actions = element(
     'div',
-    'card-footer bg-white d-flex flex-wrap gap-2 p-3',
+    'ticket-actions col-12 col-md-3 p-3 d-flex flex-column justify-content-center gap-2',
+  );
+  const secondaryActions = element(
+    'div',
+    'd-flex flex-wrap justify-content-center gap-2',
   );
   const addAction = (label, action, primary = false) => {
     const node = button(
@@ -297,16 +323,17 @@ function ticketCard(ticket) {
       `${action}-${ticket.orderId}`,
     );
     node.className = primary
-      ? 'btn btn-primary py-3 fw-bold w-100'
-      : `btn ${action === 'cancel' ? 'btn-outline-danger' : 'btn-outline-secondary'} flex-grow-1`;
+      ? 'btn btn-primary fw-semibold w-100'
+      : `btn btn-link ${action === 'cancel' ? 'text-danger' : 'text-body-secondary'} text-decoration-none px-2`;
     node.dataset.mutation = '';
     node.disabled = !connected || changing;
-    actions.append(node);
+    (primary ? actions : secondaryActions).append(node);
   };
   const label = advanceLabel(ticket.orderStatus, ticket.hasPizza);
   if (label) addAction(label, 'advance', true);
   if (ticket.orderStatus !== 'Pending') addAction('Recall', 'recall');
   if (STAGES.includes(ticket.orderStatus)) addAction('Cancel order', 'cancel');
+  if (secondaryActions.childElementCount) actions.append(secondaryActions);
   card.append(head, body, actions);
   return card;
 }
@@ -332,11 +359,11 @@ function updateClocks() {
           : active
             ? 'On track'
             : 'Closed';
-    node.querySelector('strong').textContent = `${age} min · ${cue}`;
+    node.querySelector('strong').textContent = `${age} min`;
     node.querySelector('small').textContent = active
-      ? `${stageAge} min in this stage`
-      : 'Total time to close';
-    node.className = `ticket-clock mb-3 ${cue === 'Overdue' ? 'text-danger-emphasis' : cue === 'Aging' ? 'text-warning-emphasis' : 'text-body'}`;
+      ? `${cue} · ${stageAge} min in stage`
+      : 'Closed · Total time';
+    node.className = `ticket-clock mt-2 ${cue === 'Overdue' ? 'text-danger-emphasis' : cue === 'Aging' ? 'text-warning-emphasis' : 'text-body'}`;
   });
 }
 function renderLane(stage, result) {
@@ -359,18 +386,18 @@ function renderLane(stage, result) {
   parent.replaceChildren();
   const heading = element(
     'h2',
-    'h5 fw-bold d-flex justify-content-between align-items-center gap-2 p-2 mb-2',
+    'lane-heading h6 fw-bold d-flex align-items-center gap-2 mb-2',
   );
   heading.append(
     element('span', '', stageLabel(stage)),
-    element('span', 'badge bg-white text-dark border', String(result.total)),
+    element('span', 'text-body-secondary fw-normal', String(result.total)),
   );
   parent.append(heading);
   if (!result.orders.length)
     parent.append(
       element(
         'p',
-        'rounded p-3 bg-body text-body-secondary mb-0',
+        'small text-body-secondary py-2 mb-0',
         `No ${stageLabel(stage).toLowerCase()} orders.`,
       ),
     );
@@ -403,13 +430,33 @@ function renderLane(stage, result) {
   pages[stage] = result.page;
 }
 for (const stage of STAGES) {
-  const column = element('div', 'col-12 col-md-6 col-xl-3');
-  const lane = element('section', 'kitchen-lane p-2');
+  const lane = element('section', 'kitchen-lane mb-4');
   lane.dataset.lane = stage;
   lane.setAttribute('aria-label', `${stageLabel(stage)} orders`);
-  column.append(lane);
-  $('#employeeOrders').append(column);
+  $('#employeeOrders').append(lane);
+  const filter = button(stageLabel(stage), () => filterStages(stage));
+  filter.className = 'btn stage-filter px-3';
+  filter.dataset.stageFilter = stage;
+  filter.setAttribute('aria-label', `${stageLabel(stage)} orders`);
+  filter.setAttribute('aria-pressed', 'false');
+  const count = element('span', 'ms-2', '0');
+  count.dataset.stageCount = stage;
+  filter.append(count);
+  $('#stageFilters').append(filter);
 }
+function filterStages(stage) {
+  stageFilter = stage;
+  document.querySelectorAll('[data-stage-filter]').forEach((node) => {
+    node.setAttribute(
+      'aria-pressed',
+      String(node.dataset.stageFilter === stage),
+    );
+  });
+  document.querySelectorAll('[data-lane]').forEach((lane) => {
+    lane.hidden = stage !== 'all' && lane.dataset.lane !== stage;
+  });
+}
+$('[data-stage-filter="all"]').onclick = () => filterStages('all');
 async function loadOrders() {
   if (stopped || loading || document.hidden) return;
   clearTimeout(timer);
@@ -436,6 +483,12 @@ async function loadOrders() {
     if (view !== 'entry')
       results.forEach((result, index) => renderLane(stages[index], result));
     const counts = results[0].counts;
+    document.querySelectorAll('[data-stage-count]').forEach((node) => {
+      node.textContent =
+        node.dataset.stageCount === 'all'
+          ? STAGES.reduce((sum, stage) => sum + (counts[stage] || 0), 0)
+          : counts[node.dataset.stageCount] || 0;
+    });
     const newest = results[0].newestOrderId;
     const countSignature = JSON.stringify(counts);
     if (
@@ -455,10 +508,7 @@ async function loadOrders() {
     updateClocks();
     selectTicket(selectedId);
     if (wasTicketFocused && !activeElement.isConnected)
-      (
-        document.getElementById(focusId) ||
-        document.querySelector('[data-ticket-select]')
-      )?.focus();
+      ticketFocusTarget(focusId).focus();
   } catch (error) {
     if (error.status === 401) {
       stop();
@@ -520,11 +570,9 @@ async function mutate(ticket, action, reason = '') {
     await loadOrders();
     setConnection(connected);
     if (!$('#cancelDialog').open)
-      (
-        document.getElementById(`advance-${ticket.orderId}`) ||
-        document.getElementById(`recall-${ticket.orderId}`) ||
-        document.querySelector('[data-ticket-select]') ||
-        $('#workspaceTitle')
+      ticketFocusTarget(
+        `advance-${ticket.orderId}`,
+        `recall-${ticket.orderId}`,
       ).focus();
   }
 }
@@ -566,7 +614,6 @@ async function showView(nextView) {
   document.querySelectorAll('[data-view]').forEach((node) => {
     const active = node.dataset.view === view;
     node.setAttribute('aria-pressed', String(active));
-    node.className = `btn ${active ? 'btn-primary' : node.dataset.view === 'entry' ? 'btn-outline-primary' : 'btn-outline-secondary'} px-3`;
   });
   $('#workspaceTitle').textContent = {
     board: 'Kitchen board',
@@ -574,6 +621,7 @@ async function showView(nextView) {
     entry: 'New staff order',
     accounts: 'Staff accounts',
   }[view];
+  if (view === 'board') filterStages(stageFilter);
   await waitForLoad();
   await loadOrders();
 }
@@ -620,6 +668,7 @@ try {
     const { setupStaffOrder } = await import('./employee-entry.js');
     await setupStaffOrder(employee, async (orderId) => {
       message(`Order #${orderId} sent to kitchen.`);
+      filterStages('all');
       await showView('board');
       document.getElementById(`select-${orderId}`)?.focus();
     });

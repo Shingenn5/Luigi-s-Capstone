@@ -11,26 +11,28 @@
 </head>
 <body class="employee-workspace bg-body-tertiary">
   <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
-  <header class="border-bottom bg-body p-3 px-lg-4">
+  <header class="workspace-header border-bottom bg-body px-3 px-lg-4">
     <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
-      <div class="d-flex align-items-center gap-3"><img src="./assets/logo.png" width="56" height="56" class="object-fit-contain" alt="" /><div><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's kitchen</a><p class="small text-body-secondary mb-0" id="employeeIdentity">Checking employee access…</p></div></div>
-      <nav class="d-flex flex-wrap gap-2" aria-label="Employee workspace">
-        <button class="btn btn-primary px-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
-        <button class="btn btn-outline-primary px-3" type="button" data-view="entry" aria-pressed="false">New order</button>
-        <button class="btn btn-outline-secondary px-3" type="button" data-view="history" aria-pressed="false">Order history</button>
-        <button class="btn btn-outline-secondary px-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
-        <button class="btn btn-outline-secondary px-3" type="button" id="employeeLogout">Employee logout</button>
+      <div class="d-flex align-items-center gap-2"><img src="./assets/logo.png" width="48" height="48" class="object-fit-contain" alt="" /><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's <span class="fw-normal text-body-secondary fs-6">/ Staff</span></a></div>
+      <nav class="d-flex flex-wrap gap-1 workspace-nav" aria-label="Employee workspace">
+        <button class="btn workspace-tab px-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
+        <button class="btn workspace-tab px-3" type="button" data-view="entry" aria-pressed="false">New order</button>
+        <button class="btn workspace-tab px-3" type="button" data-view="history" aria-pressed="false">Order history</button>
+        <button class="btn workspace-tab px-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
+        <button class="btn workspace-tab px-3" type="button" id="employeeLogout">Employee logout</button>
       </nav>
     </div>
   </header>
   <main class="container-fluid p-3 p-lg-4" id="main" tabindex="-1">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
-      <div><h1 class="h2 fw-bold mb-1" id="workspaceTitle" tabindex="-1">Kitchen board</h1><p class="mb-0 small" id="connectionStatus">Connecting to kitchen…</p></div>
-      <button class="btn btn-outline-secondary" id="refreshOrders" type="button">Refresh orders</button>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+      <div><h1 class="h3 fw-bold mb-1" id="workspaceTitle" tabindex="-1">Kitchen board</h1><p class="small text-body-secondary mb-0" id="employeeIdentity">Checking employee access…</p></div>
+      <div class="d-flex flex-wrap align-items-center gap-3"><p class="mb-0 small" id="connectionStatus">Connecting to kitchen…</p><button class="btn btn-outline-secondary" id="refreshOrders" type="button">Refresh orders</button></div>
     </div>
     <p class="small text-body-secondary mb-3" id="employeeStatus" role="status" aria-atomic="true"></p>
-    <section id="boardView" aria-label="Active kitchen orders"><div class="row g-3 align-items-start" id="employeeOrders" aria-label="Active order lanes" aria-busy="true"></div>
-    <details class="mt-4 border rounded p-3 bg-body"><summary class="py-2 fw-semibold">Kitchen settings and keyboard help</summary>
+    <section id="boardView" aria-label="Active kitchen orders">
+      <nav id="stageFilters" class="d-flex flex-wrap gap-2 mb-4" aria-label="Filter kitchen stages"><button class="btn stage-filter px-3" type="button" data-stage-filter="all" aria-pressed="true">All active <span class="ms-2" data-stage-count="all">0</span></button></nav>
+      <div id="employeeOrders" aria-label="Active order lanes" aria-busy="true"></div>
+    <details class="mt-4 border-top pt-2"><summary class="py-2 text-body-secondary small">Kitchen settings and keyboard help</summary>
       <p class="mt-3">Use Tab to reach controls. Arrow keys move between ticket selectors; Enter or Space selects a ticket. Use its labelled buttons to advance, recall, or cancel. No drag gestures required.</p>
       <button class="btn btn-outline-secondary mb-3" id="soundToggle" type="button" aria-pressed="false">Enable sound</button>
       <form id="thresholdForm" class="row g-3 align-items-end">
