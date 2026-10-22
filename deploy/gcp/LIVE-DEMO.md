@@ -41,6 +41,20 @@ This entry is deployment evidence added after the runtime release; its documenta
 
 ## Verified behavior
 
+### Customer-to-kitchen handoff release — October 22, 2026
+
+Runtime commit `741bba09dfdfd04e2a9b86380f341c9468902352` is deployed at the same public HTTPS origin. The owner explicitly approved this GCP deployment after the source changes were pushed and tested. The uploaded Git archive SHA-256 was `3f96438a0ef306a8e57d39487099cad9f5aec399f6247de9c614eebd0f96b2b8`; the VM verified it before installation. Changed deployed frontend/backend files and migration 006 match the committed archive.
+
+The previous source, stopped SQLite data directory, and environment configuration are backed up under `/var/backups/luigis/741bba0-20261022T190544Z`. That backup directory is root-only. The existing database and environment configuration were preserved; migration 006 applied successfully, `PRAGMA integrity_check` returned `ok`, and the foreign-key check returned no violations. Both `luigis` and `luigis-tunnel` are active. Only the app was restarted, preserving the tunnel hostname.
+
+The [release pipeline](https://github.com/Shingenn5/Luigi-s-Capstone/actions/runs/39835541021) passed all application checks, Pages build, and Pages publication for this runtime commit. Local checks also passed: locked install, lint, formatting, 29 backend/database tests, 31 browser/accessibility scenarios, and clean-package restart verification.
+
+Public Chrome verification followed the Pages entry to the full app, checked the square logo, registered a labelled synthetic customer, and submitted $8 dine-in order #6 with double pepperoni, light sauce, a drink, table `QA-12`, and kitchen instructions. The employee ticket retained the modifiers/table/instructions and showed employee-attributed activity. Native employee controls advanced the order through Preparing, In oven, Ready, and Completed; customer progress followed every stage. Desktop/mobile renders were visually inspected without horizontal overflow or uncaught page errors. Customer access to the staff activity endpoint returned 401.
+
+An app-only restart retained the customer account, completed order, table/instructions, and all five recorded activity events. Verification sessions were logged out; temporary local verification credentials were removed. The synthetic completed order remains labelled as a test. Earlier automated live-check attempts needed corrected route/readiness assertions; the completed public journey and post-restart checks passed. No payments, real food fulfillment, or external notifications were involved.
+
+This deployment evidence is a documentation-only follow-up to the runtime commit above; the documentation commit does not represent a newer deployed application build.
+
 All 24 existing Node tests passed before publishing. Public HTTPS probes verified health, unauthorized kitchen rejection, customer registration/login/logout, Secure session cookies, server-calculated prices, duplicate-submit protection, all four kitchen advances and HTTP 409 for stale revisions. A synthetic $22 order labelled `Deployment test - no food` reached Completed. Employee/customer login, the order and completed history survived a Node service restart. Browser verification confirmed signed-in customer history and the live Pages redirect. The synthetic browser session was logged out afterward.
 
 ## Operating the demo
