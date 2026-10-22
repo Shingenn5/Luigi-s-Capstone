@@ -19,6 +19,16 @@ Verified on October 21, 2026. This records deployment evidence, not a guarantee 
 
 The cloud employee username is `admin`, with a unique generated password rather than the laptop demo password. The private local handover is `demo-dist/cloud-login.txt`, excluded from Git and application packages. No credentials are recorded here. Public systemd startup does not seed the shared local demo account.
 
+## Order-testing update — October 21, 2026
+
+Application commit `ed4b38f` is deployed at the same HTTPS origin. This includes customer milestone tracking, the Place order checkout action, and expired-session recovery that preserves the draft. No schema, dependency, tunnel, or infrastructure change was required.
+
+The previous app source, stopped SQLite data directory, and environment configuration were backed up under `/var/backups/luigis/ed4b38f-20261022T004014Z` (UTC directory timestamp). The first start encountered a staging-directory permission problem; restoring `/opt/luigis` to mode 0755 resolved it. Both app and tunnel services are active. Deployed JavaScript matches the committed archive, with CRLF line endings from Windows Git export.
+
+Validation: 25 backend tests passed. All 27 browser scenarios passed across the main run and a focused rerun after correcting two assertions to inspect the disabled submit button. Lint and formatting checks passed. A public browser created an account, built a pizza with double pepperoni/light sauce plus a drink, and placed synthetic $8 order #2. Employee API checks confirmed its ticket contents and advanced it through the kitchen; the customer browser received live progress through handoff. The customer session, completed order, and kitchen history survived an app-service restart. The synthetic session was logged out afterward. Desktop/mobile screenshots were visually reviewed; no payments were collected.
+
+Use [the acceptance-testing walkthrough](../../TESTING.md) for customer and staff order steps.
+
 ## Verified behavior
 
 All 24 existing Node tests passed before publishing. Public HTTPS probes verified health, unauthorized kitchen rejection, customer registration/login/logout, Secure session cookies, server-calculated prices, duplicate-submit protection, all four kitchen advances and HTTP 409 for stale revisions. A synthetic $22 order labelled `Deployment test - no food` reached Completed. Employee/customer login, the order and completed history survived a Node service restart. Browser verification confirmed signed-in customer history and the live Pages redirect. The synthetic browser session was logged out afterward.
