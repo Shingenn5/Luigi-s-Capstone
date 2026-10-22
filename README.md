@@ -2,6 +2,8 @@
 
 A capstone ordering app using HTML, Bootstrap 5.3.8 (Bootswatch Simplex), plain JavaScript, Node.js 24 LTS, Express, and SQLite. No frontend build step or custom CSS.
 
+For acceptance testing, follow [the customer and kitchen walkthrough](TESTING.md). It includes the full test-site link, order steps, employee access, and recovery checks. Checkout keeps the draft and provides a sign-in link when a customer session expires.
+
 ## Run locally
 
 For a portable laptop demo, run `npm run demo` or double-click `start-demo.cmd`. The launcher installs missing server dependencies on first use. See [DEMO.md](DEMO.md) for employee setup, saved data, LAN access, and troubleshooting. `npm run package:demo` creates a clean shareable ZIP in `demo-dist/`; `npm run verify:demo` tests an extracted copy with a fresh database. [GCP hosting instructions](deploy/gcp/README.md) include a Compute Engine installer and systemd service.

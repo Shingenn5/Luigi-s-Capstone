@@ -34,6 +34,22 @@ let clockOffset = 0;
 let lastHistoryUpdate = 0;
 let historyConnected = false;
 
+function expireSession() {
+  customer = null;
+  historyConnected = false;
+  clearTimeout(historyTimer);
+  checkoutFields.disabled = true;
+  const accountStatus = document.querySelector('#accountStatus');
+  const login = document.createElement('a');
+  login.href = './login.html';
+  login.textContent = 'Log in again';
+  accountStatus.replaceChildren(
+    'Your session expired. ',
+    login,
+    ' to place your order. Your draft is still here.',
+  );
+}
+
 function renderOrder() {
   orderItems.replaceChildren();
   cartValid = false;
@@ -215,7 +231,7 @@ async function renderHistory() {
         ? 'Your session expired. Log in again to resume order tracking.'
         : `Updates interrupted. ${error.message} Retrying automatically.`;
     connection.textContent = `${message}${lastHistoryUpdate ? ` Last checked ${new Date(lastHistoryUpdate).toLocaleTimeString()}; displayed progress may be out of date.` : ''}`;
-    if (error.status === 401) customer = null;
+    if (error.status === 401) expireSession();
     if (!historySnapshot)
       history.textContent = 'Order history is currently unavailable.';
   } finally {
@@ -282,12 +298,13 @@ checkoutForm.addEventListener('submit', async (event) => {
   if (!validateForm(checkoutForm)) return;
   isSubmitting = true;
   checkoutForm.setAttribute('aria-busy', 'true');
+  document.querySelector('#submitOrder').textContent = 'Placing order…';
   checkoutFields.disabled = true;
   clearButton.disabled = true;
   orderItems.querySelectorAll('button, input').forEach((control) => {
     control.disabled = true;
   });
-  status.textContent = 'Saving your order…';
+  status.textContent = 'Sending your order to the kitchen…';
   try {
     const result = await apiRequest('orders', {
       method: 'POST',
@@ -304,11 +321,13 @@ checkoutForm.addEventListener('submit', async (event) => {
     focusMessage(status);
     await renderHistory();
   } catch (error) {
+    if (error.status === 401) expireSession();
     status.textContent = error.message;
     focusMessage(status);
   } finally {
     isSubmitting = false;
     checkoutForm.removeAttribute('aria-busy');
+    document.querySelector('#submitOrder').textContent = 'Place order';
     renderOrder();
   }
 });

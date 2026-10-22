@@ -186,17 +186,13 @@ test('pizza options, registration, checkout and history work by keyboard', async
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/order.html$/);
   await expect(page.locator('#checkoutFields')).toBeEnabled();
-  await page
-    .getByRole('button', { name: 'Save pending order', exact: true })
-    .focus();
+  await page.getByRole('button', { name: 'Place order', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('[data-error-summary]')).toBeFocused();
   await checkAccessibility(page);
   await page.locator('#phoneNumber').focus();
   await page.keyboard.insertText('(555) 555-0100');
-  await page
-    .getByRole('button', { name: 'Save pending order', exact: true })
-    .focus();
+  await page.getByRole('button', { name: 'Place order', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('#orderStatus')).toContainText(
     'sent to the kitchen',

@@ -21,12 +21,12 @@
         <section class="col-lg-7" aria-labelledby="reviewTitle"><h2 class="h4" id="reviewTitle">Review your items</h2><ul class="list-unstyled" id="orderItems"></ul><p class="d-flex justify-content-between border-top pt-3">Subtotal before tax <strong id="orderSubtotal">$0.00</strong></p><div class="d-flex flex-wrap gap-3"><a class="btn btn-outline-primary py-2" href="./menu.html">Add more items</a><button class="btn btn-outline-dark py-2" type="button" id="clearOrder">Clear order</button></div></section>
         <section class="col-lg-5" aria-labelledby="checkoutTitle"><div class="card"><div class="card-body p-4">
           <h2 class="h4" id="checkoutTitle">Order details</h2>
-          <p class="small text-body-secondary">Pickup or dine-in only. Saving an order does not confirm restaurant acceptance or collect payment. Tax is not configured.</p>
+          <p class="small text-body-secondary">Test ordering: pickup or dine-in. Place your order to send it to the kitchen and follow its progress below. No payment is collected. Prices are samples; tax is not configured.</p>
           <form id="checkoutForm"><fieldset id="checkoutFields" disabled><legend class="visually-hidden">Customer and service details</legend>
             <div class="mb-3"><label class="form-label" for="customerName">Name for the order</label><input class="form-control border-dark" id="customerName" autocomplete="name" maxlength="120" required /></div>
             <div class="mb-3"><label class="form-label" for="phoneNumber">Phone number</label><input class="form-control border-dark" id="phoneNumber" type="tel" autocomplete="tel" minlength="7" maxlength="25" pattern="[0-9+ .\(\)\-]{7,25}" required /></div>
             <div class="mb-4"><label class="form-label" for="serviceType">Service</label><select class="form-select border-dark" id="serviceType"><option>Pickup</option><option>Dine-in</option></select></div>
-            <button class="btn btn-primary w-100 py-2" id="submitOrder" type="submit">Save pending order</button>
+            <button class="btn btn-primary w-100 py-2" id="submitOrder" type="submit">Place order</button>
           </fieldset></form>
         </div></div></section>
       </div>

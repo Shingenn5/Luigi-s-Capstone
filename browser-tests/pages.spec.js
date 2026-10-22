@@ -37,9 +37,7 @@ test('configured Pages entry opens full app registration and real order submissi
     .click();
   await page.locator('#customerName').fill('Public Entry Customer');
   await page.locator('#phoneNumber').fill('555-555-0100');
-  await page
-    .getByRole('button', { name: 'Save pending order', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Place order', exact: true }).click();
   await expect(page.locator('#orderStatus')).toContainText(
     'sent to the kitchen',
   );
