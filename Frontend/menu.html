@@ -17,17 +17,17 @@
       <p class="text-primary fw-semibold text-uppercase mb-2">Make it your own</p>
       <h1 class="display-6 fw-bold">Our menu</h1>
       <p class="lead text-body-secondary">Marinara, cheese, and room for your favorites.</p>
-      <p class="small text-body-secondary">Test ordering is available. Choose your items, sign in, and place your order for pickup or dine-in. Prices are samples; no payment is collected and tax is not configured.</p>
-      <section class="row g-4 mb-5" aria-label="Pizza sizes">
-        <div class="col-md-4"><article class="card h-100 rounded-4 overflow-hidden"><img class="card-img-top" src="./assets/pizza-small.svg" alt="Small pizza illustration with a 12-inch diameter guide" width="400" height="320" /><div class="card-body p-4"><h2 class="h4">Small pizza</h2><p class="mb-0">12 inches · $5.00 base</p></div></article></div>
-        <div class="col-md-4"><article class="card h-100 rounded-4 overflow-hidden"><img class="card-img-top" src="./assets/pizza-medium.svg" alt="Medium pizza illustration with a 14-inch diameter guide" width="400" height="320" /><div class="card-body p-4"><h2 class="h4">Medium pizza</h2><p class="mb-0">14 inches · $7.00 base</p></div></article></div>
-        <div class="col-md-4"><article class="card h-100 rounded-4 overflow-hidden"><img class="card-img-top" src="./assets/pizza-large.svg" alt="Large pizza illustration with an 18-inch diameter guide" width="400" height="320" /><div class="card-body p-4"><h2 class="h4">Large pizza</h2><p class="mb-0">18 inches · $9.00 base</p></div></article></div>
+      <p class="small text-body-secondary">Choose a size, customize your pizza, then add it to your order. This capstone accepts practice orders only; no payment is collected.</p>
+      <p class="fw-semibold" id="sizeHint">1. Select a pizza size below, then choose your toppings.</p><section class="row g-3 mb-4" aria-label="Pizza sizes" aria-describedby="sizeHint">
+        <div class="col-md-4"><button type="button" class="card btn btn-outline-primary p-0 w-100 h-100 rounded-4 overflow-hidden text-start" data-pizza-size="small" aria-pressed="false" disabled><img class="card-img-top" src="./assets/pizza-small.svg" alt="Small pizza illustration with a 12-inch diameter guide" width="400" height="320" /><div class="card-body p-4"><h2 class="h4">Small pizza</h2><p class="mb-0">12 inches · <span data-size-price>Loading price…</span></p></div><span class="px-4 pb-3 fw-semibold" data-size-state>Choose small</span></button></div>
+        <div class="col-md-4"><button type="button" class="card btn btn-outline-primary p-0 w-100 h-100 rounded-4 overflow-hidden text-start" data-pizza-size="medium" aria-pressed="false" disabled><img class="card-img-top" src="./assets/pizza-medium.svg" alt="Medium pizza illustration with a 14-inch diameter guide" width="400" height="320" /><div class="card-body p-4"><h2 class="h4">Medium pizza</h2><p class="mb-0">14 inches · <span data-size-price>Loading price…</span></p></div><span class="px-4 pb-3 fw-semibold" data-size-state>Choose medium</span></button></div>
+        <div class="col-md-4"><button type="button" class="card btn btn-outline-primary p-0 w-100 h-100 rounded-4 overflow-hidden text-start" data-pizza-size="large" aria-pressed="false" disabled><img class="card-img-top" src="./assets/pizza-large.svg" alt="Large pizza illustration with an 18-inch diameter guide" width="400" height="320" /><div class="card-body p-4"><h2 class="h4">Large pizza</h2><p class="mb-0">18 inches · <span data-size-price>Loading price…</span></p></div><span class="px-4 pb-3 fw-semibold" data-size-state>Choose large</span></button></div>
         <div class="col-12"><p class="small text-body-secondary mb-0">Pizza illustrations use the same scale. The dashed outline shows an 18-inch pizza for comparison. Toppings are illustrative.</p></div>
       </section>
       <div class="row g-4">
         <section class="col-lg-8" aria-labelledby="buildTitle">
           <div class="card"><div class="card-body p-4">
-            <h2 class="h3" id="buildTitle">Build your pizza</h2>
+            <h2 class="h3" id="buildTitle" tabindex="-1">2. Customize your pizza</h2>
             <form id="pizzaForm">
               <fieldset id="pizzaFields" disabled><legend class="visually-hidden">Pizza configuration</legend>
                 <div class="row g-3 mb-4">

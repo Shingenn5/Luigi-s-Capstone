@@ -35,6 +35,16 @@ function updatePrice() {
   const selectedPizza = menu.find(
     (item) => item.menuItemId === Number(pizzaSize.value),
   );
+  document.querySelectorAll('[data-pizza-size]').forEach((button) => {
+    const selected =
+      button.dataset.pizzaSize === selectedPizza.size.toLowerCase();
+    button.setAttribute('aria-pressed', String(selected));
+    button.classList.toggle('border-3', selected);
+    button.classList.toggle('border-primary', selected);
+    button.querySelector('[data-size-state]').textContent = selected
+      ? 'Selected — customize below'
+      : 'Choose ' + button.dataset.pizzaSize;
+  });
   toppings.forEach((topping) => {
     const input = document.querySelector(`#topping-${topping.toppingId}`);
     const optionSelect = document.querySelector(
@@ -115,6 +125,33 @@ try {
   });
   document.querySelector('#pizzaFields').disabled = false;
   document.querySelector('#drinkFields').disabled = false;
+  document.querySelectorAll('[data-pizza-size]').forEach((button) => {
+    const item = menu.find(
+      (item) =>
+        item.category === 'Pizza' &&
+        item.size.toLowerCase() === button.dataset.pizzaSize,
+    );
+    if (!item) {
+      button.hidden = true;
+      return;
+    }
+    button.querySelector('[data-size-price]').textContent =
+      currency.format(item.priceCents / 100) + ' base';
+    button.disabled = false;
+    button.addEventListener('click', () => {
+      pizzaSize.value = String(item.menuItemId);
+      updatePrice();
+      document.querySelector('#buildTitle').focus();
+      announcement.textContent =
+        item.size + ' pizza selected. Choose your toppings below.';
+    });
+  });
+  const requestedSize = new URLSearchParams(window.location.search).get('size');
+  const requestedPizza = menu.find(
+    (item) =>
+      item.category === 'Pizza' && item.size.toLowerCase() === requestedSize,
+  );
+  if (requestedPizza) pizzaSize.value = String(requestedPizza.menuItemId);
   updatePrice();
   announcement.textContent = 'Choose your pizza or drink to get started.';
 } catch (error) {
