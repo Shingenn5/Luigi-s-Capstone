@@ -72,3 +72,13 @@ For application updates, deploy a reviewed committed source archive and run `dep
 Quick Tunnel has no uptime guarantee. A tunnel process/VM restart generates a different hostname. Read it from `sudo journalctl -u luigis-tunnel --no-pager`, update `APP_ORIGIN` in `/etc/luigis.env`, restart only `luigis`, update GitHub's `FULL_APP_URL`, and dispatch `deploy-pages.yml` on `main`. Verify public login and ordering again. A stable named hostname requires separate domain configuration.
 
 This configuration targets the ongoing free-tier allowances; it does not enforce a spending cap. Monitor billing and outbound traffic. Do not add paid IPv4, NAT, snapshots, larger resources or other paid services without the owner's approval. See [FREE-TIER.md](FREE-TIER.md) for eligibility and limits.
+
+## Pizza artwork update — October 23, 2026
+
+Runtime release `0787960427f85ecd5fc48089497af44dc812c141` was pushed to main, exported with Git archive, and deployed to `luigis-demo`. The uploaded archive SHA-256 was verified before extraction. Before installation, the previous app, environment, and stopped SQLite directory were backed up under `/var/backups/luigis/0787960427f85ecd5fc48089497af44dc812c141-20261023T224431Z`. The tunnel was left running.
+
+The three pizza illustrations now show the cheese base in consistent close-up frames. Menu and homepage references use a new asset version to refresh cached images. Card copy explains that the illustrations are not a shared-scale size comparison. No custom CSS was required.
+
+Local checks passed: lint, formatting, 29 backend/database tests, and 17 targeted browser/accessibility tests, with desktop and mobile screenshots inspected. VM verification confirmed the installed frontend matches the archive, the app health endpoint succeeds, and both services are active. Public HTTPS checks in Chrome passed at 1280px and 390px: all three images load at 480 by 360 intrinsic dimensions, large-pizza selection updates the total to $9, and the homepage medium-pizza image selects medium on the menu. Public SVG contents match the committed files after normalizing Git archive CRLF/LF conversion. Edge aborted public navigation; Chrome completed verification.
+
+This deployment-evidence entry is a documentation-only follow-up; the runtime deployment marker remains `0787960427f85ecd5fc48089497af44dc812c141`.
