@@ -48,6 +48,7 @@ for (const serviceType of ['Pickup', 'Dine-in']) {
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await buildOrder(page);
+    await expect(page.locator('#orderConfirmationArt')).toBeHidden();
     await register(page);
     await expect(page.locator('#orderItems')).toContainText(
       'Double Pepperoni, Light sauce',
@@ -95,6 +96,7 @@ for (const serviceType of ['Pickup', 'Dine-in']) {
     await expect(page.locator('#orderStatus')).toContainText(
       `Order #${savedOrder.orderId} sent to the kitchen`,
     );
+    await expect(page.locator('#orderConfirmationArt')).toBeVisible();
     await expect(page.locator('#orderSubtotal')).toHaveText('$0.00');
     await page.getByRole('link', { name: 'Track your latest order' }).click();
     await expect(page.locator(`#order-${savedOrder.orderId}`)).toBeFocused();

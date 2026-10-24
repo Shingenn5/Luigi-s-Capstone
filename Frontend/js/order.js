@@ -338,6 +338,7 @@ checkoutForm.addEventListener('submit', async (event) => {
     document.querySelector('#kitchenNotes').value = '';
     tableName.value = '';
     const trackLink = document.querySelector('#trackLatestOrder');
+    document.querySelector('#orderConfirmationArt').hidden = false;
     trackLink.hidden = false;
     trackLink.href = `#order-${result.orderId}`;
     status.textContent = `Order #${result.orderId} sent to the kitchen. Follow its progress under Your recent orders. No payment collected.`;
