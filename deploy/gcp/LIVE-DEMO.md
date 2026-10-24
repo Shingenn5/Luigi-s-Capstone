@@ -82,3 +82,13 @@ The three pizza illustrations now show the cheese base in consistent close-up fr
 Local checks passed: lint, formatting, 29 backend/database tests, and 17 targeted browser/accessibility tests, with desktop and mobile screenshots inspected. VM verification confirmed the installed frontend matches the archive, the app health endpoint succeeds, and both services are active. Public HTTPS checks in Chrome passed at 1280px and 390px: all three images load at 480 by 360 intrinsic dimensions, large-pizza selection updates the total to $9, and the homepage medium-pizza image selects medium on the menu. Public SVG contents match the committed files after normalizing Git archive CRLF/LF conversion. Edge aborted public navigation; Chrome completed verification.
 
 This deployment-evidence entry is a documentation-only follow-up; the runtime deployment marker remains `0787960427f85ecd5fc48089497af44dc812c141`.
+
+## Supplied SVG graphics integration — October 23, 2026
+
+Runtime commit `87a60dfb635d14c356ae555dec4854c9eecaa02c` was pushed and deployed from its verified Git archive. Existing app, environment, and stopped database directory backups are retained at `/var/backups/luigis/87a60dfb635d14c356ae555dec4854c9eecaa02c-20261024T013740Z`. The app health endpoint passed and both app and tunnel remained active after deployment; installed frontend files match the archive.
+
+The supplied Pizza and Drinks tiles navigate to real menu sections on the homepage and menu. The supplied confirmation graphic is revealed only after a successful order submission. Current logo, banner, and slice-count pizza illustrations are unchanged. Unsupported menu categories and replacement branding were excluded.
+
+Validation passed: lint, formatting, 29 backend tests, and 21 browser/accessibility checks including mobile pickup/dine-in confirmations and desktop/mobile category navigation. Desktop/mobile screenshots were inspected. Public HTTPS Chrome checks at 1280px and 390px verified category links, no horizontal overflow, all three SVG contents against the commit after line-ending normalization, and a hidden confirmation image before order submission. Public order submission was not repeated for this presentation-only integration; successful confirmation rendering was verified in the local checkout regression tests.
+
+This entry is a documentation-only follow-up to the deployed runtime commit above.
