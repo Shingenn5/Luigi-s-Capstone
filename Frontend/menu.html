@@ -41,19 +41,19 @@
                 <fieldset aria-describedby="toppingHint"><legend class="h5">Extra toppings</legend><p class="text-body-secondary" id="toppingHint">Select toppings for the whole pizza. Choose regular or double.</p><div class="row g-3" id="toppingChoices"></div></fieldset>
                 <fieldset class="mt-4" aria-describedby="preferenceHint"><legend class="h5">Sauce and cheese</legend><p id="preferenceHint" class="text-body-secondary">These preferences have no extra charge.</p><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="sauceChoice">Sauce</label><select class="form-select border-dark" id="sauceChoice"></select></div><div class="col-sm-6"><label class="form-label" for="cheeseChoice">Cheese</label><select class="form-select border-dark" id="cheeseChoice"></select></div></div></fieldset>
                 <p class="fw-semibold mt-4" id="pizzaPrice" aria-live="polite"></p>
-                <button class="btn btn-primary py-2" type="submit">Add pizza to order</button>
+                <button class="btn btn-primary py-2" type="submit">Add pizza to order</button><p class="mt-3 mb-2" id="pizzaStatus" role="status" aria-atomic="true"></p><a class="d-inline-block py-2" href="#drinkTitle">Add drinks &rarr;</a>
               </fieldset>
             </form>
           </div></div>
         </section>
         <section class="col-lg-4" aria-labelledby="drinkTitle">
           <div class="card"><div class="card-body p-4">
-            <h2 class="h3" id="drinkTitle">Something to drink?</h2>
+            <h2 class="h3" id="drinkTitle" tabindex="-1">Choose your drinks</h2><p class="text-body-secondary">Add drinks to your pizza or order them on their own.</p>
             <form id="drinkForm"><fieldset id="drinkFields" disabled><legend class="visually-hidden">Drink selection</legend>
-              <label class="form-label" for="drinkChoice">Drink and size</label><select class="form-select border-dark mb-3" id="drinkChoice" required></select>
+              <label class="form-label" for="drinkType">Drink</label><select class="form-select border-dark mb-3" id="drinkType" required></select><label class="form-label" for="drinkChoice">Size and price</label><select class="form-select border-dark mb-3" id="drinkChoice" required></select>
               <label class="form-label" for="drinkQuantity">Quantity</label><input class="form-control border-dark mb-4" type="number" id="drinkQuantity" value="1" min="1" max="20" required />
-              <button class="btn btn-outline-primary w-100 py-2" type="submit">Add drink to order</button>
-            </fieldset></form>
+              <p class="fw-semibold" id="drinkPrice" aria-live="polite"></p><button class="btn btn-outline-primary w-100 py-2" type="submit">Add drink to order</button>
+            </fieldset><p class="mt-3 mb-0" id="drinkStatus" role="status" aria-atomic="true"></p></form>
           </div></div>
           <a class="btn btn-primary w-100 mt-3 py-3" href="./order.html">Review your order</a>
         </section>

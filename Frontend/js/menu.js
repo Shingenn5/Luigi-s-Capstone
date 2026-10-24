@@ -67,6 +67,44 @@ function updatePrice() {
     `Total for ${pizzaQuantity.value} pizza${Number(pizzaQuantity.value) === 1 ? '' : 's'}: ${currency.format(description.lineTotalCents / 100)}`;
 }
 
+function updateDrinkPrice() {
+  const choice = menu.find(
+    (item) =>
+      item.menuItemId === Number(document.querySelector('#drinkChoice').value),
+  );
+  const quantity = document.querySelector('#drinkQuantity');
+  document.querySelector('#drinkPrice').textContent =
+    !choice || !quantity.validity.valid
+      ? 'Enter a drink quantity from 1 to 20 to see the total.'
+      : 'Total for ' +
+        quantity.value +
+        (Number(quantity.value) === 1 ? ' drink: ' : ' drinks: ') +
+        currency.format((choice.priceCents * Number(quantity.value)) / 100);
+}
+
+function updateDrinkSizes() {
+  const select = document.querySelector('#drinkChoice');
+  const previous = menu.find(
+    (item) => item.menuItemId === Number(select.value),
+  );
+  select.replaceChildren();
+  menu
+    .filter(
+      (item) =>
+        item.category === 'Drink' &&
+        item.itemName === document.querySelector('#drinkType').value,
+    )
+    .forEach((item) => {
+      const option = document.createElement('option');
+      option.value = item.menuItemId;
+      option.textContent =
+        item.size + ' — ' + currency.format(item.priceCents / 100);
+      option.selected = item.size === previous?.size;
+      select.append(option);
+    });
+  updateDrinkPrice();
+}
+
 try {
   [menu, toppings] = await Promise.all([
     apiRequest('menu'),
@@ -76,11 +114,21 @@ try {
     const option = document.createElement('option');
     option.value = item.menuItemId;
     option.textContent = `${item.size} ${item.itemName} — ${currency.format(item.priceCents / 100)}`;
-    (item.category === 'Pizza'
-      ? pizzaSize
-      : document.querySelector('#drinkChoice')
-    ).append(option);
+    if (item.category === 'Pizza') pizzaSize.append(option);
   });
+  [
+    ...new Set(
+      menu
+        .filter((item) => item.category === 'Drink')
+        .map((item) => item.itemName),
+    ),
+  ].forEach((name) => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    document.querySelector('#drinkType').append(option);
+  });
+  updateDrinkSizes();
   toppings.forEach((topping) => {
     const column = document.createElement('div');
     column.className = 'col-sm-6';
@@ -153,11 +201,15 @@ try {
   );
   if (requestedPizza) pizzaSize.value = String(requestedPizza.menuItemId);
   updatePrice();
-  announcement.textContent = 'Choose your pizza or drink to get started.';
+  announcement.textContent = '';
 } catch (error) {
   announcement.textContent = error.message;
 }
 
+document
+  .querySelector('#drinkType')
+  .addEventListener('change', updateDrinkSizes);
+drinkForm.addEventListener('input', updateDrinkPrice);
 pizzaForm.addEventListener('input', updatePrice);
 pizzaForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -166,10 +218,11 @@ pizzaForm.addEventListener('submit', (event) => {
     const item = getPizza();
     const description = describeItem(item, menu, toppings);
     addItem(item);
-    announcement.textContent = `${item.quantity} × ${description.name} added. Review your order when you are ready.`;
+    document.querySelector('#pizzaStatus').textContent =
+      `${item.quantity} × ${description.name} added. Review your order when you are ready.`;
   } catch (error) {
-    announcement.textContent = error.message;
-    focusMessage(announcement);
+    document.querySelector('#pizzaStatus').textContent = error.message;
+    focusMessage(document.querySelector('#pizzaStatus'));
   }
 });
 
@@ -184,9 +237,10 @@ drinkForm.addEventListener('submit', (event) => {
     };
     const description = describeItem(item, menu, toppings);
     addItem(item);
-    announcement.textContent = `${item.quantity} × ${description.name} added to your order.`;
+    document.querySelector('#drinkStatus').textContent =
+      `${item.quantity} × ${description.name} added to your order.`;
   } catch (error) {
-    announcement.textContent = error.message;
-    focusMessage(announcement);
+    document.querySelector('#drinkStatus').textContent = error.message;
+    focusMessage(document.querySelector('#drinkStatus'));
   }
 });
