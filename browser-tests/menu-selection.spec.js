@@ -33,8 +33,10 @@ for (const width of [1280, 390]) {
     });
     await page.goto('/index.html');
     await page
-      .getByRole('link', { name: 'Choose medium pizza', exact: true })
+      .getByRole('navigation', { name: 'Shop by category' })
+      .getByRole('link', { name: /^Pizza/i })
       .click();
+    await page.locator('[data-pizza-size="medium"] img').click();
     await expect(page.locator('[data-pizza-size="medium"]')).toHaveAttribute(
       'aria-pressed',
       'true',

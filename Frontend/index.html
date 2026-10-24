@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="./assets/bootswatch-simplex.min.css" />
     <script src="./assets/bootstrap.bundle.min.js" defer></script>
     <script type="module" src="./js/site.js"></script>
-    <script src="./js/app.js" defer></script>
   </head>
   <body>
     <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
@@ -26,7 +25,7 @@
               <li class="nav-item"><a class="nav-link py-3" href="./menu.html">Our menu</a></li>
               <li class="nav-item"><a class="nav-link py-3" href="./about.html">Our story</a></li>
               <li class="nav-item"><a class="nav-link py-3" href="./visit.html">Visit us</a></li>
-              <li class="nav-item"><button class="btn btn-primary px-4 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#orderDrawer" aria-controls="orderDrawer">Add to order <span id="cartCount" class="badge text-bg-light ms-2">0</span></button></li>
+              <li class="nav-item"><a class="btn btn-primary px-4 py-2" href="./order.html">Your order</a></li>
             </ul>
           </div>
           <a class="btn btn-outline-primary px-3 py-2 ms-2 order-lg-last" href="./login.html" aria-label="Customer login">Login</a>
@@ -43,105 +42,39 @@
               <h1 class="display-3 fw-bold mb-4" id="heroTitle">A little slice<br />of happiness.</h1>
               <p class="lead text-body-secondary mb-4">Golden crust. Melty cheese. Your favorite people around the table. Make tonight a Luigi's night.</p>
               <div class="d-flex flex-wrap gap-3">
-                <a class="btn btn-primary btn-lg px-4" href="./menu.html">Explore the menu <span aria-hidden="true">&rarr;</span></a>
+                <a class="btn btn-primary btn-lg px-4" href="./menu.html">Start your order <span aria-hidden="true">&rarr;</span></a>
                 <a class="btn btn-outline-dark btn-lg px-4" href="./about.html">Meet Luigi's</a>
               </div>
             </div>
             <div class="col-lg-6">
               <figure class="mb-0">
-                <img src="./assets/pizza.jpg" alt="Golden cheese pizza with a slice pulled away on a rustic wooden table" width="1200" height="900" class="img-fluid rounded-4 shadow-sm" fetchpriority="high" />
-                <figcaption class="mt-3 d-flex justify-content-between gap-3 small text-body-secondary"><span>The best plans start with pizza.</span><span class="text-primary fw-semibold">Made to share.</span></figcaption>
+                <a class="d-block rounded-4 overflow-hidden" href="./menu.html#pizzaSizes" aria-label="Start a pizza order"><img src="./assets/pizza-large.svg?v=2" alt="Ten-slice cheese pizza illustration" width="480" height="360" class="img-fluid w-100" fetchpriority="high" /></a>
+                <figcaption class="mt-3 d-flex justify-content-between gap-3 small text-body-secondary"><span>Choose your size. Make it yours.</span><span class="text-primary fw-semibold">Made to share.</span></figcaption>
               </figure>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="menu" class="py-5" aria-labelledby="menuTitle">
-        <div class="container py-lg-3">
-          <div class="row align-items-end g-3 mb-4">
-            <div class="col-lg-7">
-              <p class="text-primary fw-semibold text-uppercase mb-2">Find your favorite</p>
-              <h2 class="display-6 fw-bold" id="menuTitle">Big flavor! Simple ingredients!</h2>
-              <p class="text-body-secondary mb-0">Choose your size, then make it yours with toppings, sauce, and cheese.</p>
-            </div>
-            <div class="col-lg-5">
-              <div class="d-flex flex-wrap justify-content-lg-end gap-2" role="group" aria-label="Filter menu">
-                <button class="btn btn-primary py-2 px-3" type="button" data-filter="all" aria-pressed="true">All</button>
-                <button class="btn btn-outline-primary py-2 px-3" type="button" data-filter="pizza" aria-pressed="false">Pizzas</button>
-                <button class="btn btn-outline-primary py-2 px-3" type="button" data-filter="drinks" aria-pressed="false">Drinks</button>
-              </div>
-            </div>
+      <section id="menu" class="container py-5" aria-labelledby="menuTitle">
+        <p class="text-primary fw-semibold text-uppercase mb-2">Start here</p>
+        <h2 class="display-6 fw-bold" id="menuTitle">What would you like?</h2>
+        <p class="lead text-body-secondary mb-4">Pick a category to start your order. Choose sizes and options on the menu, then review everything together.</p>
+        <nav class="row g-4" aria-label="Shop by category">
+          <div class="col-md-6">
+            <a class="card h-100 rounded-4 overflow-hidden text-body text-decoration-none" href="./menu.html#pizzaSizes">
+              <img class="img-fluid w-100" src="./assets/graphics/menu-pizza.svg" alt="" width="480" height="360" loading="lazy" />
+              <div class="card-body p-4"><h3 class="h4">Pizza</h3><p class="text-body-secondary">Choose your size, then add toppings, sauce, and cheese.</p><span class="text-primary fw-semibold">Order pizza &rarr;</span></div>
+            </a>
           </div>
-
-
-<nav class="row g-3 mb-4" aria-label="Shop by category">
-  <div class="col-6 col-lg-3"><a class="d-block rounded-4 overflow-hidden" href="./menu.html#pizzaSizes" aria-label="Choose pizza size"><img class="img-fluid w-100" src="./assets/graphics/menu-pizza.svg" alt="Pizza — classic and custom" width="480" height="360" /></a></div>
-  <div class="col-6 col-lg-3"><a class="d-block rounded-4 overflow-hidden" href="./menu.html#drinkTitle" aria-label="Choose drinks"><img class="img-fluid w-100" src="./assets/graphics/menu-drinks.svg" alt="Drinks — sip and enjoy" width="480" height="360" /></a></div>
-</nav>
-          <!--Small Pizza-->
-          <div class="row g-4" id="menuGrid">
-            <div class="col-md-6 col-lg-4" data-category="pizza">
-              <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
-                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">12-inch pizza</span><span class="fw-semibold">$5.00</span></div>
-                <a href="./menu.html?size=small" aria-label="Choose small pizza"><img class="img-fluid rounded-3 mb-3" src="./assets/pizza-small.svg?v=2" alt="Centered 12-inch Small cheese pizza illustration" width="480" height="360" loading="lazy" /></a><h3 class="h4">Small Pizza</h3><p class="text-body-secondary flex-grow-1">12 inches across. A smaller canvas for your favorite combination.</p>
-                <a class="btn btn-outline-primary w-100 py-2" href="./menu.html?size=small">Choose options</a>
-              </div></article>
-            </div>
-          <!--Medium Pizza-->
-            <div class="col-md-6 col-lg-4" data-category="pizza">
-              <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
-                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">14-inch pizza</span><span class="fw-semibold">$7.00</span></div>
-                <a href="./menu.html?size=medium" aria-label="Choose medium pizza"><img class="img-fluid rounded-3 mb-3" src="./assets/pizza-medium.svg?v=2" alt="Centered 14-inch Medium cheese pizza illustration" width="480" height="360" loading="lazy" /></a><h3 class="h4">Medium Pizza</h3><p class="text-body-secondary flex-grow-1">14 inches across. A little more room for the toppings you love.</p>
-                <a class="btn btn-outline-primary w-100 py-2" href="./menu.html?size=medium">Choose options</a>
-              </div></article>
-            </div>
-          <!--Large Pizza-->
-            <div class="col-md-6 col-lg-4" data-category="pizza">
-              <article class="card h-100 rounded-4"><div class="card-body p-4 d-flex flex-column">
-                <div class="d-flex justify-content-between gap-2 mb-3"><span class="badge text-bg-light border">18-inch pizza</span><span class="fw-semibold">$9.00</span></div>
-                <a href="./menu.html?size=large" aria-label="Choose large pizza"><img class="img-fluid rounded-3 mb-3" src="./assets/pizza-large.svg?v=2" alt="Large pizza illustration with an 18-inch diameter guide" width="480" height="360" loading="lazy" /></a><h3 class="h4">Large Pizza</h3><p class="text-body-secondary flex-grow-1">18 inches across. Our largest size for a bigger pizza night.</p>
-                <a class="btn btn-outline-primary w-100 py-2" href="./menu.html?size=large">Choose options</a>
-              </div></article>
-            </div>
-            <div class="col-12" data-category="pizza"><p class="small text-body-secondary mb-0">Each pizza is shown close up. Use the inch measurements to compare sizes. Illustrations show the cheese base; choose extra toppings below.</p></div>
-            <div class="col-12" data-category="drinks">
-              <article class="mt-4" aria-labelledby="drinksTitle">
-                <h2 class="h3 mb-2" id="drinksTitle">Drinks</h2>
-                  <p class="text-body-secondary">Choose Iced Tea, Dr. Pepper, Cola, or UnCola in any of these sizes.</p>
-                <ul class="list-group">
-                  <li class="list-group-item p-3">
-                    <div class="d-flex justify-content-between gap-2 mb-2"><span>Small drink (16 oz)</span><span class="fw-semibold">$1.00</span></div>
-                    <a class="btn btn-outline-primary w-100 py-2" href="./menu.html#drinkTitle">Choose options</a>
-                  </li>
-                  <li class="list-group-item p-3">
-                    <div class="d-flex justify-content-between gap-2 mb-2"><span>Medium drink (20 0z)</span><span class="fw-semibold">$2.00</span></div>
-                    <a class="btn btn-outline-primary w-100 py-2" href="./menu.html#drinkTitle">Choose options</a>
-                  </li>
-                  <li class="list-group-item p-3">
-                    <div class="d-flex justify-content-between gap-2 mb-2"><span>Large drink (30 oz)</span><span class="fw-semibold">$3.00</span></div>
-                    <a class="btn btn-outline-primary w-100 py-2" href="./menu.html#drinkTitle">Choose options</a>
-                  </li>
-                </ul>
-              </article>
-            </div>
+          <div class="col-md-6">
+            <a class="card h-100 rounded-4 overflow-hidden text-body text-decoration-none" href="./menu.html#drinkTitle">
+              <img class="img-fluid w-100" src="./assets/graphics/menu-drinks.svg" alt="" width="480" height="360" loading="lazy" />
+              <div class="card-body p-4"><h3 class="h4">Drinks</h3><p class="text-body-secondary">Choose a drink and size to go with your pizza, or order drinks on their own.</p><span class="text-primary fw-semibold">Order drinks &rarr;</span></div>
+            </a>
           </div>
-          <p class="visually-hidden" id="menuStatus" role="status" aria-atomic="true">Showing all menu sections.</p>
-            <div class="col-md-6 col-lg-4 mx-auto my-5">
-              <aside class="card shadow-sm" aria-labelledby="hoursTitle">
-                <div class="card-header bg-primary text-light text-center">
-                  <h2 class="h5 mb-0" id="hoursTitle">Hours of Operation</h2>
-                </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <span>Monday–Sunday</span>
-                    <span class="text-body-secondary text-nowrap">10:00 AM – 11:00 PM</span>
-                  </li>
-                </ul>
-                <p class="card-body small text-body-secondary mb-0">Opening hours to closing hours. Orders ordered within the last 10 minutes require confirmation.</p>
-              </aside>
-            </div>
-        </div>
+        </nav>
+        <p class="small text-body-secondary mt-4 mb-0">Capstone practice ordering. No payment is collected.</p>
       </section>
     </main>
   </body>

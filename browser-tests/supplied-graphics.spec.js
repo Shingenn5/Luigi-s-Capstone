@@ -5,6 +5,17 @@ for (const width of [1280, 390]) {
   }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
+    await expect(page.getByText('Choose options', { exact: true })).toHaveCount(
+      0,
+    );
+    await expect(page.locator('[data-pizza-size], [data-filter]')).toHaveCount(
+      0,
+    );
+    expect(
+      await page
+        .locator('main img')
+        .evaluateAll((images) => images.every((image) => image.closest('a'))),
+    ).toBe(true);
     const categories = page.getByRole('navigation', {
       name: 'Shop by category',
     });
@@ -16,14 +27,12 @@ for (const width of [1280, 390]) {
         ),
       ).toBe(true);
     }
-    await categories
-      .getByRole('link', { name: 'Choose pizza size', exact: true })
-      .click();
+    await categories.getByRole('link', { name: /^Pizza/i }).click();
     await expect(page).toHaveURL(/menu.html#pizzaSizes$/);
     await expect(page.locator('#pizzaFields')).toBeEnabled();
     await page
       .getByRole('navigation', { name: 'Shop by category' })
-      .getByRole('link', { name: 'Choose drinks', exact: true })
+      .getByRole('link', { name: /^Drinks/i })
       .click();
     await expect(page).toHaveURL(/menu.html#drinkTitle$/);
     expect(
