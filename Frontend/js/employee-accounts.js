@@ -57,7 +57,7 @@ export function setupStaffAccounts() {
   const confirmation = document.querySelector('#accountConfirmation');
   const submit = document.querySelector('#createStaffAccount');
   fields.disabled = false;
-  
+
   const refreshAccounts = document.querySelector('#refreshStaffAccounts');
   const accountsTab = document.querySelector('#staffAccountsButton');
 
