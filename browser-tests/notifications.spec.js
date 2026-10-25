@@ -94,6 +94,30 @@ for (const width of [1280, 390]) {
       );
       await page.locator('#notificationsToggle').click();
       await expect(page.locator('#notificationList li')).toHaveCount(total);
+      await page.evaluate(
+        readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'),
+      );
+      await page.locator('#notificationsToggle').evaluate(async (node) => {
+        await Promise.all(
+          node
+            .getAnimations({ subtree: true })
+            .map((animation) => animation.finished.catch(() => {})),
+        );
+      });
+      const unreadViolations = await page.evaluate(async () =>
+        (
+          await window.axe.run(document, {
+            runOnly: {
+              type: 'tag',
+              values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
+            },
+          })
+        ).violations.map((v) => ({
+          id: v.id,
+          nodes: v.nodes.map((n) => n.target),
+        })),
+      );
+      expect(unreadViolations).toEqual([]);
       await page
         .locator('#notificationList li')
         .first()

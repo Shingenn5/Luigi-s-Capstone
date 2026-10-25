@@ -67,7 +67,7 @@ export function setupNotifications() {
     for (const notification of result.notifications) {
       const row = element(
         'li',
-        `list-group-item p-3 ${notification.readAt === null ? 'border-start border-primary border-4' : ''}`,
+        `list-group-item p-3 ${notification.readAt === null ? 'bg-body-tertiary' : ''}`,
       );
       row.dataset.notificationId = notification.notificationId;
       row.append(element('h3', 'h6 mb-2', notification.title));
@@ -92,7 +92,7 @@ export function setupNotifications() {
       if (notification.readAt === null) {
         const read = element(
           'button',
-          'btn btn-outline-secondary py-2',
+          'btn btn-outline-dark py-2',
           'Mark as read',
         );
         read.type = 'button';
