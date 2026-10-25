@@ -357,3 +357,119 @@ test('stage filters keep tickets current and keyboard focus out of hidden stages
   await page.locator('[data-stage-filter="all"]').click();
   await expect(page.locator('[data-lane="Pending"]')).toBeVisible();
 });
+
+for (const width of [1280, 390]) {
+  test(`queue timeout and saved sort controls at ${width}px`, async ({
+    page,
+    baseURL,
+  }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    await login(page, baseURL);
+    const first = await order(page, baseURL, 'First queue ticket');
+    const second = await order(page, baseURL, 'Second queue ticket');
+    const stale = await order(page, baseURL, 'Forgotten queue ticket');
+    const sqlDate = (milliseconds) =>
+      new Date(milliseconds).toISOString().slice(0, 19).replace('T', ' ');
+    first.orderDate = sqlDate(Date.now() - 20000);
+    second.orderDate = sqlDate(Date.now() - 10000);
+    stale.orderDate = sqlDate(Date.now() - 121 * 60000);
+    let expireFirst = false;
+    await page.route('**/api/employee/kitchen?**', async (route) => {
+      const params = new URL(route.request().url()).searchParams;
+      const cutoff = Date.now() - Number(params.get('timeoutMinutes')) * 60000;
+      const tickets = [first, second, stale].map((ticket) =>
+        ticket === first && expireFirst
+          ? { ...ticket, orderDate: sqlDate(Date.now() - 122 * 60000) }
+          : ticket,
+      );
+      const old = (ticket) =>
+        Date.parse(ticket.orderDate.replace(' ', 'T') + 'Z') <= cutoff;
+      const selected = tickets.filter((ticket) =>
+        params.get('queue') === 'timed-out' ? old(ticket) : !old(ticket),
+      );
+      selected.sort(
+        (a, b) =>
+          (a.orderDate.localeCompare(b.orderDate) || a.orderId - b.orderId) *
+          (params.get('sort') === 'newest' ? -1 : 1),
+      );
+      const orders = params.get('status') === 'Pending' ? selected : [];
+      await route.fulfill({
+        json: {
+          orders,
+          counts: { Pending: selected.length },
+          timedOutCount: tickets.filter(old).length,
+          total: orders.length,
+          page: 1,
+          pages: 1,
+          serverTime: Date.now(),
+          newestOrderId: stale.orderId,
+        },
+      });
+    });
+    await page.locator('#refreshOrders').click();
+    const ids = () =>
+      page
+        .locator('[data-lane="Pending"] article')
+        .evaluateAll((cards) => cards.map((card) => card.id));
+    await expect
+      .poll(ids)
+      .toEqual([`ticket-${first.orderId}`, `ticket-${second.orderId}`]);
+    await expect(page.locator('#timedOutCount')).toHaveText('1');
+    await page.locator('#queueSort').selectOption('newest');
+    await expect
+      .poll(ids)
+      .toEqual([`ticket-${second.orderId}`, `ticket-${first.orderId}`]);
+    await page.reload();
+    await expect(page.locator('#queueSort')).toHaveValue('newest');
+    await expect
+      .poll(ids)
+      .toEqual([`ticket-${second.orderId}`, `ticket-${first.orderId}`]);
+    await page.getByRole('button', { name: /^Timed out/ }).click();
+    await expect.poll(ids).toEqual([`ticket-${stale.orderId}`]);
+    await expect(page.locator(`#advance-${stale.orderId}`)).toBeEnabled();
+    await page
+      .getByText('Kitchen settings and keyboard help', { exact: true })
+      .click();
+    await page.locator('#timeoutMinutes').fill('180');
+    await page
+      .getByRole('button', { name: 'Save timeout', exact: true })
+      .click();
+    await expect.poll(ids).toEqual([]);
+    await page
+      .getByRole('button', { name: 'Kitchen board', exact: true })
+      .click();
+    await expect(page.locator('[data-lane="Pending"] article')).toHaveCount(3);
+    await page.locator('#timeoutMinutes').fill('120');
+    await page
+      .getByRole('button', { name: 'Save timeout', exact: true })
+      .click();
+    await expect(page.locator(`#ticket-${stale.orderId}`)).toHaveCount(0);
+    await page.locator(`#select-${first.orderId}`).focus();
+    expireFirst = true;
+    await expect(page.locator(`#ticket-${first.orderId}`)).toHaveCount(0);
+    expect(
+      await page.evaluate(
+        () =>
+          document.activeElement === document.body ||
+          Boolean(document.activeElement.closest('[hidden]')),
+      ),
+    ).toBe(false);
+    await page.locator('#queueSort').selectOption('oldest');
+    await page.reload();
+    await expect(page.locator('#queueSort')).toHaveValue('oldest');
+    await page.getByRole('button', { name: /^Timed out/ }).click();
+    await expect
+      .poll(ids)
+      .toEqual([`ticket-${first.orderId}`, `ticket-${stale.orderId}`]);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await accessible(page);
+    await page.screenshot({
+      path: testInfo.outputPath(`timed-out-${width}.png`),
+      fullPage: true,
+    });
+  });
+}

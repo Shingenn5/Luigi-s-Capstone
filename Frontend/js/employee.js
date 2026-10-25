@@ -27,6 +27,52 @@ let warning = 10;
 let overdue = 20;
 let historySearch = '';
 let stageFilter = 'all';
+let timeoutMinutes = Number(preference('luigis-kitchen-timeout', '120'));
+if (
+  !Number.isInteger(timeoutMinutes) ||
+  timeoutMinutes < 1 ||
+  timeoutMinutes > 1440
+)
+  timeoutMinutes = 120;
+let queueSort = preference('luigis-kitchen-sort', 'oldest');
+if (!['oldest', 'newest'].includes(queueSort)) queueSort = 'oldest';
+let queueVersion = 0;
+
+function describeQueue() {
+  $('#queueFilterLabel').textContent =
+    view === 'timed-out' ? 'All timed out' : 'All active';
+  $('#queueDescription').textContent =
+    view === 'timed-out'
+      ? `Unfinished orders placed ${timeoutMinutes} or more minutes ago. Review these tickets and finish or cancel them as needed.`
+      : `Orders move to Timed out ${timeoutMinutes} minutes after being placed if still unfinished.`;
+  $('#boardView').setAttribute(
+    'aria-label',
+    view === 'timed-out' ? 'Timed-out kitchen orders' : 'Active kitchen orders',
+  );
+}
+async function refreshQueuePreferences() {
+  queueVersion += 1;
+  for (const stage of STAGES) pages[stage] = 1;
+  snapshots.clear();
+  describeQueue();
+  await waitForLoad();
+  await loadOrders();
+}
+$('#timeoutMinutes').value = timeoutMinutes;
+$('#queueSort').value = queueSort;
+describeQueue();
+$('#timeoutForm').onsubmit = (event) => {
+  event.preventDefault();
+  if (!event.target.reportValidity()) return;
+  timeoutMinutes = Number($('#timeoutMinutes').value);
+  savePreference('luigis-kitchen-timeout', String(timeoutMinutes));
+  refreshQueuePreferences();
+};
+$('#queueSort').onchange = () => {
+  queueSort = $('#queueSort').value;
+  savePreference('luigis-kitchen-sort', queueSort);
+  refreshQueuePreferences();
+};
 
 export function message(text) {
   status.textContent = text;
@@ -507,23 +553,26 @@ async function loadOrders() {
   const focusId = activeElement?.id;
   const wasTicketFocused = Boolean(activeElement?.closest('article'));
   const requestView = view;
+  const requestVersion = queueVersion;
   try {
     const stages =
       requestView === 'history' ? [$('#historyStage').value] : STAGES;
     const results = await Promise.all(
       stages.map((stage) =>
         apiRequest(
-          `employee/kitchen?status=${encodeURIComponent(stage)}&page=${pages[stage]}&search=${encodeURIComponent(requestView === 'history' ? historySearch : '')}`,
+          `employee/kitchen?status=${encodeURIComponent(stage)}&page=${pages[stage]}&search=${encodeURIComponent(requestView === 'history' ? historySearch : '')}&queue=${requestView === 'history' ? 'all' : requestView === 'timed-out' ? 'timed-out' : 'active'}&timeoutMinutes=${timeoutMinutes}&sort=${requestView === 'history' ? 'newest' : queueSort}`,
         ),
       ),
     );
-    if (stopped || view !== requestView) return;
+    if (stopped || view !== requestView || queueVersion !== requestVersion)
+      return;
     clockOffset = results[0].serverTime - Date.now();
     lastSuccess = Date.now();
     setConnection(true);
     if (view !== 'entry')
       results.forEach((result, index) => renderLane(stages[index], result));
     const counts = results[0].counts;
+    $('#timedOutCount').textContent = results[0].timedOutCount || 0;
     document.querySelectorAll('[data-stage-count]').forEach((node) => {
       node.textContent =
         node.dataset.stageCount === 'all'
@@ -541,7 +590,7 @@ async function loadOrders() {
       message('New kitchen order received.');
     } else if (snapshots.get('counts') !== countSignature)
       message(
-        `${STAGES.reduce((sum, stage) => sum + (counts[stage] || 0), 0)} active orders. Kitchen updated.`,
+        `${STAGES.reduce((sum, stage) => sum + (counts[stage] || 0), 0)} ${view === 'timed-out' ? 'timed-out' : 'active'} orders. Kitchen updated.`,
       );
     snapshots.set('counts', countSignature);
     if (requestView !== 'history')
@@ -650,19 +699,24 @@ $('#historyForm').onsubmit = (event) => {
 };
 async function showView(nextView) {
   view = nextView;
+  queueVersion += 1;
+  for (const stage of STAGES) pages[stage] = 1;
+  snapshots.clear();
   for (const name of ['board', 'entry', 'history', 'accounts'])
-    $(`#${name}View`).hidden = name !== view;
+    $(`#${name}View`).hidden = name !== (view === 'timed-out' ? 'board' : view);
   document.querySelectorAll('[data-view]').forEach((node) => {
     const active = node.dataset.view === view;
     node.setAttribute('aria-pressed', String(active));
   });
   $('#workspaceTitle').textContent = {
     board: 'Kitchen board',
+    'timed-out': 'Timed-out orders',
     history: 'Order history',
     entry: 'New staff order',
     accounts: 'Staff accounts',
   }[view];
-  if (view === 'board') filterStages(stageFilter);
+  if (view === 'board' || view === 'timed-out') filterStages(stageFilter);
+  describeQueue();
   await waitForLoad();
   await loadOrders();
 }

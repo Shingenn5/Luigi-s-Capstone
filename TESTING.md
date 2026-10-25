@@ -20,6 +20,13 @@ Open [Employee login](https://pipeline-alberta-drawing-inner.trycloudflare.com/e
 - Try cancellation with a reason and recall. Completed/cancelled tickets appear in searchable history.
 - On a website ticket, confirm the customer's kitchen instructions and dine-in table match checkout. Expand **Contact and order details** to see **Order activity**, including recorded stage changes, employee names, times, and cancellation reasons. These staff details are unavailable to customer accounts.
 
+## Queue timeout and ordering
+
+- Open **Kitchen board** and switch **Order within each stage** between newest on top and newest on bottom. Each stage should reverse its ticket order; reload to confirm the selection is saved.
+- Under **Kitchen settings and keyboard help**, confirm the default timeout is **120 minutes**. Unfinished orders at or beyond that age appear under **Timed out** with their original stages and staff actions. Completed/cancelled orders remain in history.
+- Change the timeout and save. Both tabs and their counts should refresh; reload to confirm the saved value. Preferences apply to the current browser/device. Orders crossing the threshold move on the next successful kitchen poll.
+- Test at desktop and phone widths and with keyboard controls. If a focused ticket times out, focus should move to a visible control.
+
 ## Employee and admin accounts
 
 1. Sign in through **Employee login** using an admin account.

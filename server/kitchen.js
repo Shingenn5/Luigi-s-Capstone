@@ -221,42 +221,68 @@ export function createKitchenRouter(database) {
     const status = request.query.status || 'Pending';
     const page = Number(request.query.page || 1);
     const search = request.query.search || '';
+    const queue = request.query.queue || 'all';
+    const timeoutMinutes = Number(request.query.timeoutMinutes || 120);
+    const sort =
+      request.query.sort || (STAGES.includes(status) ? 'oldest' : 'newest');
     if (
       ![...STAGES, ...TERMINAL_STAGES].includes(status) ||
       !Number.isSafeInteger(page) ||
       page < 1 ||
       typeof search !== 'string' ||
-      search.length > 120
+      search.length > 120 ||
+      !['all', 'active', 'timed-out'].includes(queue) ||
+      !['oldest', 'newest'].includes(sort) ||
+      !Number.isInteger(timeoutMinutes) ||
+      timeoutMinutes < 1 ||
+      timeoutMinutes > 1440
     )
-      return response
-        .status(400)
-        .json({ error: 'Choose a valid stage, search, and page.' });
+      return response.status(400).json({
+        error:
+          'Choose a valid stage, search, page, queue, sort order, and timeout (1–1440 minutes).',
+      });
+    const serverTime = Date.now();
+    const cutoff = serverTime - timeoutMinutes * 60000;
+    // Partition before pagination so forgotten tickets cannot crowd out fresh orders.
+    const ageFilter =
+      queue === 'all' || !STAGES.includes(status)
+        ? ''
+        : ` AND unixepoch(o.orderDate) * 1000 ${queue === 'active' ? '>' : '<='} ?`;
     const where =
-      " WHERE o.orderStatus = ? AND (o.customerName LIKE ? ESCAPE '\\' OR CAST(o.orderID AS TEXT) LIKE ? ESCAPE '\\')";
+      " WHERE o.orderStatus = ? AND (o.customerName LIKE ? ESCAPE '\\' OR CAST(o.orderID AS TEXT) LIKE ? ESCAPE '\\')" +
+      ageFilter;
     const term = `%${search.replace(/[\\%_]/g, '\\$&')}%`;
+    const parameters = [status, term, term, ...(ageFilter ? [cutoff] : [])];
     const total = database
       .prepare(`SELECT COUNT(*) AS count FROM Orders o${where}`)
-      .get(status, term, term).count;
+      .get(...parameters).count;
     const pages = Math.max(1, Math.ceil(total / 50));
     const currentPage = Math.min(page, pages);
-    const direction = STAGES.includes(status) ? 'ASC' : 'DESC';
+    const direction = sort === 'oldest' ? 'ASC' : 'DESC';
     const orders = database
       .prepare(
-        `${ticketQuery}${where} ORDER BY o.orderID ${direction} LIMIT 50 OFFSET ?`,
+        `${ticketQuery}${where} ORDER BY o.orderDate ${direction}, o.orderID ${direction} LIMIT 50 OFFSET ?`,
       )
-      .all(status, term, term, (currentPage - 1) * 50)
+      .all(...parameters, (currentPage - 1) * 50)
       .map((row) => ({ ...row, items: readOrderItems(database, row.orderId) }))
       .map((row) => ({
         ...row,
         hasPizza: row.items.some((item) => item.itemName === 'Pizza'),
       }));
+    const ageCounts = database
+      .prepare(
+        'SELECT orderStatus, COUNT(*) AS count, SUM(CASE WHEN unixepoch(orderDate) * 1000 <= ? THEN 1 ELSE 0 END) AS timedOut FROM Orders GROUP BY orderStatus',
+      )
+      .all(cutoff);
     const counts = Object.fromEntries(
-      database
-        .prepare(
-          'SELECT orderStatus, COUNT(*) AS count FROM Orders GROUP BY orderStatus',
-        )
-        .all()
-        .map((row) => [row.orderStatus, row.count]),
+      ageCounts.map((row) => [
+        row.orderStatus,
+        !STAGES.includes(row.orderStatus) || queue === 'all'
+          ? row.count
+          : queue === 'active'
+            ? row.count - row.timedOut
+            : row.timedOut,
+      ]),
     );
     response.json({
       orders,
@@ -265,7 +291,10 @@ export function createKitchenRouter(database) {
       page: currentPage,
       pageSize: 50,
       pages,
-      serverTime: Date.now(),
+      serverTime,
+      timedOutCount: ageCounts
+        .filter((row) => STAGES.includes(row.orderStatus))
+        .reduce((sum, row) => sum + row.timedOut, 0),
       newestOrderId: database
         .prepare('SELECT COALESCE(MAX(orderID), 0) AS id FROM Orders')
         .get().id,

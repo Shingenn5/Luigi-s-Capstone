@@ -310,3 +310,109 @@ test('migration imports existing orders and kitchen history persists across data
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test('queue timeout partitions before paging and sorting without changing order status', async (context) => {
+  const database = openDatabase(':memory:');
+  const employeeId = await createEmployee(database, {
+    username: 'queue.cook',
+    displayName: 'Queue Cook',
+    password: 'queue test password',
+  });
+  const server = createApp(database).listen(0, '127.0.0.1');
+  await new Promise((resolve) => server.once('listening', resolve));
+  context.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    database.close();
+  });
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  const login = await fetch(`${origin}/api/employee/auth/login`, {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: 'queue.cook',
+      password: 'queue test password',
+    }),
+  });
+  const cookie = login.headers.get('set-cookie').split(';')[0];
+  const query = (params) =>
+    fetch(`${origin}/api/employee/kitchen?${params}`, {
+      headers: { Cookie: cookie },
+    });
+  const stale = [];
+  for (let index = 0; index < 52; index++) {
+    const ticket = saveStaffOrder(
+      database,
+      employeeId,
+      draft(`stale-queue-order-${index}`),
+    ).order;
+    database
+      .prepare(
+        "UPDATE Orders SET orderDate = datetime('now', '-120 minutes') WHERE orderID = ?",
+      )
+      .run(ticket.orderId);
+    stale.push(ticket.orderId);
+  }
+  const fresh = [0, 1, 2].map(
+    (index) =>
+      saveStaffOrder(database, employeeId, draft(`fresh-queue-order-${index}`))
+        .order.orderId,
+  );
+  const active = await (
+    await query('queue=active&timeoutMinutes=60&sort=oldest')
+  ).json();
+  assert.deepEqual(
+    active.orders.map((ticket) => ticket.orderId),
+    fresh,
+  );
+  assert.equal(active.total, 3);
+  assert.equal(active.counts.Pending, 3);
+  assert.equal(active.timedOutCount, 52);
+  const reverse = await (await query('queue=active&sort=newest')).json();
+  assert.deepEqual(
+    reverse.orders.map((ticket) => ticket.orderId),
+    [...fresh].reverse(),
+  );
+  const expired = await (
+    await query('queue=timed-out&page=2&sort=newest')
+  ).json();
+  assert.deepEqual(
+    expired.orders.map((ticket) => ticket.orderId),
+    stale.slice(0, 2).reverse(),
+  );
+  assert.equal(expired.total, 52);
+  assert.equal(expired.counts.Pending, 52);
+  assert.equal(expired.pages, 2);
+  const extended = await (
+    await query('queue=active&timeoutMinutes=180')
+  ).json();
+  assert.equal(extended.total, 55);
+  assert.equal(extended.timedOutCount, 0);
+  // A ticket crossing the cutoff moves on the next poll, without a state mutation.
+  database
+    .prepare(
+      "UPDATE Orders SET orderDate = datetime('now', '-120 minutes') WHERE orderID = ?",
+    )
+    .run(fresh[0]);
+  const after = await (await query('queue=active')).json();
+  assert.equal(after.total, 2);
+  assert.equal(after.timedOutCount, 53);
+  assert.equal(readTicket(database, fresh[0]).orderStatus, 'Pending');
+  const advanced = changeStatus(database, employeeId, stale[0], {
+    action: 'advance',
+    expectedRevision: 0,
+  });
+  assert.equal(advanced.orderStatus, 'Preparing');
+  const preparing = await (
+    await query('queue=timed-out&status=Preparing')
+  ).json();
+  assert.equal(preparing.orders[0].orderId, stale[0]);
+  for (const params of [
+    'queue=bad',
+    'sort=bad',
+    'timeoutMinutes=0',
+    'timeoutMinutes=1.5',
+    'timeoutMinutes=1441',
+  ]) {
+    assert.equal((await query(params)).status, 400);
+  }
+});

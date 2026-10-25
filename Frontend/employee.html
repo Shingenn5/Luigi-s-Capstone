@@ -16,6 +16,7 @@
       <div class="d-flex align-items-center gap-2"><img src="./assets/logo.png" width="48" height="48" class="object-fit-contain" alt="" /><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's <span class="fw-normal text-body-secondary fs-6">/ Staff</span></a></div>
       <nav class="d-flex flex-wrap gap-1 workspace-nav" aria-label="Employee workspace">
         <button class="btn workspace-tab px-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
+        <button class="btn workspace-tab px-3" type="button" data-view="timed-out" aria-pressed="false">Timed out <span id="timedOutCount" class="ms-2">0</span></button>
         <button class="btn workspace-tab px-3" type="button" data-view="entry" aria-pressed="false">New order</button>
         <button class="btn workspace-tab px-3" type="button" data-view="history" aria-pressed="false">Order history</button>
         <button class="btn workspace-tab px-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
@@ -30,7 +31,8 @@
     </div>
     <p class="small text-body-secondary mb-3" id="employeeStatus" role="status" aria-atomic="true"></p>
     <section id="boardView" aria-label="Active kitchen orders">
-      <nav id="stageFilters" class="d-flex flex-wrap gap-2 mb-4" aria-label="Filter kitchen stages"><button class="btn stage-filter px-3" type="button" data-stage-filter="all" aria-pressed="true">All active <span class="ms-2" data-stage-count="all">0</span></button></nav>
+      <div class="row g-3 align-items-end mb-3"><div class="col-md-8"><p id="queueDescription" class="text-body-secondary mb-0"></p></div><div class="col-md-4"><label for="queueSort" class="form-label">Order within each stage</label><select id="queueSort" class="form-select"><option value="oldest">Newest on bottom (oldest first)</option><option value="newest">Newest on top</option></select></div></div>
+      <nav id="stageFilters" class="d-flex flex-wrap gap-2 mb-4" aria-label="Filter kitchen stages"><button class="btn stage-filter px-3" type="button" data-stage-filter="all" aria-pressed="true"><span id="queueFilterLabel">All active</span> <span class="ms-2" data-stage-count="all">0</span></button></nav>
       <div id="employeeOrders" aria-label="Active order lanes" aria-busy="true"></div>
     <details class="mt-4 border-top pt-2"><summary class="py-2 text-body-secondary small">Kitchen settings and keyboard help</summary>
       <p class="mt-3">Use Tab to reach controls. Arrow keys move between ticket selectors; Enter or Space selects a ticket. Use its labelled buttons to advance, recall, or cancel. No drag gestures required.</p>
@@ -39,7 +41,9 @@
         <div class="col-sm-4"><label for="warningMinutes" class="form-label">Demo warning age (minutes)</label><input id="warningMinutes" class="form-control" type="number" min="1" max="179" value="10" required /></div>
         <div class="col-sm-4"><label for="overdueMinutes" class="form-label">Demo overdue age (minutes)</label><input id="overdueMinutes" class="form-control" type="number" min="2" max="180" value="20" required /></div>
         <div class="col-sm-4"><button class="btn btn-outline-secondary" type="submit">Save thresholds</button></div>
-      </form><p class="small text-body-secondary mt-2 mb-0">Display preferences apply to this device. Timers are informational; staff always confirms readiness.</p>
+      </form>
+      <form id="timeoutForm" class="row g-3 align-items-end mt-2"><div class="col-sm-8"><label for="timeoutMinutes" class="form-label">Move unfinished orders to Timed out after (minutes)</label><input id="timeoutMinutes" class="form-control" type="number" min="1" max="1440" value="120" required aria-describedby="timeoutHelp" /></div><div class="col-sm-4"><button class="btn btn-outline-secondary" type="submit">Save timeout</button></div></form>
+      <p id="timeoutHelp" class="small text-body-secondary mt-2 mb-0">Measured from when the order was placed. Timed-out orders keep their current stage and remain available to advance, recall, or cancel. Timeout and sorting preferences apply to this device and survive reloads. Staff always confirms readiness.</p>
     </details></section>
     <section id="accountsView" hidden aria-labelledby="accountsTitle">
       <div class="row"><div class="col-12 col-md-8 col-xl-5">
