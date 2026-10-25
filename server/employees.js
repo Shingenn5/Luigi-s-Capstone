@@ -113,6 +113,29 @@ export function createEmployeeRouter(database) {
   router.get('/auth/session', (request, response) => {
     response.json({ employee: getEmployee(database, request) || null });
   });
+  
+router.get('/accounts', requireEmployee(database), (request, response) => {
+  if (request.employee.role !== 'admin') {
+    return response
+      .status(403)
+      .json({ error: 'Only admins can view staff accounts.' });
+  }
+
+  const employees = database
+    .prepare(
+      `SELECT employee_id AS employeeId,
+              display_name AS displayName,
+              username,
+              role,
+              is_active AS isActive
+       FROM employees
+       ORDER BY display_name COLLATE NOCASE ASC`
+    )
+    .all();
+
+  response.json({ employees });
+});
+
   router.post(
     '/accounts',
     requireEmployee(database),
