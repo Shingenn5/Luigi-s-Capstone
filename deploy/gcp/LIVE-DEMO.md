@@ -122,3 +122,15 @@ A persistent `testadmin` account with the admin role was provisioned in the loca
 Validation: lint, formatting, all 29 backend tests, and all 38 browser tests passed during this task. Initial sandbox network restrictions and a browser-test port conflict were resolved before successful reruns. Cloud SQLite integrity returned `ok`, with no foreign-key violations. Public HTTPS verification confirmed the testing login, secure session cookie, protected staff orders, and the admin Staff accounts screen. Login and the admin role remained valid after an app-only restart. Verification sessions were logged out; both app and tunnel are active, and the public hostname was preserved. No synthetic orders were submitted.
 
 This record is a documentation-only follow-up; the deployed runtime marker remains `d235f85e2aac4e923a0f64335e5911c9221ffa70`.
+
+## Kitchen timeout and ticket sorting — October 25, 2026
+
+Runtime commit `5beffd3d0865c1630281d5c9cfc66e6e50b438a6` was pushed to main and deployed from its checksum-verified Git archive (SHA-256 `5ffac0f3263f9dff6366189f24c3d075980a8b1cc794ce97ebfd79a649da5cc8`). Every installed archive file matched the staged release. The previous app, environment, and stopped SQLite directory are backed up under `/var/backups/luigis/5beffd3d0865c1630281d5c9cfc66e6e50b438a6-20261025T180351Z`. Dependencies and service configuration were verified unchanged. App health and both services passed, and the tunnel hostname was preserved.
+
+Unfinished tickets move from the main board to **Timed out** after 120 minutes from placement by default. Staff can adjust this from 1 to 1440 minutes in kitchen settings. Orders retain their stages and actions. Both queue tabs support newest on top or newest on bottom within each stage. Timeout and sort choices persist per browser/device. Server filtering and sorting happen before pagination; no automatic completion or cancellation is performed.
+
+Lint, formatting, all 30 backend/database tests, and all 40 browser/accessibility scenarios passed. Coverage includes a stale backlog larger than one page, timeout boundary crossing without status changes, reverse ordering, adjustable thresholds, saved preferences, desktop/mobile layouts, and visible keyboard focus after a ticket leaves the board. Desktop and mobile screenshots were visually inspected.
+
+Public HTTPS Chrome verification at 1280px and 390px confirmed 2 current active tickets and 7 timed-out tickets, partition totals, age cutoffs, both sort directions against the API, saved timeout/sort after reload, no horizontal overflow, and successful testing-admin access. The existing old tickets are accessible in Timed out with their original details. Verification changed only browser preferences, logged out its sessions, and submitted no live orders.
+
+This entry is a documentation-only follow-up; the runtime deployment marker remains `5beffd3d0865c1630281d5c9cfc66e6e50b438a6`.
