@@ -112,3 +112,13 @@ Drinks now use separate type and size/price selects with a live quantity total. 
 Lint, formatting, and 29 backend tests passed. The full 38-test browser suite passed 37 scenarios initially; the new mixed-order test had an overly exact link selector that omitted the visible arrow. After correcting that selector, all three drinks-flow tests passed, including mobile/desktop drinks-only carts, invalid quantities, type/size changes, persistence after reload, pizza draft preservation across category navigation, and combined order review. Screenshots were inspected. Public HTTPS Chrome checks passed at 1280px and 390px for two large UnColas, $6 preview and saved subtotal, size preservation, immediate local feedback, no unintended pizza, and reload persistence. The live check waits for asynchronous checkout loading. These checks used browser-local carts only; no live order was submitted.
 
 This is a documentation-only follow-up to the runtime commit above.
+
+## Persistent testing admin — October 25, 2026
+
+Runtime commit `d235f85e2aac4e923a0f64335e5911c9221ffa70` was verified against origin/main and deployed from its Git archive (SHA-256 `1657ff1c237711c6de4f13c85ffb9ede73912759791234f03ff2a7307fd017ab`). All installed archive files matched after deployment. Existing runtime dependencies and service configuration were unchanged. The app, environment, and stopped SQLite directory were backed up under `/var/backups/luigis/d235f85e2aac4e923a0f64335e5911c9221ffa70-20261025T171335Z` before installation.
+
+A persistent `testadmin` account with the admin role was provisioned in the local database and the GCP database for shared testing. Its password was supplied privately to the owner and is not recorded in source control. The cloud provisioning operation transferred only the local password hash over authenticated IAP SSH. Existing accounts were preserved, and the temporary cloud provisioning file was removed.
+
+Validation: lint, formatting, all 29 backend tests, and all 38 browser tests passed during this task. Initial sandbox network restrictions and a browser-test port conflict were resolved before successful reruns. Cloud SQLite integrity returned `ok`, with no foreign-key violations. Public HTTPS verification confirmed the testing login, secure session cookie, protected staff orders, and the admin Staff accounts screen. Login and the admin role remained valid after an app-only restart. Verification sessions were logged out; both app and tunnel are active, and the public hostname was preserved. No synthetic orders were submitted.
+
+This record is a documentation-only follow-up; the deployed runtime marker remains `d235f85e2aac4e923a0f64335e5911c9221ffa70`.
