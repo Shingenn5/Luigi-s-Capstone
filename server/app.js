@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { getMenu, getToppings } from './database.js';
 import { createAuthRouter } from './auth.js';
 import { createOrderRouter } from './orders.js';
+import { createNotificationRouter } from './notifications.js';
 import { createEmployeeRouter, getEmployee } from './employees.js';
 
 export function createApp(database, { trustProxy = false } = {}) {
@@ -48,6 +49,7 @@ export function createApp(database, { trustProxy = false } = {}) {
   app.use('/api/employee', createEmployeeRouter(database));
   app.use('/api/auth', createAuthRouter(database));
   app.use('/api/orders', createOrderRouter(database));
+  app.use('/api/notifications', createNotificationRouter(database));
   app.get('/api/menu', (_request, response) =>
     response.json(getMenu(database)),
   );

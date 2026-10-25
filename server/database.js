@@ -24,6 +24,7 @@ export function openDatabase(databasePath) {
     '004-kitchen.sql',
     '005-employee-roles.sql',
     '006-customer-order-details.sql',
+    '007-customer-notifications.sql',
   ];
   migrations.forEach((filename, index) => {
     const version = index + 1;

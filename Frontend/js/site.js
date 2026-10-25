@@ -1,5 +1,8 @@
 import { apiRequest } from './api.js';
 import { STATIC_PREVIEW } from './runtime-config.js';
+import { setupNotifications } from './notifications.js';
+
+let stopNotifications;
 
 const header = document.querySelector('#siteHeader');
 header.innerHTML = `
@@ -29,9 +32,18 @@ header.innerHTML = `
           <li class="nav-item"><button class="btn btn-outline-dark py-2" type="button" id="logoutButton" hidden>Logout</button></li>
         </ul>
       </div>
-      <a class="btn btn-outline-primary py-2 ms-2" href="./login.html" id="accountLink">Login</a>
+      <button class="btn btn-outline-primary btn-sm py-2 px-2 lh-lg ms-2" type="button" id="notificationsToggle" aria-controls="notificationsPanel" aria-expanded="false" hidden>Updates <span id="notificationCount" class="badge text-bg-primary ms-1">0</span></button>
+      <a class="btn btn-outline-primary btn-sm py-2 px-2 lh-lg ms-2" href="./login.html" id="accountLink">Login</a>
     </div>
-  </nav>`;
+  </nav>
+  <div class="container"><p id="notificationAnnouncement" class="small text-primary-emphasis my-2" role="status" aria-atomic="true"></p>
+    <section id="notificationsPanel" class="border rounded p-3 mb-3" aria-labelledby="notificationsTitle" hidden>
+      <div class="d-flex flex-wrap justify-content-between gap-3 align-items-center mb-2"><h2 id="notificationsTitle" class="h4 mb-0">Your order updates</h2><button id="notificationsReadAll" class="btn btn-outline-primary py-2" type="button" disabled>Mark all as read</button></div>
+      <p id="notificationConnection" class="small text-body-secondary">Loading your account updates…</p>
+      <ul id="notificationList" class="list-group mb-3"></ul>
+      <div id="notificationPagination" hidden><div class="d-flex flex-wrap gap-3 align-items-center"><button id="notificationsPrevious" class="btn btn-outline-secondary py-2" type="button">Previous updates</button><span id="notificationPage" class="small"></span><button id="notificationsNext" class="btn btn-outline-secondary py-2" type="button">Older updates</button></div></div>
+    </section>
+  </div>`;
 
 if (STATIC_PREVIEW) {
   const notice = document.createElement('p');
@@ -74,6 +86,7 @@ try {
     accountLink.textContent = 'My account';
     accountLink.href = './order.html';
     document.querySelector('#logoutButton').hidden = false;
+    stopNotifications = setupNotifications();
   }
   const { employee } = await apiRequest('employee/auth/session');
   if (employee) {
@@ -95,6 +108,7 @@ document
     event.currentTarget.disabled = true;
     try {
       await apiRequest('auth/logout', { method: 'POST', body: '{}' });
+      stopNotifications?.();
       window.location.assign('./login.html');
     } catch (error) {
       event.target.textContent = 'Retry logout';

@@ -117,6 +117,14 @@ The board uses a light POS layout. Warning/overdue ages default to 10/20 minutes
 
 Employee APIs: `GET /api/employee/kitchen?status=Pending&page=1&search=`, `POST /api/employee/orders`, `GET /api/employee/orders/submissions/:requestId`, and `POST /api/employee/orders/:orderId/status`. Status requests contain `action` (`advance`, `recall`, or `cancel`), `expectedRevision`, and a cancellation `reason`. Kitchen responses include tickets, stage counts, paging, and server time. Staff creation accepts the existing item contract plus customer/service/source/table/notes and a stable request ID. Unknown, stale, invalid, and unauthenticated operations return appropriate errors.
 
+## Customer account notifications
+
+Signed-in customers have an **Updates** button on all restaurant pages. Kitchen advances (Preparing, In oven, Ready, Completed), cancellations, and recalls create saved account notifications. Pizza-ready messages explain that the pizza is made, cut and boxed; drink-only orders skip the oven. Updates arrive while browsing and are saved for the next login if the customer is away.
+
+The inbox shows an unread count, dated messages, order-progress links, individual read controls, and **Mark all as read**. Older messages are paginated. Read status is saved on the account across sessions/devices. Existing historical stage changes are not replayed as new notifications at installation. Phone/counter orders without a customer account receive no account notifications.
+
+Migration 007 creates account notifications from kitchen events in the same SQL transaction. One event creates one notification; stale/rejected/rolled-back changes create none. Customer authentication and ownership scope every read and acknowledgement. The inbox exposes customer-facing stage text without staff identities or cancellation reasons. It polls every two seconds while the page is visible, retains existing messages during connection failures, and clears them on session expiry. These are in-site account updates; email, SMS, and closed-browser push are not configured.
+
 ## Customer order tracking
 
 After placing an order, customers follow it under **Your order → Your recent orders**. The page checks the signed-in customer's orders every two seconds while visible. Each order shows received, preparing, in the oven, cut and boxed, and handed-off milestones, with recorded local times, total elapsed time, and time in the current stage. Drink-only orders skip the oven and use Ready instead of Cut and boxed. Completed/cancelled totals stop at the saved terminal timestamp.

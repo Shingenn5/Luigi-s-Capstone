@@ -36,6 +36,14 @@ Open [Employee login](https://pipeline-alberta-drawing-inner.trycloudflare.com/e
 
 For the first admin on a new server, run `npm run admin:create` in an interactive terminal using that server's database configuration. `npm run employee:create` also lets you choose either role. The local demo account keeps ordinary employee access; its username does not grant admin permissions. Password reset and changing an existing account's role are not included in this screen.
 
+## Customer account updates
+
+1. Sign in as a customer and place a labelled practice order. Stay on the homepage or menu, then use a separate staff session to advance the ticket.
+2. Confirm **Updates** gains unread notifications for preparing, in the oven, ready, and handoff. For pizza, Ready says made, cut and boxed; a drink-only order goes from preparing to ready without an oven update.
+3. Open Updates, check the latest message and recorded time, and follow **View order progress**. Recall/cancellation should add a correction/cancellation update without exposing staff notes.
+4. Mark one message as read, reload or sign out/in, and confirm that read state remains. **Mark all as read** clears the displayed account backlog without swallowing a newer stage change that arrives afterward.
+5. Sign in with another customer account and confirm those notifications are absent. Check phone and desktop layouts and keyboard focus after marking messages read.
+
 ## Recovery checks
 
 - Refresh before submitting: the cart should remain. Refresh afterward: the saved order should appear in history with its original number.
