@@ -2,6 +2,8 @@
 
 Use one non-Spot `e2-micro` in `us-central1`, with a 20 GB `pd-standard` boot disk retained on deletion. The free allowance is shared across eligible usage on the billing account; check for other VMs and disks first. External IPv4, Cloud NAT, load balancers, snapshots, Cloud DNS zones, larger machines and disks, and traffic beyond allowances can incur charges. Billing must be enabled. This configuration is intended to stay within allowances, not impose a billing hard cap.
 
+Current public access uses the owner-selected IPv6-only DuckDNS and Certbot setup in [DUCKDNS.md](DUCKDNS.md). The Quick Tunnel instructions below describe the former demo setup and its recovery option. Direct hosting has no IPv4 fallback; visitors need IPv6 connectivity.
+
 ## Network and VM
 
 The commands below create a dedicated dual-stack network. The VM has internal IPv4 for IAP administration and external IPv6 for outbound traffic, but no external IPv4. Firewall access to SSH is limited to Google's IAP range. Node remains on loopback; the public tunnel needs no inbound application ports.

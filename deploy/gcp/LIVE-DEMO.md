@@ -1,5 +1,19 @@
 # GCP demo deployment
 
+## DuckDNS and Certbot cutover — October 26, 2026
+
+Public HTTPS now uses `https://luigis-pizza.duckdns.org` with direct IPv6, Nginx, and a Let's Encrypt certificate managed by Certbot. The owner explicitly selected IPv6-only access instead of a paid public IPv4 address, and selected the new hostname because the signed-in DuckDNS account did not own the previous name. DuckDNS has only an AAAA record pointing to `2600:1900:4001:1255::`; the automatically detected laptop-network A record was cleared. IPv4-only visitors cannot connect.
+
+The pushed configuration/runtime commit is `0c393b45074c6aa9bdd077ecad82f4d653e2923f`. Archive SHA-256 `fc0f0236675ca862f40037799a7a5a7fc79ea103b5096e57e24c83bcdc40ba37` was verified on the VM, and every installed archive file matched. Application, environment, and stopped database backups are retained under `/var/backups/luigis/0c393b45074c6aa9bdd077ecad82f4d653e2923f-20261026T161507Z`. Pre-cutover environment and Nginx configuration are also retained privately under `/var/backups/luigis/tls-migration-20261026`. Database integrity and foreign-key checks passed.
+
+Ubuntu packages `nginx`, `certbot`, and `python3-certbot-nginx` were installed. The committed proxy template gained an IPv6 listener; the installed site substitutes the selected hostname, and Certbot manages its TLS configuration. GCP firewall rule `luigis-web-ipv6` allows only TCP 80/443 from `::/0` on instances tagged `luigis-demo`. Existing IAP SSH access is unchanged. Node still listens only on `127.0.0.1:3000`; no public IPv4 address was added.
+
+The certificate expires January 24, 2027. Independent Windows curl and Node TLS checks accepted the certificate without bypass flags and identified Let's Encrypt as the issuer. HTTP redirects to HTTPS. `certbot.timer` is enabled and active, and `certbot renew --dry-run` succeeded after its built-in randomized delay. Renewal uses HTTP-01 validation through Nginx, so keep IPv6 port 80 reachable. No DuckDNS token or TLS private key is stored in Git.
+
+`APP_ORIGIN` and GitHub's `FULL_APP_URL` are set to the new HTTPS origin; Secure cookies and loopback proxy trust remain enabled. Public Chrome checks passed admin login, Secure cookie issuance, staff-list response fields without password data, staff list/refresh, and edit-dialog opening/cancellation at 1280px and 390px. Verification sessions were logged out and the staff-list API returned 401 afterward. The new homepage was rendered and visually inspected. No live orders or accounts were created or edited. Application logic and dependencies are unchanged. Linux `nginx -t`, loopback/public health, and the proxy's actual IPv6 routing passed; an immediate probe during the first reload briefly saw the old default site before the successful rechecks.
+
+Pages publication [40357621452](https://github.com/Shingenn5/Luigi-s-Capstone/actions/runs/40357621452) passed all checks, build, and deployment; its live HTML points to DuckDNS. Afterward, `luigis-tunnel` was stopped and disabled, while `luigis`, `nginx`, and `certbot.timer` remained active and direct HTTPS health passed. This record is a documentation follow-up, separate from the deployed runtime commit. See [DUCKDNS.md](DUCKDNS.md) for maintenance and recovery.
+
 ## Staff-account editing release — October 25, 2026
 
 Runtime commit `bad4f8b84ac20af2d19693ec0ba4e9a6504f67c6` is deployed to `luigis-demo`. GitHub main matched this SHA before export. The archive SHA-256 was `a8588bd05abbb74cc8cf8116ba45e8fa149e0418ed669586cf1ad8451399b215`; it was verified on the VM before installation, and every installed archive file matched afterward.
@@ -35,7 +49,7 @@ Verified on October 21, 2026. This records deployment evidence, not a guarantee 
 - Configuration: `/etc/luigis.env`, root-only, HTTPS `APP_ORIGIN`, secure cookies and loopback proxy trust enabled.
 - Tunnel: systemd `luigis-tunnel`, official cloudflared 2026.10.3, IPv6 edge connections with HTTP/2.
 - Binary SHA256: `053b80b0a23031a038fdbf3c073f59f82b8f1f152aa67971d7383ffafc0dbab0`.
-- Current HTTPS origin: <https://pipeline-alberta-drawing-inner.trycloudflare.com>.
+- Current HTTPS origin: <https://luigis-pizza.duckdns.org> (IPv6 only; see the October 26 cutover record).
 - Public entry: <https://shingenn5.github.io/Luigi-s-Capstone/>. Repository variable `FULL_APP_URL` points to the HTTPS origin.
 - Pages publication: [successful run 39672944250](https://github.com/Shingenn5/Luigi-s-Capstone/actions/runs/39672944250).
 
@@ -80,6 +94,8 @@ This deployment evidence is a documentation-only follow-up to the runtime commit
 All 24 existing Node tests passed before publishing. Public HTTPS probes verified health, unauthorized kitchen rejection, customer registration/login/logout, Secure session cookies, server-calculated prices, duplicate-submit protection, all four kitchen advances and HTTP 409 for stale revisions. A synthetic $22 order labelled `Deployment test - no food` reached Completed. Employee/customer login, the order and completed history survived a Node service restart. Browser verification confirmed signed-in customer history and the live Pages redirect. The synthetic browser session was logged out afterward.
 
 ## Operating the demo
+
+Current public hosting uses direct IPv6, DuckDNS, Nginx, and Certbot; see [DUCKDNS.md](DUCKDNS.md). The Quick Tunnel instructions in this historical section are a recovery option, not the current public entry.
 
 Use the authenticated Google Cloud CLI with `--project=luigis-pizzeria-512320`, `--zone=us-central1-a` and `--tunnel-through-iap` for SSH/SCP. The repository's local CLI is under the ignored `demo-dist/tools/google-cloud-sdk` directory; credentials use the normal user gcloud configuration.
 
