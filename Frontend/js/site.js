@@ -32,8 +32,10 @@ header.innerHTML = `
           <li class="nav-item"><button class="btn btn-outline-dark py-2" type="button" id="logoutButton" hidden>Logout</button></li>
         </ul>
       </div>
-      <button class="btn btn-outline-dark btn-sm py-2 px-2 lh-lg ms-2" type="button" id="notificationsToggle" aria-controls="notificationsPanel" aria-expanded="false" hidden>Updates <span id="notificationCount" class="badge text-bg-dark ms-1">0</span></button>
-      <a class="btn btn-outline-primary btn-sm py-2 px-2 lh-lg ms-2" href="./login.html" id="accountLink">Login</a>
+      <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 pb-2 pb-lg-0 ms-lg-2">
+      <button class="btn btn-outline-dark py-2 px-3 flex-grow-1" type="button" id="notificationsToggle" aria-controls="notificationsPanel" aria-expanded="false" hidden>Updates <span id="notificationCount" class="badge text-bg-dark ms-1">0</span></button>
+      <a class="btn btn-outline-primary py-2 px-3 flex-grow-1" href="./login.html" id="accountLink">Login</a>
+      </div>
     </div>
   </nav>
   <div class="container"><p id="notificationAnnouncement" class="small text-primary-emphasis my-2" role="status" aria-atomic="true"></p>

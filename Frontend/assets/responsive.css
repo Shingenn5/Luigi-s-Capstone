@@ -1,0 +1,21 @@
+/* Bootstrap handles layout. These scoped exceptions allow long account/order
+   text to shrink and give phone controls comfortable touch and input sizes. */
+:is(#main, #siteHeader) :is(.card, .list-group-item, .flex-fill) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767.98px) {
+  :is(#main, #siteHeader) :is(.btn, .form-control, .form-select),
+  #toppingChoices label:first-child {
+    min-height: 44px;
+  }
+
+  #main :is(.form-control, .form-select) {
+    font-size: 1rem;
+  }
+
+  .employee-workspace .workspace-tab {
+    flex: 1 1 calc(50% - 0.5rem);
+  }
+}

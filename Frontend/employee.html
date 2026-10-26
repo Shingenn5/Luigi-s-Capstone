@@ -6,6 +6,7 @@
   <title>Kitchen | Luigi's Pizzeria</title>
   <link rel="icon" href="./assets/Luigis-Logo.png" type="image/png" />
   <link rel="stylesheet" href="./assets/bootstrap.min.css" />
+    <link rel="stylesheet" href="./assets/responsive.css" />
   <link rel="stylesheet" href="./assets/employee.css" />
   <script type="module" src="./js/employee.js"></script>
 </head>
@@ -15,12 +16,12 @@
     <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-2"><img src="./assets/logo.png" width="48" height="48" class="object-fit-contain" alt="" /><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's <span class="fw-normal text-body-secondary fs-6">/ Staff</span></a></div>
       <nav class="d-flex flex-wrap gap-1 workspace-nav" aria-label="Employee workspace">
-        <button class="btn workspace-tab px-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
-        <button class="btn workspace-tab px-3" type="button" data-view="timed-out" aria-pressed="false">Timed out <span id="timedOutCount" class="ms-2">0</span></button>
-        <button class="btn workspace-tab px-3" type="button" data-view="entry" aria-pressed="false">New order</button>
-        <button class="btn workspace-tab px-3" type="button" data-view="history" aria-pressed="false">Order history</button>
-        <button class="btn workspace-tab px-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
-        <button class="btn workspace-tab px-3" type="button" id="employeeLogout">Employee logout</button>
+        <button class="btn workspace-tab px-2 px-sm-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
+        <button class="btn workspace-tab px-2 px-sm-3" type="button" data-view="timed-out" aria-pressed="false">Timed out <span id="timedOutCount" class="ms-2">0</span></button>
+        <button class="btn workspace-tab px-2 px-sm-3" type="button" data-view="entry" aria-pressed="false">New order</button>
+        <button class="btn workspace-tab px-2 px-sm-3" type="button" data-view="history" aria-pressed="false">Order history</button>
+        <button class="btn workspace-tab px-2 px-sm-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
+        <button class="btn workspace-tab px-2 px-sm-3" type="button" id="employeeLogout">Employee logout</button>
       </nav>
     </div>
   </header>
