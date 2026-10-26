@@ -1,135 +1,650 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kitchen | Luigi's Pizzeria</title>
-  <link rel="icon" href="./assets/Luigis-Logo.png" type="image/png" />
-  <link rel="stylesheet" href="./assets/bootstrap.min.css" />
-  <link rel="stylesheet" href="./assets/employee.css" />
-  <script type="module" src="./js/employee.js"></script>
-</head>
-<body class="employee-workspace bg-body-tertiary">
-  <a class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark" href="#main">Skip to content</a>
-  <header class="workspace-header border-bottom bg-body px-3 px-lg-4">
-    <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
-      <div class="d-flex align-items-center gap-2"><img src="./assets/logo.png" width="48" height="48" class="object-fit-contain" alt="" /><a class="fw-bold text-body fs-4 text-decoration-none" href="./employee.html">Luigi's <span class="fw-normal text-body-secondary fs-6">/ Staff</span></a></div>
-      <nav class="d-flex flex-wrap gap-1 workspace-nav" aria-label="Employee workspace">
-        <button class="btn workspace-tab px-3" type="button" data-view="board" aria-pressed="true">Kitchen board</button>
-        <button class="btn workspace-tab px-3" type="button" data-view="timed-out" aria-pressed="false">Timed out <span id="timedOutCount" class="ms-2">0</span></button>
-        <button class="btn workspace-tab px-3" type="button" data-view="entry" aria-pressed="false">New order</button>
-        <button class="btn workspace-tab px-3" type="button" data-view="history" aria-pressed="false">Order history</button>
-        <button class="btn workspace-tab px-3" type="button" data-view="accounts" id="staffAccountsButton" aria-pressed="false" hidden>Staff accounts</button>
-        <button class="btn workspace-tab px-3" type="button" id="employeeLogout">Employee logout</button>
-      </nav>
-    </div>
-  </header>
-  <main class="container-fluid p-3 p-lg-4" id="main" tabindex="-1">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-      <div><h1 class="h3 fw-bold mb-1" id="workspaceTitle" tabindex="-1">Kitchen board</h1><p class="small text-body-secondary mb-0" id="employeeIdentity">Checking employee access…</p></div>
-      <div class="d-flex flex-wrap align-items-center gap-3"><p class="mb-0 small" id="connectionStatus">Connecting to kitchen…</p><button class="btn btn-outline-secondary" id="refreshOrders" type="button">Refresh orders</button></div>
-    </div>
-    <p class="small text-body-secondary mb-3" id="employeeStatus" role="status" aria-atomic="true"></p>
-    <section id="boardView" aria-label="Active kitchen orders">
-      <div class="row g-3 align-items-end mb-3"><div class="col-md-8"><p id="queueDescription" class="text-body-secondary mb-0"></p></div><div class="col-md-4"><label for="queueSort" class="form-label">Order within each stage</label><select id="queueSort" class="form-select"><option value="oldest">Newest on bottom (oldest first)</option><option value="newest">Newest on top</option></select></div></div>
-      <nav id="stageFilters" class="d-flex flex-wrap gap-2 mb-4" aria-label="Filter kitchen stages"><button class="btn stage-filter px-3" type="button" data-stage-filter="all" aria-pressed="true"><span id="queueFilterLabel">All active</span> <span class="ms-2" data-stage-count="all">0</span></button></nav>
-      <div id="employeeOrders" aria-label="Active order lanes" aria-busy="true"></div>
-    <details class="mt-4 border-top pt-2"><summary class="py-2 text-body-secondary small">Kitchen settings and keyboard help</summary>
-      <p class="mt-3">Use Tab to reach controls. Arrow keys move between ticket selectors; Enter or Space selects a ticket. Use its labelled buttons to advance, recall, or cancel. No drag gestures required.</p>
-      <button class="btn btn-outline-secondary mb-3" id="soundToggle" type="button" aria-pressed="false">Enable sound</button>
-      <form id="thresholdForm" class="row g-3 align-items-end">
-        <div class="col-sm-4"><label for="warningMinutes" class="form-label">Demo warning age (minutes)</label><input id="warningMinutes" class="form-control" type="number" min="1" max="179" value="10" required /></div>
-        <div class="col-sm-4"><label for="overdueMinutes" class="form-label">Demo overdue age (minutes)</label><input id="overdueMinutes" class="form-control" type="number" min="2" max="180" value="20" required /></div>
-        <div class="col-sm-4"><button class="btn btn-outline-secondary" type="submit">Save thresholds</button></div>
-      </form>
-      <form id="timeoutForm" class="row g-3 align-items-end mt-2"><div class="col-sm-8"><label for="timeoutMinutes" class="form-label">Move unfinished orders to Timed out after (minutes)</label><input id="timeoutMinutes" class="form-control" type="number" min="1" max="1440" value="120" required aria-describedby="timeoutHelp" /></div><div class="col-sm-4"><button class="btn btn-outline-secondary" type="submit">Save timeout</button></div></form>
-      <p id="timeoutHelp" class="small text-body-secondary mt-2 mb-0">Measured from when the order was placed. Timed-out orders keep their current stage and remain available to advance, recall, or cancel. Timeout and sorting preferences apply to this device and survive reloads. Staff always confirms readiness.</p>
-    </details></section>
-    <section id="accountsView" hidden aria-labelledby="accountsTitle">
-      <div class="row"><div class="col-12 col-md-8 col-xl-5">
-        <h2 id="accountsTitle" class="h4">Create a staff account</h2>
-        <p>Employees can take orders and use the kitchen. Admins can also create employee and admin accounts.</p>
-        <p id="accountStatus" role="status" aria-atomic="true" tabindex="-1"></p>
-        <form id="staffAccountForm" class="card card-body">
-          <fieldset id="staffAccountFields" disabled><legend class="h5">New account</legend>
-            <div class="mb-3"><label class="form-label" for="accountDisplayName">Display name</label><input class="form-control" id="accountDisplayName" name="displayName" maxlength="80" autocomplete="off" required /></div>
-            <div class="mb-3"><label class="form-label" for="accountUsername">Username</label><input class="form-control" id="accountUsername" name="username" minlength="3" maxlength="32" pattern="[a-zA-Z0-9._\-]{3,32}" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="accountUsernameHint" required /><div class="form-text" id="accountUsernameHint">3–32 letters, numbers, dots, underscores, or hyphens.</div></div>
-            <div class="mb-3"><label class="form-label" for="accountRole">Role</label><select class="form-select" id="accountRole" name="role"><option value="employee">Employee</option><option value="admin">Admin</option></select></div>
-            <div class="mb-3"><label class="form-label" for="accountPassword">Password</label><input class="form-control" type="password" id="accountPassword" name="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="accountPasswordHint" required /><div class="form-text" id="accountPasswordHint">8–128 characters. Give these credentials to the staff member privately.</div></div>
-            <div class="mb-3"><label class="form-label" for="accountConfirmation">Confirm password</label><input class="form-control" type="password" id="accountConfirmation" minlength="8" maxlength="128" autocomplete="new-password" required /></div>
-            <button class="btn btn-primary py-3" type="submit" id="createStaffAccount">Create account</button>
-          </fieldset>
-        </form>
-      
-      </div></div>
-
-      <section class="mt-5" aria-labelledby="existingStaffTitle">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-          <h2 id="existingStaffTitle" class="h4 mb-0">
-            Existing staff accounts
-          </h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kitchen | Luigi's Pizzeria</title>
+    <link rel="icon" href="./assets/Luigis-Logo.png" type="image/png" />
+    <link rel="stylesheet" href="./assets/bootstrap.min.css" />
+    <link rel="stylesheet" href="./assets/employee.css" />
+    <script type="module" src="./js/employee.js"></script>
+  </head>
+  <body class="employee-workspace bg-body-tertiary">
+    <a
+      class="visually-hidden-focusable position-absolute z-3 p-3 bg-white text-dark"
+      href="#main"
+      >Skip to content</a
+    >
+    <header class="workspace-header border-bottom bg-body px-3 px-lg-4">
+      <div
+        class="d-flex flex-wrap gap-3 align-items-center justify-content-between"
+      >
+        <div class="d-flex align-items-center gap-2">
+          <img
+            src="./assets/logo.png"
+            width="48"
+            height="48"
+            class="object-fit-contain"
+            alt=""
+          /><a
+            class="fw-bold text-body fs-4 text-decoration-none"
+            href="./employee.html"
+            >Luigi's
+            <span class="fw-normal text-body-secondary fs-6">/ Staff</span></a
+          >
+        </div>
+        <nav
+          class="d-flex flex-wrap gap-1 workspace-nav"
+          aria-label="Employee workspace"
+        >
+          <button
+            class="btn workspace-tab px-3"
+            type="button"
+            data-view="board"
+            aria-pressed="true"
+          >
+            Kitchen board
+          </button>
+          <button
+            class="btn workspace-tab px-3"
+            type="button"
+            data-view="timed-out"
+            aria-pressed="false"
+          >
+            Timed out <span id="timedOutCount" class="ms-2">0</span>
+          </button>
+          <button
+            class="btn workspace-tab px-3"
+            type="button"
+            data-view="entry"
+            aria-pressed="false"
+          >
+            New order
+          </button>
+          <button
+            class="btn workspace-tab px-3"
+            type="button"
+            data-view="history"
+            aria-pressed="false"
+          >
+            Order history
+          </button>
+          <button
+            class="btn workspace-tab px-3"
+            type="button"
+            data-view="accounts"
+            id="staffAccountsButton"
+            aria-pressed="false"
+            hidden
+          >
+            Staff accounts
+          </button>
+          <button
+            class="btn workspace-tab px-3"
+            type="button"
+            id="employeeLogout"
+          >
+            Employee logout
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main class="container-fluid p-3 p-lg-4" id="main" tabindex="-1">
+      <div
+        class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3"
+      >
+        <div>
+          <h1 class="h3 fw-bold mb-1" id="workspaceTitle" tabindex="-1">
+            Kitchen board
+          </h1>
+          <p class="small text-body-secondary mb-0" id="employeeIdentity">
+            Checking employee access…
+          </p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <p class="mb-0 small" id="connectionStatus">Connecting to kitchen…</p>
           <button
             class="btn btn-outline-secondary"
-            id="refreshStaffAccounts"
+            id="refreshOrders"
             type="button"
           >
-            Refresh accounts
+            Refresh orders
           </button>
         </div>
+      </div>
+      <p
+        class="small text-body-secondary mb-3"
+        id="employeeStatus"
+        role="status"
+        aria-atomic="true"
+      ></p>
+      <section id="boardView" aria-label="Active kitchen orders">
+        <div class="row g-3 align-items-end mb-3">
+          <div class="col-md-8">
+            <p id="queueDescription" class="text-body-secondary mb-0"></p>
+          </div>
+          <div class="col-md-4">
+            <label for="queueSort" class="form-label"
+              >Order within each stage</label
+            ><select id="queueSort" class="form-select">
+              <option value="oldest">Newest on bottom (oldest first)</option>
+              <option value="newest">Newest on top</option>
+            </select>
+          </div>
+        </div>
+        <nav
+          id="stageFilters"
+          class="d-flex flex-wrap gap-2 mb-4"
+          aria-label="Filter kitchen stages"
+        >
+          <button
+            class="btn stage-filter px-3"
+            type="button"
+            data-stage-filter="all"
+            aria-pressed="true"
+          >
+            <span id="queueFilterLabel">All active</span>
+            <span class="ms-2" data-stage-count="all">0</span>
+          </button>
+        </nav>
+        <div
+          id="employeeOrders"
+          aria-label="Active order lanes"
+          aria-busy="true"
+        ></div>
+        <details class="mt-4 border-top pt-2">
+          <summary class="py-2 text-body-secondary small">
+            Kitchen settings and keyboard help
+          </summary>
+          <p class="mt-3">
+            Use Tab to reach controls. Arrow keys move between ticket selectors;
+            Enter or Space selects a ticket. Use its labelled buttons to
+            advance, recall, or cancel. No drag gestures required.
+          </p>
+          <button
+            class="btn btn-outline-secondary mb-3"
+            id="soundToggle"
+            type="button"
+            aria-pressed="false"
+          >
+            Enable sound
+          </button>
+          <form id="thresholdForm" class="row g-3 align-items-end">
+            <div class="col-sm-4">
+              <label for="warningMinutes" class="form-label"
+                >Demo warning age (minutes)</label
+              ><input
+                id="warningMinutes"
+                class="form-control"
+                type="number"
+                min="1"
+                max="179"
+                value="10"
+                required
+              />
+            </div>
+            <div class="col-sm-4">
+              <label for="overdueMinutes" class="form-label"
+                >Demo overdue age (minutes)</label
+              ><input
+                id="overdueMinutes"
+                class="form-control"
+                type="number"
+                min="2"
+                max="180"
+                value="20"
+                required
+              />
+            </div>
+            <div class="col-sm-4">
+              <button class="btn btn-outline-secondary" type="submit">
+                Save thresholds
+              </button>
+            </div>
+          </form>
+          <form id="timeoutForm" class="row g-3 align-items-end mt-2">
+            <div class="col-sm-8">
+              <label for="timeoutMinutes" class="form-label"
+                >Move unfinished orders to Timed out after (minutes)</label
+              ><input
+                id="timeoutMinutes"
+                class="form-control"
+                type="number"
+                min="1"
+                max="1440"
+                value="120"
+                required
+                aria-describedby="timeoutHelp"
+              />
+            </div>
+            <div class="col-sm-4">
+              <button class="btn btn-outline-secondary" type="submit">
+                Save timeout
+              </button>
+            </div>
+          </form>
+          <p id="timeoutHelp" class="small text-body-secondary mt-2 mb-0">
+            Measured from when the order was placed. Timed-out orders keep their
+            current stage and remain available to advance, recall, or cancel.
+            Timeout and sorting preferences apply to this device and survive
+            reloads. Staff always confirms readiness.
+          </p>
+        </details>
+      </section>
+      <section id="accountsView" hidden aria-labelledby="accountsTitle">
+        <div class="row">
+          <div class="col-12 col-md-8 col-xl-5">
+            <h2 id="accountsTitle" class="h4">Create a staff account</h2>
+            <p>
+              Employees can take orders and use the kitchen. Admins can also
+              create employee and admin accounts.
+            </p>
+            <p
+              id="accountStatus"
+              role="status"
+              aria-atomic="true"
+              tabindex="-1"
+            ></p>
+            <form id="staffAccountForm" class="card card-body">
+              <fieldset id="staffAccountFields" disabled>
+                <legend class="h5">New account</legend>
+                <div class="mb-3">
+                  <label class="form-label" for="accountDisplayName"
+                    >Display name</label
+                  ><input
+                    class="form-control"
+                    id="accountDisplayName"
+                    name="displayName"
+                    maxlength="80"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="accountUsername"
+                    >Username</label
+                  ><input
+                    class="form-control"
+                    id="accountUsername"
+                    name="username"
+                    minlength="3"
+                    maxlength="32"
+                    pattern="[a-zA-Z0-9._\-]{3,32}"
+                    autocomplete="off"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    aria-describedby="accountUsernameHint"
+                    required
+                  />
+                  <div class="form-text" id="accountUsernameHint">
+                    3–32 letters, numbers, dots, underscores, or hyphens.
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="accountRole">Role</label
+                  ><select class="form-select" id="accountRole" name="role">
+                    <option value="employee">Employee</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="accountPassword"
+                    >Password</label
+                  ><input
+                    class="form-control"
+                    type="password"
+                    id="accountPassword"
+                    name="password"
+                    minlength="8"
+                    maxlength="128"
+                    autocomplete="new-password"
+                    aria-describedby="accountPasswordHint"
+                    required
+                  />
+                  <div class="form-text" id="accountPasswordHint">
+                    8–128 characters. Give these credentials to the staff member
+                    privately.
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="accountConfirmation"
+                    >Confirm password</label
+                  ><input
+                    class="form-control"
+                    type="password"
+                    id="accountConfirmation"
+                    minlength="8"
+                    maxlength="128"
+                    autocomplete="new-password"
+                    required
+                  />
+                </div>
+                <button
+                  class="btn btn-primary py-3"
+                  type="submit"
+                  id="createStaffAccount"
+                >
+                  Create account
+                </button>
+              </fieldset>
+            </form>
+          </div>
+        </div>
 
-        <p id="staffListStatus" class="text-body-secondary" role="status">
-          Open Staff accounts to load existing employees.
+        <section class="mt-5" aria-labelledby="existingStaffTitle">
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3"
+          >
+            <h2 id="existingStaffTitle" class="h4 mb-0">
+              Existing staff accounts
+            </h2>
+            <button
+              class="btn btn-outline-secondary"
+              id="refreshStaffAccounts"
+              type="button"
+            >
+              Refresh accounts
+            </button>
+          </div>
+
+          <p id="staffListStatus" class="text-body-secondary" role="status">
+            Open Staff accounts to load existing employees.
+          </p>
+
+          <div class="table-responsive" tabindex="0">
+            <table class="table table-striped table-hover align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Display name</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staffAccountsList"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <dialog
+          id="editStaffDialog"
+          class="bg-body text-body border rounded p-4"
+          aria-labelledby="editStaffTitle"
+        >
+          <form id="editStaffForm">
+            <h2 id="editStaffTitle" class="h4">Edit staff account</h2>
+
+            <p id="editStaffStatus" role="status" aria-atomic="true"></p>
+
+            <div class="mb-3">
+              <label class="form-label" for="editStaffDisplayName">
+                Edit display name
+              </label>
+              <input
+                class="form-control"
+                id="editStaffDisplayName"
+                maxlength="80"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="editStaffUsername">
+                Edit username
+              </label>
+              <input
+                class="form-control"
+                id="editStaffUsername"
+                minlength="3"
+                maxlength="32"
+                pattern="[a-zA-Z0-9._\-]{3,32}"
+                autocapitalize="none"
+                spellcheck="false"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="editStaffRole"> Edit role </label>
+              <select class="form-select" id="editStaffRole">
+                <option value="employee">Employee</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div class="form-check mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="editStaffActive"
+              />
+              <label class="form-check-label" for="editStaffActive">
+                Account active (employee can sign in)
+              </label>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+              <button
+                class="btn btn-primary"
+                id="saveStaffChanges"
+                type="submit"
+              >
+                Save changes
+              </button>
+              <button
+                class="btn btn-outline-secondary"
+                id="cancelStaffEdit"
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </dialog>
+      </section>
+
+      <section id="historyView" hidden aria-labelledby="historyTitle">
+        <h2 id="historyTitle" class="h4">Completed and cancelled orders</h2>
+        <form id="historyForm" class="row g-3 align-items-end mb-4">
+          <div class="col-sm-4">
+            <label for="historyStage" class="form-label">History stage</label
+            ><select id="historyStage" class="form-select">
+              <option>Completed</option>
+              <option>Cancelled</option>
+            </select>
+          </div>
+          <div class="col-sm-5">
+            <label for="historySearch" class="form-label"
+              >Order number or customer name</label
+            ><input
+              class="form-control"
+              id="historySearch"
+              maxlength="120"
+              type="search"
+            />
+          </div>
+          <div class="col-sm-3">
+            <button class="btn btn-primary py-3" type="submit">
+              Search history
+            </button>
+          </div>
+        </form>
+        <div id="historyOrders"></div>
+      </section>
+      <section id="entryView" hidden aria-labelledby="entryTitle">
+        <h2 class="h4" id="entryTitle">Phone and counter order</h2>
+        <p class="text-body-secondary">
+          Add items, check the customer details, then send to kitchen.
         </p>
-
-        <div class="table-responsive" tabindex="0">
-          <table class="table table-striped table-hover align-middle">
-            <thead>
-              <tr>
-                <th scope="col">Display name</th>
-                <th scope="col">Username</th>
-                <th scope="col">Role</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody id="staffAccountsList"></tbody>
-          </table>
+        <p id="staffStatus" role="status" aria-atomic="true"></p>
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <form id="staffItemForm" class="card card-body mb-4">
+              <fieldset id="staffItemFields" disabled>
+                <legend class="h5">Add an item</legend>
+                <div class="row g-3 mb-3">
+                  <div class="col-sm-8">
+                    <label for="staffItem" class="form-label"
+                      >Menu item and size</label
+                    ><select
+                      class="form-select"
+                      id="staffItem"
+                      required
+                    ></select>
+                  </div>
+                  <div class="col-sm-4">
+                    <label for="staffQuantity" class="form-label"
+                      >Item quantity</label
+                    ><input
+                      class="form-control"
+                      type="number"
+                      id="staffQuantity"
+                      min="1"
+                      max="20"
+                      value="1"
+                      required
+                    />
+                  </div>
+                </div>
+                <fieldset id="staffPizza">
+                  <legend class="h6 fw-bold">Toppings</legend>
+                  <p class="small text-body-secondary">
+                    Select toppings below. Choose regular or double for each
+                    selected topping; prices are per pizza.
+                  </p>
+                  <div id="staffToppings" class="row g-2 mb-3"></div>
+                  <div class="row g-3">
+                    <div class="col-sm-6">
+                      <label for="staffSauce" class="form-label">Sauce</label
+                      ><select class="form-select" id="staffSauce"></select>
+                    </div>
+                    <div class="col-sm-6">
+                      <label for="staffCheese" class="form-label">Cheese</label
+                      ><select class="form-select" id="staffCheese"></select>
+                    </div>
+                  </div>
+                </fieldset>
+                <p class="fw-semibold mt-3" id="staffItemPrice"></p>
+                <button class="btn btn-primary py-3 mt-2" type="submit">
+                  Add item to staff order
+                </button>
+              </fieldset>
+            </form>
+            <section class="card card-body" aria-labelledby="draftTitle">
+              <h3 class="h5" id="draftTitle">Staff order draft</h3>
+              <div id="staffDraftItems"></div>
+              <p class="fw-bold fs-5" id="staffTotal"></p>
+            </section>
+          </div>
+          <div class="col-lg-5">
+            <form id="staffCheckout" class="card card-body">
+              <fieldset id="staffCheckoutFields" disabled>
+                <legend class="h5">Customer and service</legend>
+                <label class="form-label" for="staffSource">Order source</label
+                ><select class="form-select mb-3" id="staffSource">
+                  <option>Phone</option>
+                  <option>Counter</option>
+                </select>
+                <label class="form-label" for="staffName">Customer name</label
+                ><input
+                  class="form-control mb-3"
+                  id="staffName"
+                  maxlength="120"
+                  autocomplete="off"
+                  required
+                />
+                <label class="form-label" for="staffService">Service</label
+                ><select class="form-select mb-3" id="staffService">
+                  <option>Pickup</option>
+                  <option>Dine-in</option>
+                </select>
+                <label class="form-label" for="staffPhone"
+                  >Phone
+                  <span id="phoneHint">(required for pickup)</span></label
+                ><input
+                  class="form-control mb-3"
+                  id="staffPhone"
+                  type="tel"
+                  maxlength="25"
+                  pattern="[0-9+ .\(\)\-]{7,25}"
+                  required
+                />
+                <label class="form-label" for="staffTable"
+                  >Table (optional, dine-in only)</label
+                ><input
+                  class="form-control mb-3"
+                  id="staffTable"
+                  maxlength="40"
+                  disabled
+                />
+                <label class="form-label" for="staffNotes"
+                  >Kitchen notes (optional, 500 characters)</label
+                ><textarea
+                  class="form-control mb-3"
+                  id="staffNotes"
+                  maxlength="500"
+                  rows="3"
+                ></textarea>
+                <button
+                  class="btn btn-primary w-100 py-3"
+                  type="submit"
+                  id="staffSubmit"
+                >
+                  Send to kitchen
+                </button>
+                <p class="small text-body-secondary mt-3 mb-0">
+                  Payment is handled separately. To change a submitted order,
+                  cancel it and create a replacement.
+                </p>
+                <button
+                  class="btn btn-outline-secondary w-100 mt-3"
+                  id="staffClear"
+                  type="button"
+                >
+                  Clear draft
+                </button>
+              </fieldset>
+            </form>
+          </div>
         </div>
       </section>
-    </section>
-
-    <section id="historyView" hidden aria-labelledby="historyTitle"><h2 id="historyTitle" class="h4">Completed and cancelled orders</h2>
-      <form id="historyForm" class="row g-3 align-items-end mb-4"><div class="col-sm-4"><label for="historyStage" class="form-label">History stage</label><select id="historyStage" class="form-select"><option>Completed</option><option>Cancelled</option></select></div><div class="col-sm-5"><label for="historySearch" class="form-label">Order number or customer name</label><input class="form-control" id="historySearch" maxlength="120" type="search" /></div><div class="col-sm-3"><button class="btn btn-primary py-3" type="submit">Search history</button></div></form>
-      <div id="historyOrders"></div>
-    </section>
-    <section id="entryView" hidden aria-labelledby="entryTitle">
-      <h2 class="h4" id="entryTitle">Phone and counter order</h2><p class="text-body-secondary">Add items, check the customer details, then send to kitchen.</p>
-      <p id="staffStatus" role="status" aria-atomic="true"></p>
-      <div class="row g-4">
-        <div class="col-lg-7">
-          <form id="staffItemForm" class="card card-body mb-4"><fieldset id="staffItemFields" disabled><legend class="h5">Add an item</legend>
-            <div class="row g-3 mb-3"><div class="col-sm-8"><label for="staffItem" class="form-label">Menu item and size</label><select class="form-select" id="staffItem" required></select></div>
-            <div class="col-sm-4"><label for="staffQuantity" class="form-label">Item quantity</label><input class="form-control" type="number" id="staffQuantity" min="1" max="20" value="1" required /></div></div>
-            <fieldset id="staffPizza"><legend class="h6 fw-bold">Toppings</legend><p class="small text-body-secondary">Select toppings below. Choose regular or double for each selected topping; prices are per pizza.</p><div id="staffToppings" class="row g-2 mb-3"></div>
-              <div class="row g-3"><div class="col-sm-6"><label for="staffSauce" class="form-label">Sauce</label><select class="form-select" id="staffSauce"></select></div><div class="col-sm-6"><label for="staffCheese" class="form-label">Cheese</label><select class="form-select" id="staffCheese"></select></div></div>
-            </fieldset>
-            <p class="fw-semibold mt-3" id="staffItemPrice"></p><button class="btn btn-primary py-3 mt-2" type="submit">Add item to staff order</button>
-          </fieldset></form>
-          <section class="card card-body" aria-labelledby="draftTitle"><h3 class="h5" id="draftTitle">Staff order draft</h3><div id="staffDraftItems"></div><p class="fw-bold fs-5" id="staffTotal"></p></section>
-        </div>
-        <div class="col-lg-5"><form id="staffCheckout" class="card card-body"><fieldset id="staffCheckoutFields" disabled><legend class="h5">Customer and service</legend>
-          <label class="form-label" for="staffSource">Order source</label><select class="form-select mb-3" id="staffSource"><option>Phone</option><option>Counter</option></select>
-          <label class="form-label" for="staffName">Customer name</label><input class="form-control mb-3" id="staffName" maxlength="120" autocomplete="off" required />
-          <label class="form-label" for="staffService">Service</label><select class="form-select mb-3" id="staffService"><option>Pickup</option><option>Dine-in</option></select>
-          <label class="form-label" for="staffPhone">Phone <span id="phoneHint">(required for pickup)</span></label><input class="form-control mb-3" id="staffPhone" type="tel" maxlength="25" pattern="[0-9+ .\(\)\-]{7,25}" required />
-          <label class="form-label" for="staffTable">Table (optional, dine-in only)</label><input class="form-control mb-3" id="staffTable" maxlength="40" disabled />
-          <label class="form-label" for="staffNotes">Kitchen notes (optional, 500 characters)</label><textarea class="form-control mb-3" id="staffNotes" maxlength="500" rows="3"></textarea>
-          <button class="btn btn-primary w-100 py-3" type="submit" id="staffSubmit">Send to kitchen</button>
-          <p class="small text-body-secondary mt-3 mb-0">Payment is handled separately. To change a submitted order, cancel it and create a replacement.</p>
-          <button class="btn btn-outline-secondary w-100 mt-3" id="staffClear" type="button">Clear draft</button>
-        </fieldset></form></div>
-      </div>
-    </section>
-    <dialog class="bg-body text-body border rounded p-4" id="cancelDialog" aria-labelledby="cancelTitle"><form id="cancelForm"><h2 class="h4" id="cancelTitle">Cancel order</h2><p id="cancelDescription"></p><label for="cancelReason" class="form-label">Cancellation reason (required)</label><textarea class="form-control mb-3" id="cancelReason" maxlength="500" required rows="3"></textarea><div class="d-flex flex-wrap gap-3"><button class="btn btn-danger py-3" id="confirmCancel" data-mutation type="submit">Confirm cancellation</button><button class="btn btn-outline-secondary" id="keepOrder" type="button">Keep order</button></div><p id="cancelError" class="mt-3" role="alert"></p></form></dialog>
-  </main>
-</body>
+      <dialog
+        class="bg-body text-body border rounded p-4"
+        id="cancelDialog"
+        aria-labelledby="cancelTitle"
+      >
+        <form id="cancelForm">
+          <h2 class="h4" id="cancelTitle">Cancel order</h2>
+          <p id="cancelDescription"></p>
+          <label for="cancelReason" class="form-label"
+            >Cancellation reason (required)</label
+          ><textarea
+            class="form-control mb-3"
+            id="cancelReason"
+            maxlength="500"
+            required
+            rows="3"
+          ></textarea>
+          <div class="d-flex flex-wrap gap-3">
+            <button
+              class="btn btn-danger py-3"
+              id="confirmCancel"
+              data-mutation
+              type="submit"
+            >
+              Confirm cancellation</button
+            ><button
+              class="btn btn-outline-secondary"
+              id="keepOrder"
+              type="button"
+            >
+              Keep order
+            </button>
+          </div>
+          <p id="cancelError" class="mt-3" role="alert"></p>
+        </form>
+      </dialog>
+    </main>
+  </body>
 </html>
