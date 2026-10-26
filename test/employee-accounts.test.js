@@ -85,6 +85,32 @@ test('staff creation requires an active admin and creates usable, hashed account
   });
   const staffCookie = await login({ ...account, username: 'ordinary' });
   const adminCookie = await login({ ...account, username: 'owner' });
+  assert.equal((await request('/api/employee/accounts')).status, 401);
+  assert.equal(
+    (await request('/api/employee/accounts', undefined, staffCookie)).status,
+    403,
+  );
+  const listed = await request(
+    '/api/employee/accounts',
+    undefined,
+    adminCookie,
+  );
+  assert.equal(listed.status, 200);
+  const { employees } = await listed.json();
+  assert.equal(employees.length, 2);
+  assert.deepEqual(employees.map((employee) => employee.username).sort(), [
+    'ordinary',
+    'owner',
+  ]);
+  for (const employee of employees) {
+    assert.deepEqual(Object.keys(employee).sort(), [
+      'displayName',
+      'employeeId',
+      'isActive',
+      'role',
+      'username',
+    ]);
+  }
   assert.equal((await request('/api/employee/accounts', account)).status, 401);
   assert.equal(
     (
