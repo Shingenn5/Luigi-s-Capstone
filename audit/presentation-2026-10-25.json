@@ -1,0 +1,668 @@
+{
+  "auditDate": "2026-10-25",
+  "timezone": "America/Chicago",
+  "recordedAt": "2026-10-26T03:07:13.968Z",
+  "sourceCommit": "71fa1f28d9f87dda7baabe54ed80487e17487a03",
+  "deployedRuntime": "92e197afca47e90fab3424f7a9d5e3b5eb3927d3",
+  "versions": {
+    "node": "v24.19.0",
+    "playwright": "1.64.1",
+    "axe": "4.14.0"
+  },
+  "repositoryChecks": {
+    "lint": "PASS",
+    "format": "PASS",
+    "backend": {
+      "passed": 31,
+      "failed": 0
+    },
+    "edgeBrowser": {
+      "passed": 49,
+      "failed": 0
+    },
+    "chromeBrowser": {
+      "passed": 49,
+      "failed": 0
+    },
+    "portableDemo": "PASS"
+  },
+  "extraProbes": [
+    {
+      "name": "All local links and assets on public pages resolve; no uncaught JS errors",
+      "result": "PASS",
+      "evidence": {
+        "urlsChecked": 35
+      },
+      "errors": []
+    },
+    {
+      "name": "Malformed JSON cart and invalid saved items can be recovered by clearing",
+      "result": "PASS",
+      "errors": []
+    },
+    {
+      "name": "Blocked browser storage reports actionable error and adds no phantom item",
+      "result": "PASS",
+      "errors": []
+    },
+    {
+      "name": "20-line limit, zero/fractional quantities, remove and clear recover",
+      "result": "PASS",
+      "errors": []
+    },
+    {
+      "name": "Menu outage disables ordering, explains failure, reload recovers",
+      "result": "PASS",
+      "evidence": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "count": 2
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "name": "Two open checkout tabs preserve both edits to their shared cart",
+      "result": "FAIL",
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: locator('#orderItems')\nExpected substring: \"empty\"\nReceived string:    \"2 × Small PizzaRegular sauce, Regular cheeseQuantity$10.00Remove\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toContainText\" locator('#orderItems') with timeout 1500ms\n  - waiting for locator('#orderItems')\n    15 × locator resolved to <ul id=\"orderItems\" class=\"list-unstyled\">…</ul>\n       - unexpected value \"2 × Small PizzaRegular sauce, Regular cheeseQuantity$10.00Remove\"\n",
+      "errors": []
+    },
+    {
+      "name": "Staff settings, sound, modal escape/focus and all views pass axe",
+      "result": "PASS",
+      "evidence": [
+        {
+          "width": 320,
+          "view": "board",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "aria-prohibited-attr",
+              "count": 1
+            },
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "view": "entry",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "count": 5
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "view": "history",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "view": "accounts",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "view": "timed-out",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "aria-prohibited-attr",
+              "count": 1
+            },
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 1280,
+          "view": "board",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "aria-prohibited-attr",
+              "count": 1
+            },
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 1280,
+          "view": "entry",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "count": 5
+            }
+          ]
+        },
+        {
+          "width": 1280,
+          "view": "history",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 1280,
+          "view": "accounts",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "width": 1280,
+          "view": "timed-out",
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "aria-prohibited-attr",
+              "count": 1
+            },
+            {
+              "id": "color-contrast",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "name": "Public pages at 200% text size fit 320px with zero axe violations",
+      "result": "FAIL",
+      "error": "[{\"path\":\"index.html\",\"overflow\":22,\"violations\":[],\"incomplete\":[{\"id\":\"color-contrast\",\"count\":3}]},{\"path\":\"menu.html\",\"overflow\":0,\"violations\":[],\"incomplete\":[{\"id\":\"color-contrast\",\"count\":7}]},{\"path\":\"order.html\",\"overflow\":0,\"violations\":[],\"incomplete\":[]},{\"path\":\"login.html\",\"overflow\":0,\"violations\":[],\"incomplete\":[{\"id\":\"color-contrast\",\"count\":1}]},{\"path\":\"about.html\",\"overflow\":14,\"violations\":[],\"incomplete\":[{\"id\":\"color-contrast\",\"count\":5}]},{\"path\":\"visit.html\",\"overflow\":0,\"violations\":[],\"incomplete\":[{\"id\":\"color-contrast\",\"count\":4}]},{\"path\":\"employee-login.html\",\"overflow\":0,\"violations\":[],\"incomplete\":[{\"id\":\"color-contrast\",\"count\":1}]}]",
+      "errors": []
+    },
+    {
+      "name": "Editing a customer cart after a lost success response does not create a second order",
+      "result": "FAIL",
+      "error": "Saved 2 orders with quantities 2,1\n\n2 !== 1\n",
+      "errors": []
+    },
+    {
+      "name": "Unread notification buttons include their visible label in their accessible name",
+      "result": "FAIL",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     id: 'color-contrast',\n+     impact: 'serious',\n+     nodes: [\n+       {\n+         summary: 'Fix any of the following:\\n' +\n+           '  Element has insufficient color contrast of 2.28 (foreground color: #bdbebe, background color: #797b7c, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1',\n+         target: [\n+           '#notificationsToggle'\n+         ]\n+       }\n+     ]\n+   },\n+   {\n+     id: 'label-content-name-mismatch',\n+     impact: 'serious',\n+     nodes: [\n+       {\n+         summary: 'Fix any of the following:\\n' +\n+           '  Text inside the element is not included in the accessible name',\n+         target: [\n+           '#notification-read-1'\n+         ]\n+       }\n+     ]\n+   }\n+ ]\n- []\n",
+      "errors": []
+    },
+    {
+      "name": "Older updates and previous updates preserve visible keyboard focus",
+      "result": "FAIL",
+      "error": "Focus fell to body or a disabled button at the pagination boundary",
+      "errors": []
+    },
+    {
+      "name": "Open kitchen settings validate, save thresholds and remain accessible after reload",
+      "result": "PASS",
+      "evidence": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "count": 1
+          },
+          {
+            "id": "color-contrast",
+            "count": 1
+          }
+        ]
+      },
+      "errors": []
+    }
+  ],
+  "pricing": {
+    "checks": 60729,
+    "pizzaSizes": 3,
+    "toppings": 9,
+    "toppingCombinationsPerSize": 19683,
+    "sauceCheesePairs": 12,
+    "quantityRange": [1, 20],
+    "drinkVariants": 12,
+    "result": "PASS"
+  },
+  "publicReadOnly": {
+    "origin": "https://pipeline-alberta-drawing-inner.trycloudflare.com",
+    "scans": [
+      {
+        "width": 320,
+        "path": "index.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 320,
+        "path": "menu.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 320,
+        "path": "order.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 320,
+        "path": "about.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 320,
+        "path": "visit.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 320,
+        "path": "login.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 320,
+        "path": "employee-login.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "index.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "menu.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "order.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "about.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "visit.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "login.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 390,
+        "path": "employee-login.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "index.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "menu.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "order.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "about.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "visit.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "login.html",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "width": 1280,
+        "path": "employee-login.html",
+        "overflow": 0,
+        "violations": []
+      }
+    ],
+    "errors": [],
+    "assetsMatch": true,
+    "localCartWorks": true,
+    "staffProtected": true,
+    "pagesEntryDestination": "https://pipeline-alberta-drawing-inner.trycloudflare.com/index.html",
+    "entryLinks": [
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/index.html#main",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/menu.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/about.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/visit.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/order.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/login.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/menu.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/about.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/menu.html#pizzaSizes",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/menu.html#pizzaSizes",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/menu.html#drinkTitle",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/about.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/visit.html",
+      "https://pipeline-alberta-drawing-inner.trycloudflare.com/employee-login.html"
+    ],
+    "complete": true
+  },
+  "approvedLiveRehearsal": {
+    "origin": "https://pipeline-alberta-drawing-inner.trycloudflare.com",
+    "started": "2026-10-26T03:01:05.604Z",
+    "orders": [
+      {
+        "orderId": 16,
+        "subtotal": "$16.00",
+        "totalCents": 1600,
+        "serviceType": "Pickup",
+        "finalStage": "Cancelled"
+      },
+      {
+        "orderId": 17,
+        "totalCents": 100,
+        "serviceType": "Dine-in",
+        "finalStage": "Completed"
+      }
+    ],
+    "scans": [
+      {
+        "label": "index.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "menu.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "order.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "about.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "visit.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "login.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "employee-login.html mobile",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "completed mixed pickup with unread updates mobile",
+        "overflow": 0,
+        "violations": [
+          {
+            "id": "label-content-name-mismatch",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": ["#notification-read-8"],
+                "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+              },
+              {
+                "target": ["#notification-read-7"],
+                "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+              },
+              {
+                "target": ["#notification-read-6"],
+                "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+              },
+              {
+                "target": ["#notification-read-5"],
+                "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "public cancellation dialog desktop",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff board 320px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff entry 320px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff history 320px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff accounts 320px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff timed-out 320px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff board 1280px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff entry 1280px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff history 1280px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff accounts 1280px",
+        "overflow": 0,
+        "violations": []
+      },
+      {
+        "label": "staff timed-out 1280px",
+        "overflow": 0,
+        "violations": []
+      }
+    ],
+    "errors": [],
+    "assetsMatch": true,
+    "secureStaffCookie": true,
+    "completed": true,
+    "loggedOut": true,
+    "finished": "2026-10-26T03:01:47.635Z"
+  },
+  "enlargedText": [
+    {
+      "path": "index.html",
+      "details": [
+        {
+          "tag": "SECTION",
+          "id": "",
+          "text": "Good company, Better pizza.\n              A little sliceof happiness.\n              Golden crust. Melty cheese. Your fav",
+          "left": 0,
+          "right": 320,
+          "scrollWidth": 342,
+          "clientWidth": 320
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "text": "Good company, Better pizza.\n              A little sliceof happiness.\n              Golden crust. Melty cheese. Your fav",
+          "left": 0,
+          "right": 320,
+          "scrollWidth": 342,
+          "clientWidth": 320
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "text": "Good company, Better pizza.\n              A little sliceof happiness.\n              Golden crust. Melty cheese. Your fav",
+          "left": 0,
+          "right": 320,
+          "scrollWidth": 342,
+          "clientWidth": 320
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "text": "Good company, Better pizza.\n              A little sliceof happiness.\n              Golden crust. Melty cheese. Your fav",
+          "left": 0,
+          "right": 320,
+          "scrollWidth": 342,
+          "clientWidth": 320
+        },
+        {
+          "tag": "H1",
+          "id": "heroTitle",
+          "text": "A little sliceof happiness.",
+          "left": 24,
+          "right": 296,
+          "scrollWidth": 318,
+          "clientWidth": 272
+        }
+      ]
+    },
+    {
+      "path": "about.html",
+      "details": [
+        {
+          "tag": "H1",
+          "id": "aboutTitle",
+          "text": "Good pizza.Better company.",
+          "left": 24,
+          "right": 296,
+          "scrollWidth": 289,
+          "clientWidth": 272
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "text": "Good company. Your favorite toppings.A little slice of happiness.\n          Explore the menu →",
+          "left": 0,
+          "right": 320,
+          "scrollWidth": 334,
+          "clientWidth": 320
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "text": "Good company. Your favorite toppings.A little slice of happiness.\n          Explore the menu →",
+          "left": 24,
+          "right": 296,
+          "scrollWidth": 310,
+          "clientWidth": 272
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "text": "Good company. Your favorite toppings.A little slice of happiness.",
+          "left": 72,
+          "right": 248,
+          "scrollWidth": 262,
+          "clientWidth": 176
+        },
+        {
+          "tag": "H2",
+          "id": "pizzaNightTitle",
+          "text": "A little slice of happiness.",
+          "left": 72,
+          "right": 248,
+          "scrollWidth": 262,
+          "clientWidth": 176
+        }
+      ]
+    }
+  ],
+  "postRehearsalVm": {
+    "app": "active",
+    "tunnel": "active",
+    "health": "ok",
+    "runtimeMarkerUnchanged": true
+  }
+}
