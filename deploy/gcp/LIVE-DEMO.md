@@ -1,5 +1,17 @@
 # GCP demo deployment
 
+## Staff-account editing release — October 25, 2026
+
+Runtime commit `bad4f8b84ac20af2d19693ec0ba4e9a6504f67c6` is deployed to `luigis-demo`. GitHub main matched this SHA before export. The archive SHA-256 was `a8588bd05abbb74cc8cf8116ba45e8fa149e0418ed669586cf1ad8451399b215`; it was verified on the VM before installation, and every installed archive file matched afterward.
+
+The previous application, environment configuration, and stopped SQLite directory are retained in the private root-owned backup `/var/backups/luigis/bad4f8b84ac20af2d19693ec0ba4e9a6504f67c6-20261026T042339Z`. The lockfile, database initialization code, and service configuration matched the previous deployment. Only the application service was restarted; the tunnel and public hostname were preserved. The deployed SHA, both active services, VM/public health, SQLite integrity, and foreign keys were verified.
+
+Local checks passed locked dependency installation, lint, formatting, all 31 backend/database tests, and all 49 browser/accessibility scenarios. Sandbox localhost restrictions were resolved by rerunning network-dependent checks with the required access. Formatting warnings in the incoming JavaScript files were exclusively Windows line endings; normalization produced no Git content changes.
+
+Public Chrome checks passed admin login with a Secure cookie, staff-list field validation without password data, listing/refresh, and opening the new edit dialog with the correct account values at 1280px and 390px. Cancel closed the dialog at both widths, screenshots were visually inspected, and the pages had no viewport overflow. The verification session was logged out and subsequent staff-list access returned 401. Existing live accounts were not edited; saving account changes was not exercised on production. No live orders or accounts were created.
+
+Remaining issue: the production dependency audit reports one high-severity advisory in the existing `body-parser` dependency (GHSA-27r3-jxmh-p828, compressed-request denial of service). The requested exact release retains its committed lockfile; dependency remediation is separate work. This deployment record is a documentation-only follow-up and does not change the deployed runtime SHA.
+
 ## Latest teammate changes — October 25, 2026
 
 Runtime commit `27c1398806506a7fd68b6b4163ad3ece9cc34547` is deployed. It includes the four incoming GitHub commits through `07baa98` (admin staff-account list, favicon references, formatting and accessibility fixes), plus staff-list API verification for anonymous/employee rejection, admin access, and absence of password fields. GitHub main matched the runtime SHA before export. Archive SHA-256: `af96df44eba6c7c3f8abf63d09573ef95927068735d5f5e08101d705a91af9b3`.
