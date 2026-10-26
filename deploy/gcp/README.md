@@ -63,6 +63,8 @@ Open **http://127.0.0.1:3000** on the laptop. The app and database run on the VM
 
 ## Public HTTPS address
 
+For the selected IPv6-only DuckDNS hostname and Certbot cutover, follow [DUCKDNS.md](DUCKDNS.md). Deployment evidence is recorded separately in [LIVE-DEMO.md](LIVE-DEMO.md).
+
 For public access, reserve an address, point a real domain at it, and allow ports 80/443 in your GCP firewall. Keep Node listening on `127.0.0.1:3000`; do not expose that port directly.
 
 Install Nginx and copy `nginx.conf` into its site configuration. Replace `demo.example.com` with the real domain. Use the current [Certbot Nginx instructions](https://certbot.eff.org/instructions?ws=nginx&os=snap) to obtain and renew HTTPS certificates. Test Nginx before reloading it.
