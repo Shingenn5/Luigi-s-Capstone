@@ -1,5 +1,15 @@
 # GCP demo deployment
 
+## Latest teammate changes — October 25, 2026
+
+Runtime commit `27c1398806506a7fd68b6b4163ad3ece9cc34547` is deployed. It includes the four incoming GitHub commits through `07baa98` (admin staff-account list, favicon references, formatting and accessibility fixes), plus staff-list API verification for anonymous/employee rejection, admin access, and absence of password fields. GitHub main matched the runtime SHA before export. Archive SHA-256: `af96df44eba6c7c3f8abf63d09573ef95927068735d5f5e08101d705a91af9b3`.
+
+Previous app, environment, and stopped SQLite-directory backups are retained at `/var/backups/luigis/27c1398806506a7fd68b6b4163ad3ece9cc34547-20261026T015445Z` (UTC timestamp). Every installed archive file matched. Lockfile and service configuration were unchanged. App health, both services, SQLite integrity, foreign keys, and migration 007 passed. The tunnel remained running with its existing public hostname.
+
+Local verification passed lint, formatting, all 31 backend/database tests, and all 42 browser/accessibility scenarios. Initial sandbox network restrictions and a browser-test port conflict were resolved before successful reruns. Incoming formatting warnings were line-ending normalization; no application logic was changed during release preparation. Public Chrome checks at desktop/mobile widths passed health, unauthenticated staff-list rejection, deployed listing JavaScript, favicon retrieval, and login-page reflow. Authenticated public verification is pending explicit approval to use the saved admin credentials; no live orders or accounts were created.
+
+OS Login and narrowly scoped IAP access were configured for both existing project teammates; see [ACCESS.md](ACCESS.md). A fresh owner OS Login session and sudo succeeded. Teammates must verify their own connections. This deployment record is a documentation-only follow-up to the runtime SHA above.
+
 Verified on October 21, 2026. This records deployment evidence, not a guarantee of permanent availability or zero billing.
 
 - Project: `luigis-pizzeria-512320`.

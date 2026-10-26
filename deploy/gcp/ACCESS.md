@@ -2,14 +2,17 @@
 
 The app's customer/employee accounts, GitHub repository permissions, and Google Cloud VM permissions are separate. Sharing an employee login does not grant SSH access. Each teammate should use their own Google account and SSH identity.
 
-## Audited state — October 21, 2026
+## Audited state — October 25, 2026
 
 Project `luigis-pizzeria-512320`, VM `luigis-demo`, zone `us-central1-a`:
 
-- Only the project owner's Google account currently has a human IAM binding. No teammate IAM grants were found at project or instance scope. Service-account bindings are not human access.
-- OS Login is not enabled at project or instance scope. Existing SSH access uses metadata keys and IAP.
+- Both existing project teammates now have `roles/compute.osLogin` on this VM. The owner has an explicit instance-level `roles/compute.osAdminLogin` grant.
+- OS Login is enabled on this VM only. Metadata SSH keys no longer authorize connections to this VM; each person uses their own Google identity.
+- Both teammates have IAP tunnel access conditioned on `destination.ip == "10.42.0.2" && destination.port == 22`.
+- A custom project role, `projects/luigis-pizzeria-512320/roles/luigisSshProjectLookup`, grants only `compute.projects.get` and `resourcemanager.projects.get` for SSH project lookup. Compute Viewer was not granted. Existing unrelated roles were preserved.
 - No service account is attached to this VM in the inspected configuration.
-- Teammate grants are pending the owner's list of Google-account emails and the access level for each person. This document is preparation, not proof that anyone else can connect.
+- A pre-change admin session was kept open during setup. A fresh owner session through IAP then verified the OS Login identity and successful `sudo -n true`. Final IAM policies were read back and verified.
+- Teammate connection tests remain pending: each teammate must sign in with their own account and run the connection command below. Owner SSH and policy verification do not prove their end-to-end login.
 
 ## Access setup
 
@@ -22,7 +25,7 @@ For each approved teammate, grant the following as appropriate:
 | Open an SSH session without sudo | `roles/compute.osLogin` |
 | Deploy and administer the VM with sudo | `roles/compute.osAdminLogin` |
 | Reach this VM through IAP | `roles/iap.tunnelResourceAccessor`, scoped to the VM and SSH port where possible |
-| Find the project/VM in the console or CLI | Project-level role containing `compute.projects.get`, plus the instance discovery permissions needed by that connection method; Compute Viewer is a documented practical option |
+| Find the project/VM in the console or CLI | The custom SSH project-lookup role above supplies project lookup; instance-level OS Login supplies access to the designated VM. The explicit project, VM, and zone in the command avoid needing broad resource discovery. |
 | Use an attached VM service account | `roles/iam.serviceAccountUser` on that specific service account, only if one is attached |
 
 An ordinary OS Login shell does not automatically grant access to protected app logs, `/etc/luigis.env`, or the SQLite data directory. Define any read-only operational/data access separately. Admin login includes sudo and therefore access to app credentials and customer records; grant it only to the people the owner identifies as administrators. Do not substitute project Owner/Editor for SSH roles or grant access to `allUsers`/`allAuthenticatedUsers`.
